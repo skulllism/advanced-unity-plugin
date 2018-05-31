@@ -4,10 +4,20 @@ using UnityEngine;
 
 namespace Advanced
 {
-    public abstract class Decision : ScriptableObject
+    namespace ScriptableObject
     {
-        public bool isTrue;
-        public abstract bool Decide(Actor actor);
+        /*
+    * @brief this is the logic that can be used for any decision
+    * @author Kay
+    * @date 2018-05-31
+    * @version 0.0.1
+    * */
+
+        public abstract class Decision : PrototypeScriptableObject
+        {
+            public bool isTrue;
+            public abstract bool Decide(ScriptableGameobject actor);
+        }
     }
 }
 

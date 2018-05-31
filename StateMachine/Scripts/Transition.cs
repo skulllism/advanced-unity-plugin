@@ -4,27 +4,48 @@ using UnityEngine;
 
 namespace Advanced
 {
-    [CreateAssetMenu(menuName = "AdvancedUnityPlugin/Transition")]
-    public class Transition : ScriptableObject
+    namespace ScriptableObject
     {
-        [Header("Decision")]
-        public Decision[] decisions;
-        public bool isTrue;
-
-        [Header("Target")]
-        public State state;
-
-        public bool CanBeTransit(Actor actor , out State state)
+        /*
+    * @brief this is a logic that states can transition
+    * @details you can assemble Decision on slot. state would be transit by your decision
+    * @author Kay
+    * @date 2018-05-31
+    * @version 0.0.1
+    * */
+        [CreateAssetMenu(menuName = "AdvancedUnityPlugin/Transition")]
+        public class Transition : PrototypeScriptableObject
         {
-            state = this.state;
+            [Header("Decision")]
+            public Decision[] decisions;
 
-            for (int i = 0; i < decisions.Length; i++)
+            [Header("Target State ID")]
+            public string stateID;
+
+            private Decision[] clones;
+
+            public bool CanBeTransit(ScriptableGameobject obj, out string stateID)
             {
-                if (decisions[i].Decide(actor) != decisions[i].isTrue)
-                    return false;
+                stateID = this.stateID;
+
+                for (int i = 0; i < decisions.Length; i++)
+                {
+                    if (decisions[i].Decide(obj) != decisions[i].isTrue)
+                        return false;
+                }
+
+                return true;
             }
 
-            return true;
+            public override PrototypeScriptableObject Clone()
+            {
+                return Instantiate(this);
+            }
+
+            public override void Init(ScriptableGameobject obj)
+            {
+                clones = SetClones(obj, decisions);
+            }
         }
     }
 }

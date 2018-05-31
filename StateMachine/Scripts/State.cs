@@ -4,38 +4,81 @@ using UnityEngine;
 
 namespace Advanced
 {
-    [CreateAssetMenu(menuName = "AdvancedUnityPlugin/State")]
-    public class State : ScriptableObject
+    namespace ScriptableObject
     {
-        [Header("Action")]
-        public Action[] onEnters;
-        public Action[] onUpdates;
-        public Action[] onExits;
-
-        [Header("Transition")]
-        public Transition[] transitions;
-
-        public void OnEnter(Actor actor)
+        /*
+     * @brief assembly prototype state
+     * @details you can assemble Action, Transition on each slots. all of Prototype ScriptableObject would be clone
+     * @author Kay
+     * @date 2018-05-31
+     * @version 0.0.1
+     * */
+        [CreateAssetMenu(menuName = "AdvancedUnityPlugin/State")]
+        public class State : PrototypeScriptableObject
         {
-            for (int i = 0; i < onEnters.Length; i++)
+            public string ID;
+
+            [Header("Action")]
+            public Action[] onEnters;
+            public Action[] onUpdates;
+            public Action[] onExits;
+
+            [Header("Transition")]
+            public Transition[] transitions;
+
+            private Action[] cloningOnEnters;
+            private Action[] cloningOnUpdates;
+            private Action[] cloningOnExits;
+            private Transition[] cloningTransitions;
+
+            public override void Init(ScriptableGameobject obj)
             {
-                onEnters[i].OnAction(actor);
+                cloningOnEnters = SetClones(obj, onEnters);
+                cloningOnUpdates = SetClones(obj, onUpdates);
+                cloningOnExits = SetClones(obj, onExits);
+
+                cloningTransitions = SetClones(obj, transitions);
             }
-        }
 
-        public void OnUpdate(Actor actor)
-        {
-            for (int i = 0; i < onUpdates.Length; i++)
+            public void OnEnter(ScriptableGameobject obj)
             {
-                onUpdates[i].OnAction(actor);
+                for (int i = 0; i < cloningOnEnters.Length; i++)
+                {
+                    cloningOnEnters[i].OnAction(obj);
+                }
             }
-        }
 
-        public void OnExit(Actor actor)
-        {
-            for (int i = 0; i < onExits.Length; i++)
+            public void OnUpdate(ScriptableGameobject obj)
             {
-                onEnters[i].OnAction(actor);
+                for (int i = 0; i < cloningOnUpdates.Length; i++)
+                {
+                    cloningOnUpdates[i].OnAction(obj);
+                }
+            }
+
+            public void OnExit(ScriptableGameobject obj)
+            {
+                for (int i = 0; i < cloningOnExits.Length; i++)
+                {
+                    cloningOnExits[i].OnAction(obj);
+                }
+            }
+
+            public bool IsTransition(ScriptableGameobject obj, out string next)
+            {
+                for (int i = 0; i < cloningTransitions.Length; i++)
+                {
+                    if (cloningTransitions[i].CanBeTransit(obj, out next))
+                        return true;
+                }
+
+                next = null;
+                return false;
+            }
+
+            public override PrototypeScriptableObject Clone()
+            {
+                return Instantiate(this);
             }
         }
     }
