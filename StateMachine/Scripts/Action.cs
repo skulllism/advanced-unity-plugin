@@ -7,6 +7,6 @@ namespace Advanced
 {
     public abstract class Action : ScriptableObject
     {
-        public abstract void OnAction();
+        public abstract void OnAction(Actor actor);
     }
 }

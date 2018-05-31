@@ -6,5 +6,7 @@ namespace Advanced
 {
     public class StateMachine : MonoBehaviour
     {
+        public State[] states;
+
     }
 }

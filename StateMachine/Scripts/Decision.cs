@@ -4,20 +4,10 @@ using UnityEngine;
 
 namespace Advanced
 {
-    public class Decision : MonoBehaviour
+    public abstract class Decision : ScriptableObject
     {
-
-        // Use this for initialization
-        void Start()
-        {
-
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
+        public bool isTrue;
+        public abstract bool Decide(Actor actor);
     }
 }
 

@@ -2,15 +2,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Transition : MonoBehaviour {
+namespace Advanced
+{
+    [CreateAssetMenu(menuName = "AdvancedUnityPlugin/Transition")]
+    public class Transition : ScriptableObject
+    {
+        [Header("Decision")]
+        public Decision[] decisions;
+        public bool isTrue;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+        [Header("Target")]
+        public State state;
+
+        public bool CanBeTransit(Actor actor , out State state)
+        {
+            state = this.state;
+
+            for (int i = 0; i < decisions.Length; i++)
+            {
+                if (decisions[i].Decide(actor) != decisions[i].isTrue)
+                    return false;
+            }
+
+            return true;
+        }
+    }
 }
+

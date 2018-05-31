@@ -13,7 +13,31 @@ namespace Advanced
         public Action[] onExits;
 
         [Header("Transition")]
-        public Decision[] transitions;
+        public Transition[] transitions;
+
+        public void OnEnter(Actor actor)
+        {
+            for (int i = 0; i < onEnters.Length; i++)
+            {
+                onEnters[i].OnAction(actor);
+            }
+        }
+
+        public void OnUpdate(Actor actor)
+        {
+            for (int i = 0; i < onUpdates.Length; i++)
+            {
+                onUpdates[i].OnAction(actor);
+            }
+        }
+
+        public void OnExit(Actor actor)
+        {
+            for (int i = 0; i < onExits.Length; i++)
+            {
+                onEnters[i].OnAction(actor);
+            }
+        }
     }
 }
 
