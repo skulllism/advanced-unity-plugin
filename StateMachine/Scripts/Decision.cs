@@ -4,19 +4,19 @@ using UnityEngine;
 
 namespace Advanced
 {
-    public class Decision : MonoBehaviour
+    namespace ScriptableObject
     {
+        /*
+    * @brief this is the logic that can be used for any decision
+    * @author Kay
+    * @date 2018-05-31
+    * @version 0.0.1
+    * */
 
-        // Use this for initialization
-        void Start()
+        public abstract class Decision : PrototypeScriptableObject
         {
-
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
+            public bool isTrue;
+            public abstract bool Decide(ScriptableGameobject actor);
         }
     }
 }
