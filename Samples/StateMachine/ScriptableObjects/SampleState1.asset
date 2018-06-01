@@ -11,8 +11,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b42f573647dbd1c43bc16026c6765934, type: 3}
   m_Name: SampleState1
   m_EditorClassIdentifier: 
-  ID: 
-  onEnters: []
+  ID: 1
+  onEnters:
+  - {fileID: 11400000, guid: 20d0551e7943fda47bff852bbeba689a, type: 2}
   onUpdates: []
   onExits: []
-  transitions: []
+  transitions:
+  - {fileID: 11400000, guid: 28cabe2ba5f7966448169c5771f9b112, type: 2}
