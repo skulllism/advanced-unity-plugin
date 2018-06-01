@@ -4,8 +4,6 @@ using UnityEngine;
 
 namespace Advanced
 {
-    namespace ScriptableObject
-    {
         /*
          * @brief component of ScriptableGameObject
          * @author Kay
@@ -19,5 +17,4 @@ namespace Advanced
             public abstract void OnReceiveMessage(string message, object[] args);
             public abstract void ManualUpdate(ScriptableGameobject obj);
         }
-    }
 }

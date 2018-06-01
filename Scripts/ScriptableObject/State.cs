@@ -4,8 +4,6 @@ using UnityEngine;
 
 namespace Advanced
 {
-    namespace ScriptableObject
-    {
         /*
      * @brief assembly prototype state
      * @details you can assemble Action, Transition on each slots. all of Prototype ScriptableObject would be clone
@@ -81,6 +79,5 @@ namespace Advanced
                 return Instantiate(this);
             }
         }
-    }
 }
 
