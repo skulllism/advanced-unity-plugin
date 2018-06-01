@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Advanced.ScriptableObject;
+using Advanced;
 
 [CreateAssetMenu(menuName = "AdvancedUnityPlugin/Sample/Action")]
 public class SampleAction : Action {

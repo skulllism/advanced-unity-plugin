@@ -4,8 +4,6 @@ using UnityEngine;
 
 namespace Advanced
 {
-    namespace ScriptableObject
-    {
         /*
     * @brief this is a logic that states can transition
     * @details you can assemble Decision on slot. state would be transit by your decision
@@ -47,6 +45,5 @@ namespace Advanced
                 clones = SetClones(obj, decisions);
             }
         }
-    }
 }
 

@@ -4,8 +4,6 @@ using UnityEngine;
 
 namespace Advanced
 {
-    namespace ScriptableObject
-    {
         /*
     * @brief GameObject for scriptable components
     * @author Kay
@@ -107,5 +105,4 @@ namespace Advanced
                 return null;
             }
         }
-    }
 }

@@ -5,8 +5,6 @@ using UnityEngine;
 
 namespace Advanced
 {
-    namespace ScriptableObject
-    {
 
         /*
     * @brief this is a Action that invoke on state
@@ -18,5 +16,4 @@ namespace Advanced
         {
             public abstract void OnAction(ScriptableGameobject actor);
         }
-    }
 }

@@ -4,8 +4,6 @@ using UnityEngine;
 
 namespace Advanced
 {
-    namespace ScriptableObject
-    {
         /*
          * @brief this ScriptableObject can be cloning
          * @author Kay
@@ -32,6 +30,5 @@ namespace Advanced
                 return clones;
             }
         }
-    }
 }
 

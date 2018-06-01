@@ -4,8 +4,6 @@ using UnityEngine;
 
 namespace Advanced
 {
-    namespace ScriptableObject
-    {
         /*
     * @brief this is the logic that can be used for any decision
     * @author Kay
@@ -18,6 +16,5 @@ namespace Advanced
             public bool isTrue;
             public abstract bool Decide(ScriptableGameobject actor);
         }
-    }
 }
 
