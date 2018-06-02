@@ -19,7 +19,7 @@ namespace AdvancedUnityPlugin
             {
                 if (instance == null)
                 {
-                    GameObject gameobj = new GameObject("AdvancedSceneController");
+                    GameObject gameobj = new GameObject("SceneController");
                     GameObject.DontDestroyOnLoad(gameobj);
                     instance = gameobj.AddComponent<SceneController>();
                 }
