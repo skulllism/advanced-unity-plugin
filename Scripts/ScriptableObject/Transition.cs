@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Advanced
+namespace AdvancedUnityPlugin
 {
         /*
     * @brief this is a logic that states can transition
@@ -22,13 +22,13 @@ namespace Advanced
 
             private Decision[] clones;
 
-            public bool CanBeTransit(ScriptableGameobject obj, out string stateID)
+            public bool CanBeTransit(GameObject gameObj, out string stateID)
             {
                 stateID = this.stateID;
 
                 for (int i = 0; i < decisions.Length; i++)
                 {
-                    if (decisions[i].Decide(obj) != decisions[i].isTrue)
+                    if (decisions[i].Decide(gameObj) != decisions[i].isTrue)
                         return false;
                 }
 
@@ -40,9 +40,9 @@ namespace Advanced
                 return Instantiate(this);
             }
 
-            public override void Init(ScriptableGameobject obj)
+            public override void Init(GameObject gameObj)
             {
-                clones = SetClones(obj, decisions);
+                clones = SetClones(gameObj, decisions);
             }
         }
 }

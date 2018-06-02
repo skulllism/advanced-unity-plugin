@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Advanced
+namespace AdvancedUnityPlugin
 {
         /*
          * @brief this ScriptableObject can be cloning
@@ -14,9 +14,9 @@ namespace Advanced
         {
             public abstract PrototypeScriptableObject Clone();
 
-            public abstract void Init(ScriptableGameobject obj);
+            public abstract void Init(GameObject gameObj);
 
-            public static T[] SetClones<T>(ScriptableGameobject obj, T[] origin) where T : PrototypeScriptableObject
+            public static T[] SetClones<T>(GameObject gameObj, T[] origin) where T : PrototypeScriptableObject
             {
                 T[] clones = new T[origin.Length];
 
@@ -24,7 +24,7 @@ namespace Advanced
                 {
                     Debug.Assert(origin[i] != null, "[AUP] origin prototype is null");
                     clones[i] = origin[i].Clone() as T;
-                    clones[i].Init(obj);
+                    clones[i].Init(gameObj);
                 }
 
                 return clones;

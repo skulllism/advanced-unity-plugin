@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Advanced
+namespace AdvancedUnityPlugin
 {
         /*
      * @brief assembly prototype state
@@ -29,44 +29,44 @@ namespace Advanced
             private Action[] cloningOnExits;
             private Transition[] cloningTransitions;
 
-            public override void Init(ScriptableGameobject obj)
+            public override void Init(GameObject gameObj)
             {
-                cloningOnEnters = SetClones(obj, onEnters);
-                cloningOnUpdates = SetClones(obj, onUpdates);
-                cloningOnExits = SetClones(obj, onExits);
+                cloningOnEnters = SetClones(gameObj, onEnters);
+                cloningOnUpdates = SetClones(gameObj, onUpdates);
+                cloningOnExits = SetClones(gameObj, onExits);
 
-                cloningTransitions = SetClones(obj, transitions);
+                cloningTransitions = SetClones(gameObj, transitions);
             }
 
-            public void OnEnter(ScriptableGameobject obj)
+            public void OnEnter(GameObject gameObj)
             {
                 for (int i = 0; i < cloningOnEnters.Length; i++)
                 {
-                    cloningOnEnters[i].OnAction(obj);
+                    cloningOnEnters[i].OnAction(gameObj);
                 }
             }
 
-            public void OnUpdate(ScriptableGameobject obj)
+            public void OnUpdate(GameObject gameObj)
             {
                 for (int i = 0; i < cloningOnUpdates.Length; i++)
                 {
-                    cloningOnUpdates[i].OnAction(obj);
+                    cloningOnUpdates[i].OnAction(gameObj);
                 }
             }
 
-            public void OnExit(ScriptableGameobject obj)
+            public void OnExit(GameObject gameObj)
             {
                 for (int i = 0; i < cloningOnExits.Length; i++)
                 {
-                    cloningOnExits[i].OnAction(obj);
+                    cloningOnExits[i].OnAction(gameObj);
                 }
             }
 
-            public bool IsTransition(ScriptableGameobject obj, out string next)
+            public bool IsTransition(GameObject gameObj, out string next)
             {
                 for (int i = 0; i < cloningTransitions.Length; i++)
                 {
-                    if (cloningTransitions[i].CanBeTransit(obj, out next))
+                    if (cloningTransitions[i].CanBeTransit(gameObj, out next))
                         return true;
                 }
 

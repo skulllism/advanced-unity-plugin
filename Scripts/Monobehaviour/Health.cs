@@ -1,0 +1,64 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace AdvancedUnityPlugin
+{
+    public class Health : MonoBehaviour , DamageEventBroadcaster2D.Listener
+    {
+        public DamageEventBroadcaster2D broadcaster;
+        public FloatVariable max;
+        public FloatVariable staticValue;
+
+        public float Current
+        {
+            get
+            {
+                return current;
+            }
+            private set
+            {
+                current = value;
+                if (staticValue != null)
+                    staticValue.value = current;
+            }
+        }
+
+        private float current;
+
+        private void OnEnable()
+        {
+            Current = max.value;
+            broadcaster.RegistEventListener(this);
+        }
+
+        private void OnDisable()
+        {
+            broadcaster.UnregistEventListener(this);
+        }
+
+        public void Recovery(float recovery)
+        {
+            float result = Current + recovery;
+            if (result > max.value)
+                result = max.value;
+
+            Current = result;
+        }
+
+        public void TakeDamage(float damage)
+        {
+            float result = Current - damage;
+
+            if (result < 0)
+                result = 0;
+
+            Current = result;
+        }
+
+        public void OnDamaged(AttackEvent2D.Data data)
+        {
+            TakeDamage(data.damage);
+        }
+    }
+}

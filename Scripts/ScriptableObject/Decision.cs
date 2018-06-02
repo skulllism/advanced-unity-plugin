@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Advanced
+namespace AdvancedUnityPlugin
 {
         /*
     * @brief this is the logic that can be used for any decision
@@ -14,7 +14,7 @@ namespace Advanced
         public abstract class Decision : PrototypeScriptableObject
         {
             public bool isTrue;
-            public abstract bool Decide(ScriptableGameobject actor);
+            public abstract bool Decide(GameObject gameObj);
         }
 }
 

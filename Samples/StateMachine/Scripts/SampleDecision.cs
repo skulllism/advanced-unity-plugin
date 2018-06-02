@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Advanced;
+using AdvancedUnityPlugin;
 
 [CreateAssetMenu(menuName ="AdvancedUnityPlugin/Sample/Decision")]
 public class SampleDecision : Decision
@@ -11,12 +11,12 @@ public class SampleDecision : Decision
         return CreateInstance<SampleDecision>();
     }
 
-    public override bool Decide(ScriptableGameobject actor)
+    public override bool Decide(GameObject gameObj)
     {
         return true;
     }
 
-    public override void Init(ScriptableGameobject obj)
+    public override void Init(GameObject gameObj)
     {
     }
 }

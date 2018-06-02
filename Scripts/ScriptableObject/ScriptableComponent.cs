@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Advanced
+namespace AdvancedUnityPlugin
 {
         /*
          * @brief component of ScriptableGameObject
@@ -15,6 +15,6 @@ namespace Advanced
             public string ID;
 
             public abstract void OnReceiveMessage(string message, object[] args);
-            public abstract void ManualUpdate(ScriptableGameobject obj);
+            public abstract void ManualUpdate(GameObject gameObj);
         }
 }

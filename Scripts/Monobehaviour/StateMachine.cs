@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Advanced
+namespace AdvancedUnityPlugin
 {
     /*
    * @brief the scriptable finite state machine
@@ -11,53 +11,36 @@ namespace Advanced
    * @date 2018-05-31
    * @version 0.0.1
    * */
-    [CreateAssetMenu]
-    public class StateMachine : ScriptableComponent
+    public class StateMachine : MonoBehaviour
     {
-        [Header("State")]
         public State[] states;
 
         private State[] clones;
 
         private State current;
 
-        private ScriptableGameobject obj;
-
-        public override void Init(ScriptableGameobject obj)
+        private void Awake()
         {
-            this.obj = obj;
-
-            clones = SetClones(obj, states);
-        }
-
-        public override PrototypeScriptableObject Clone()
-        {
-            return Instantiate(this);
-        }
-
-        public override void OnReceiveMessage(string message, object[] args)
-        {
-            if (message == "TransitionToState")
-                TransitionToState(args[0] as string);
+            clones = PrototypeScriptableObject.SetClones(gameObject, states);
         }
 
         public void TransitionToState(string ID)
         {
             if (current)
-                current.OnExit(obj);
+                current.OnExit(gameObject);
 
             current = GetState(ID);
 
-            current.OnEnter(obj);
+            current.OnEnter(gameObject);
         }
 
-        public override void ManualUpdate(ScriptableGameobject obj)
+        private void Update()
         {
             if (!current)
                 return;
 
             string next;
-            if (current.IsTransition(obj, out next))
+            if (current.IsTransition(gameObject, out next))
                 TransitionToState(next);
         }
 

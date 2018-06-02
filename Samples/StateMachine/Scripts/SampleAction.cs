@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Advanced;
+using AdvancedUnityPlugin;
 
 [CreateAssetMenu(menuName = "AdvancedUnityPlugin/Sample/Action")]
 public class SampleAction : Action {
@@ -10,11 +10,11 @@ public class SampleAction : Action {
         return CreateInstance<SampleAction>();
     }
 
-    public override void Init(ScriptableGameobject obj)
+    public override void Init(GameObject gameObj)
     {
     }
 
-    public override void OnAction(ScriptableGameobject actor)
+    public override void OnAction(GameObject gameObj)
     {
         Debug.Log("SampleAction");
     }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-namespace Advanced
+namespace AdvancedUnityPlugin
 {
 
         /*
@@ -14,6 +14,6 @@ namespace Advanced
     * */
         public abstract class Action : PrototypeScriptableObject
         {
-            public abstract void OnAction(ScriptableGameobject actor);
+            public abstract void OnAction(GameObject gameObj);
         }
 }
