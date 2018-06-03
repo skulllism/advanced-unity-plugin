@@ -1,12 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.Events;
 
 namespace AdvancedUnityPlugin
 {
     public class Health : MonoBehaviour , DamageEventBroadcaster2D.Listener
     {
         public DamageEventBroadcaster2D broadcaster;
+        public UnityEvent onDeathEvent;
         public FloatVariable max;
         public FloatVariable staticValue;
 
@@ -21,6 +21,9 @@ namespace AdvancedUnityPlugin
                 current = value;
                 if (staticValue != null)
                     staticValue.initialValue = current;
+
+                if (current == 0)
+                    onDeathEvent.Invoke();
             }
         }
 
