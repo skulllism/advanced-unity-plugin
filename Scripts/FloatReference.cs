@@ -16,7 +16,7 @@ namespace AdvancedUnityPlugin
         {
             get
             {
-                return useConstantValue ? constantValue : variable.value;
+                return useConstantValue ? constantValue : variable.initialValue;
             }
         }
     }

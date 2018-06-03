@@ -20,7 +20,7 @@ namespace AdvancedUnityPlugin
             {
                 current = value;
                 if (staticValue != null)
-                    staticValue.value = current;
+                    staticValue.initialValue = current;
             }
         }
 
@@ -28,7 +28,7 @@ namespace AdvancedUnityPlugin
 
         private void OnEnable()
         {
-            Current = max.value;
+            Current = max.initialValue;
             broadcaster.RegistEventListener(this);
         }
 
@@ -40,8 +40,8 @@ namespace AdvancedUnityPlugin
         public void Recovery(float recovery)
         {
             float result = Current + recovery;
-            if (result > max.value)
-                result = max.value;
+            if (result > max.initialValue)
+                result = max.initialValue;
 
             Current = result;
         }

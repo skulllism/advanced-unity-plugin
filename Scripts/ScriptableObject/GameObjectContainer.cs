@@ -4,11 +4,12 @@ using UnityEngine;
 
 namespace AdvancedUnityPlugin
 {
-    public class GameObjectContainer
+    [CreateAssetMenu]
+    public class GameObjectContainer : ScriptableObject
     {
-        private static Dictionary<GameObject, GameObjectPool> pools = new Dictionary<GameObject, GameObjectPool>();
+        private Dictionary<GameObject, GameObjectPool> pools = new Dictionary<GameObject, GameObjectPool>();
 
-        private static GameObjectPool GetPool(GameObject key)
+        private GameObjectPool GetPool(GameObject key)
         {
             GameObjectPool pool;
             if (pools.TryGetValue(key, out pool))
@@ -17,7 +18,7 @@ namespace AdvancedUnityPlugin
             return null;
         }
 
-        public static GameObject Get(GameObject key)
+        public GameObject Get(GameObject key)
         {
             GameObject active = null;
             GameObjectPool pool = GetPool(key);
@@ -28,7 +29,7 @@ namespace AdvancedUnityPlugin
             return active;
         }
 
-        public static void CreatePool(GameObject origin, int max)
+        public void CreatePool(GameObject origin, int max)
         {
             GameObjectPool tmp = new GameObjectPool(origin);
 
@@ -41,7 +42,7 @@ namespace AdvancedUnityPlugin
             pools.Add(origin, tmp);
         }
 
-        public static void DestroyAll()
+        public void DestroyAll()
         {
             foreach (var pool in pools)
             {
@@ -49,17 +50,17 @@ namespace AdvancedUnityPlugin
             }
         }
 
-        public static void DestroyAll(GameObject Key)
+        public void DestroyAll(GameObject Key)
         {
             GetPool(Key).DestroyAll();
         }
 
-        public static void PoolAll(GameObject key)
+        public void PoolAll(GameObject key)
         {
             GetPool(key).DisableAll();
         }
 
-        public static void PoolAll()
+        public void PoolAll()
         {
             foreach (var pool in pools)
             {
@@ -67,12 +68,12 @@ namespace AdvancedUnityPlugin
             }
         }
 
-        public static void Pool(GameObject target)
+        public void Pool(GameObject target)
         {
             GameObjectPool.Disable(target);
         }
 
-        public static void Destroy(GameObject target)
+        public void Destroy(GameObject target)
         {
             foreach (var pool in pools.Values)
             {

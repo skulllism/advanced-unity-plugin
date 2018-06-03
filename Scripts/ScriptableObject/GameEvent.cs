@@ -4,7 +4,12 @@ using UnityEngine;
 [CreateAssetMenu]
 public class GameEvent : ScriptableObject
 {
-    private List<GameEventListener> listeners = new List<GameEventListener>();
+    public interface Listener
+    {
+        void OnEventRaised();
+    }
+
+    private List<Listener> listeners = new List<Listener>();
 
     public void Raise()
     {
@@ -14,12 +19,12 @@ public class GameEvent : ScriptableObject
         }
     }
 
-    public void RegisterListener(GameEventListener listener)
+    public void RegisterListener(Listener listener)
     {
         listeners.Add(listener);
     }
 
-    public void UnregisterListener(GameEventListener listener)
+    public void UnregisterListener(Listener listener)
     {
         listeners.Remove(listener);
     }

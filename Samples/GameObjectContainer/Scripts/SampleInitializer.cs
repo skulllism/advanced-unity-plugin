@@ -3,23 +3,24 @@ using AdvancedUnityPlugin;
 
 public class SampleInitializer : MonoBehaviour {
 
+    public GameObjectContainer container;
     public GameObject origin;
     public int max;
 
 	// Use this for initialization
 	void Start () {
-        GameObjectContainer.CreatePool(origin, max);
+        container.CreatePool(origin, max);
 	}
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.C))
-            GameObjectContainer.Get(origin);
+            container.Get(origin);
 
         if (Input.GetKeyDown(KeyCode.A))
-            GameObjectContainer.PoolAll(origin);
+            container.PoolAll(origin);
 
         if (Input.GetKeyDown(KeyCode.Escape))
-            GameObjectContainer.DestroyAll(origin);
+            container.DestroyAll(origin);
     }
 }
