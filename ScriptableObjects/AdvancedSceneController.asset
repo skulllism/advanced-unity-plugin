@@ -11,4 +11,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1840638d35b18640a8d199719c60f1f, type: 3}
   m_Name: AdvancedSceneController
   m_EditorClassIdentifier: 
-  onSingleLoad: {fileID: 0}
+  onSingleLoad: {fileID: 11400000, guid: 191dd8413659a4d4ab77bf20a9fcc41d, type: 2}

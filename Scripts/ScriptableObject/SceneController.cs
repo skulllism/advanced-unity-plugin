@@ -170,7 +170,7 @@ namespace AdvancedUnityPlugin
             operation.allowSceneActivation = false;
             loadingOperations.Add(sceneName, operation);
 
-            while (operation.progress >= 9.0f)
+            while (operation.progress < 0.9f)
             {
                 yield return null;
             }

@@ -11,4 +11,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdef867bebdb863418f227fc9af69ace, type: 3}
   m_Name: SampleStaticHP
   m_EditorClassIdentifier: 
-  value: 0
+  initialValue: 0
