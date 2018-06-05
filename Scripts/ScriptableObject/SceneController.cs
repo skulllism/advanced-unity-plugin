@@ -22,6 +22,9 @@ namespace AdvancedUnityPlugin
 
         private void OnDisable()
         {
+            loadingOperations.Clear();
+            unloadingOperations.Clear();
+            activeScenes.Clear();
             SceneManager.sceneLoaded -= onSceneLoaded;
         }
 

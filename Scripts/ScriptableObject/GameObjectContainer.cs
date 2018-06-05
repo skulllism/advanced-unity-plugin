@@ -9,6 +9,11 @@ namespace AdvancedUnityPlugin
     {
         private Dictionary<GameObject, GameObjectPool> pools = new Dictionary<GameObject, GameObjectPool>();
 
+        private void OnDisable()
+        {
+            DestroyAll();
+        }
+
         private GameObjectPool GetPool(GameObject key)
         {
             GameObjectPool pool;
@@ -48,6 +53,7 @@ namespace AdvancedUnityPlugin
             {
                 pool.Value.DestroyAll();
             }
+            pools.Clear();
         }
 
         public void DestroyAll(GameObject Key)

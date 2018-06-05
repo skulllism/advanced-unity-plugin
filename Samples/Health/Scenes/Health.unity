@@ -235,13 +235,18 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1431788674505612, guid: b1ce486a9513aaa479fb6ba37bf1ee0c, type: 2}
       propertyPath: m_Name
-      value: SampleGameObject
+      value: SampleHealth
       objectReference: {fileID: 0}
     - target: {fileID: 114698575762757662, guid: b1ce486a9513aaa479fb6ba37bf1ee0c,
         type: 2}
       propertyPath: onDamaged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1584170115}
+    - target: {fileID: 1431788674505612, guid: b1ce486a9513aaa479fb6ba37bf1ee0c, type: 2}
+      propertyPath: m_Icon
+      value: 
+      objectReference: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000,
+        type: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: b1ce486a9513aaa479fb6ba37bf1ee0c, type: 2}
   m_IsPrefabParent: 0
@@ -258,7 +263,7 @@ GameObject:
   m_Layer: 0
   m_Name: Attacker
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
