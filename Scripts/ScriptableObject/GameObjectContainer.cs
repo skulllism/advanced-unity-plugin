@@ -6,7 +6,7 @@ namespace AdvancedUnityPlugin
     [CreateAssetMenu]
     public class GameObjectContainer : ScriptableObject
     {
-        public GameObject[] origins;
+        public ObjectContainer objectContainer;
 
         private Dictionary<string, GameObjectPool> pools = new Dictionary<string, GameObjectPool>();
 
@@ -19,18 +19,6 @@ namespace AdvancedUnityPlugin
             return null;
         }
 
-        private GameObject GetOrigin(string originName)
-        {
-            for (int i = 0; i < origins.Length; i++)
-            {
-                if (origins[i].name == originName)
-                    return origins[i];
-            }
-
-            Debug.Log("[GameObjectContainer] Not Found Origin : " + originName);
-            return null;
-        }
-
         public GameObject Get(string originName)
         {
             GameObject active = null;
@@ -38,7 +26,7 @@ namespace AdvancedUnityPlugin
 
             if (pool == null || pool.Get() == null)
             {
-                GameObject origin = GetOrigin(originName);
+                GameObject origin = objectContainer.GetOrigin(originName) as GameObject;
                 active = Instantiate(origin) as GameObject;
             }
 
@@ -47,7 +35,7 @@ namespace AdvancedUnityPlugin
 
         public void CreatePool(string originName, int max)
         {
-            GameObjectPool tmp = new GameObjectPool(GetOrigin(originName));
+            GameObjectPool tmp = new GameObjectPool(objectContainer.GetOrigin(originName) as GameObject);
 
             if (pools.ContainsKey(originName))
                 return;

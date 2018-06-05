@@ -5,13 +5,6 @@ namespace AdvancedUnityPlugin
 {
     public class GameObjectPool
     {
-        public static event EventHandler onCreate;
-        public static event EventHandler onGet;
-        public static event EventHandler onPool;
-        public static event EventHandler onDestroy;
-
-        public delegate void EventHandler(GameObject gameObject);
-
         private GameObject origin;
 
         private List<GameObject> gameObjects = new List<GameObject>();
@@ -33,9 +26,6 @@ namespace AdvancedUnityPlugin
         {
             GameObject gameObject = Object.Instantiate(origin);
             gameObjects.Add(gameObject);
-
-            if (onCreate != null)
-                onCreate(gameObject);
 
             return gameObject;
         }
@@ -62,9 +52,6 @@ namespace AdvancedUnityPlugin
 
                 gameObject.SetActive(true);
 
-                if (onGet != null)
-                    onGet(gameObject);
-
                 return gameObject;
             }
 
@@ -76,9 +63,6 @@ namespace AdvancedUnityPlugin
         {
             if (!target)
                 return;
-
-            if (onPool != null)
-                onPool(target);
 
             target.gameObject.SetActive(false);
         }
@@ -105,9 +89,6 @@ namespace AdvancedUnityPlugin
         {
             if (!gameObjects.Contains(target))
                 return;
-
-            if (onDestroy != null)
-                onDestroy(target);
 
             Object.Destroy(target);
         }
