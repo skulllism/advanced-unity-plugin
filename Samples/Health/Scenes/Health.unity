@@ -194,60 +194,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &503881879 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 1431788674505612, guid: b1ce486a9513aaa479fb6ba37bf1ee0c,
-    type: 2}
-  m_PrefabInternal: {fileID: 900211235}
---- !u!4 &503881881 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 4277748055653422, guid: b1ce486a9513aaa479fb6ba37bf1ee0c,
-    type: 2}
-  m_PrefabInternal: {fileID: 900211235}
---- !u!114 &503881882
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 503881879}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6f1b9e15c9e445643b5f5e3caf4a1021, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Event: {fileID: 11400000, guid: f165c230d6fcc53488ed3e8bac0b81aa, type: 2}
-  hitbox:
-  - {fileID: 2145792719}
-  onDamaged:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1584170115}
-        m_MethodName: Log
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: damaged!
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
---- !u!114 &503881883
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 503881879}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 96317bab5af9f7f4e965e4b0557744ae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  broadcaster: {fileID: 503881882}
-  max: {fileID: 11400000, guid: e8e468e7afab79d4ebc470cf32ba2241, type: 2}
-  staticValue: {fileID: 11400000, guid: 5253847061ab3504899162c2edd9506a, type: 2}
 --- !u!1001 &900211235
 Prefab:
   m_ObjectHideFlags: 0
@@ -291,8 +237,12 @@ Prefab:
       propertyPath: m_Name
       value: SampleGameObject
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 114006391381970062, guid: b1ce486a9513aaa479fb6ba37bf1ee0c, type: 2}
+    - target: {fileID: 114698575762757662, guid: b1ce486a9513aaa479fb6ba37bf1ee0c,
+        type: 2}
+      propertyPath: onDamaged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1584170115}
+    m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: b1ce486a9513aaa479fb6ba37bf1ee0c, type: 2}
   m_IsPrefabParent: 0
 --- !u!1 &980283656
@@ -323,7 +273,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe7930219161475449f1a6ac22838100, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Event: {fileID: 11400000, guid: f165c230d6fcc53488ed3e8bac0b81aa, type: 2}
+  attacker: {fileID: 980283656}
+  Event: {fileID: 11400000, guid: 822cca87a22861c4cb68e56a2394442c, type: 2}
   damage: {fileID: 11400000, guid: 5b287629118051a44be3e6e4d39f63a0, type: 2}
 --- !u!58 &980283658
 CircleCollider2D:
@@ -393,68 +344,3 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &2145792718
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 2145792720}
-  - component: {fileID: 2145792719}
-  - component: {fileID: 2145792721}
-  m_Layer: 0
-  m_Name: hitbox
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!58 &2145792719
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 2145792718}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  serializedVersion: 2
-  m_Radius: 0.5
---- !u!4 &2145792720
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 2145792718}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 503881881}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!50 &2145792721
-Rigidbody2D:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 2145792718}
-  m_BodyType: 0
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
-  m_GravityScale: 0
-  m_Material: {fileID: 0}
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0
