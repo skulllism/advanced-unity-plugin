@@ -13,23 +13,39 @@ namespace AdvancedUnityPlugin
             [Serializable]
             public struct KeyframeEvent
             {
+                [Header("Event Keyframe")]
                 public int eventKeyframe;
-                public Action onKeyframeAction;
+
+                [Header("Keyframe Actions")]
+                public Action[] onKeyframeAction;
+
+                [Header("Keyframe UnityEvent")]
                 public UnityEvent onKeyframeUnityEvent;
             }
 
             [Serializable]
             public struct TermEvent
             {
+                [Header("Start Keyframe Action")]
                 public KeyframeEvent startKeyframeEvent;
-                public Action onTerm;
+
+                [Header("Term Actions")]
+                public Action[] onTerm;
+
+                [Header("Term UnityEvent")]
                 public UnityEvent onTermUnityEvent;
+
+                [Header("End Keyframe Action")]
                 public KeyframeEvent endKeyframeEvent;
             }
 
+            [Header("Animation Name")]
             public string animationName;
 
+            [Header("Keyframe Events")]
             public KeyframeEvent[] keyframeEvents;
+
+            [Header("Term Events")]
             public TermEvent[] termEvents;
         }
 
@@ -62,20 +78,12 @@ namespace AdvancedUnityPlugin
             if (!animationPlaying)
                 return;
 
-            TermEventHandle();
+            TermEventHandle(currentFrame);
 
             FrameUpdate();
         }
 
-        private void Handle(int currenrFrame)
-        {
-            for (int i = 0; i < currentEvents.Count; i++)
-            {
-                KeyframeEventHandle(currentEvents[i]);
-            }
-        }
-
-        private void TermEventHandle()
+        private void TermEventHandle(int currentFrame)
         {
             for (int i = 0; i < currentEvents.Count; i++)
             {
@@ -84,42 +92,25 @@ namespace AdvancedUnityPlugin
                     if (currentEvents[i].termEvents[j].startKeyframeEvent.eventKeyframe >= currentFrame
                         && currentEvents[i].termEvents[j].endKeyframeEvent.eventKeyframe <= currentFrame)
                     {
-                        if(currentEvents[i].termEvents[j].onTerm)
-                            currentEvents[i].termEvents[j].onTerm.OnAction(gameObject);
+                        for (int k = 0; k < currentEvents[i].termEvents[j].onTerm.Length; k++)
+                        {
+                            currentEvents[i].termEvents[j].onTerm[k].OnAction(gameObject);
+                        }
                         currentEvents[i].termEvents[j].onTermUnityEvent.Invoke();
                     }
                 }
             }
         }
 
-        private void KeyframeEventHandle(Event Event)
+        private void KeyframeEventHandle(Event.KeyframeEvent keyframeEvent , int currentFrame)
         {
-            for (int i = 0; i < Event.keyframeEvents.Length; i++)
+            if (keyframeEvent.eventKeyframe == currentFrame)
             {
-                if (Event.keyframeEvents[i].eventKeyframe == currentFrame)
+                for (int k = 0; k < keyframeEvent.onKeyframeAction.Length; k++)
                 {
-                    if(Event.keyframeEvents[i].onKeyframeAction)
-                        Event.keyframeEvents[i].onKeyframeAction.OnAction(gameObject);
-                    Event.keyframeEvents[i].onKeyframeUnityEvent.Invoke();
+                    keyframeEvent.onKeyframeAction[k].OnAction(gameObject);
                 }
-            }
-
-            for (int i = 0; i < Event.termEvents.Length; i++)
-            {
-                if (Event.termEvents[i].startKeyframeEvent.eventKeyframe == currentFrame)
-                {
-                    if(Event.termEvents[i].startKeyframeEvent.onKeyframeAction)
-                        Event.termEvents[i].startKeyframeEvent.onKeyframeAction.OnAction(gameObject);
-                    Event.termEvents[i].startKeyframeEvent.onKeyframeUnityEvent.Invoke();
-
-                }
-                if (Event.termEvents[i].endKeyframeEvent.eventKeyframe == currentFrame)
-                {
-                    if(Event.keyframeEvents[i].onKeyframeAction)
-                        Event.keyframeEvents[i].onKeyframeAction.OnAction(gameObject);
-                    Event.termEvents[i].endKeyframeEvent.onKeyframeUnityEvent.Invoke();
-
-                }
+                keyframeEvent.onKeyframeUnityEvent.Invoke();
             }
         }
 
@@ -189,7 +180,19 @@ namespace AdvancedUnityPlugin
 
             currentFrame = frame;
 
-            Handle(currentFrame);
+            for (int i = 0; i < currentEvents.Count; i++)
+            {
+                for (int j = 0; j < currentEvents[i].keyframeEvents.Length; j++)
+                {
+                    KeyframeEventHandle(currentEvents[i].keyframeEvents[j] , currentFrame);
+                }
+
+                for (int j = 0; j < currentEvents[i].termEvents.Length; j++)
+                {
+                    KeyframeEventHandle(currentEvents[i].termEvents[j].startKeyframeEvent , currentFrame);
+                    KeyframeEventHandle(currentEvents[i].termEvents[j].endKeyframeEvent , currentFrame);
+                }
+            }
         }
     }
 }
