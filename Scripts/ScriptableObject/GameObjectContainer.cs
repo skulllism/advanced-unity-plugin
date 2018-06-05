@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace AdvancedUnityPlugin
@@ -7,44 +6,56 @@ namespace AdvancedUnityPlugin
     [CreateAssetMenu]
     public class GameObjectContainer : ScriptableObject
     {
-        private Dictionary<GameObject, GameObjectPool> pools = new Dictionary<GameObject, GameObjectPool>();
+        public GameObject[] origins;
 
-        private void OnDisable()
-        {
-            pools.Clear();
-        }
+        private Dictionary<string, GameObjectPool> pools = new Dictionary<string, GameObjectPool>();
 
-        private GameObjectPool GetPool(GameObject key)
+        private GameObjectPool GetPool(string originName)
         {
             GameObjectPool pool;
-            if (pools.TryGetValue(key, out pool))
+            if (pools.TryGetValue(originName, out pool))
                 return pool;
 
             return null;
         }
 
-        public GameObject Get(GameObject key)
+        private GameObject GetOrigin(string originName)
+        {
+            for (int i = 0; i < origins.Length; i++)
+            {
+                if (origins[i].name == originName)
+                    return origins[i];
+            }
+
+            Debug.Log("[GameObjectContainer] Not Found Origin : " + originName);
+            return null;
+        }
+
+        public GameObject Get(string originName)
         {
             GameObject active = null;
-            GameObjectPool pool = GetPool(key);
+            GameObjectPool pool = GetPool(originName);
 
             if (pool == null || pool.Get() == null)
-                active = Object.Instantiate(key) as GameObject;
+            {
+                GameObject origin = GetOrigin(originName);
+                active = Instantiate(origin) as GameObject;
+            }
 
             return active;
         }
 
-        public void CreatePool(GameObject origin, int max)
+        public void CreatePool(string originName, int max)
         {
-            GameObjectPool tmp = new GameObjectPool(origin);
+            GameObjectPool tmp = new GameObjectPool(GetOrigin(originName));
 
-            if (pools.ContainsKey(origin))
+            if (pools.ContainsKey(originName))
                 return;
             if (pools.ContainsValue(tmp))
                 return;
 
             tmp.CreateAndDisable(max);
-            pools.Add(origin, tmp);
+            pools.Add(originName, tmp);
         }
 
         public void DestroyAll()
@@ -53,17 +64,16 @@ namespace AdvancedUnityPlugin
             {
                 pool.Value.DestroyAll();
             }
-            pools.Clear();
         }
 
-        public void DestroyAll(GameObject Key)
+        public void DestroyAll(string originName)
         {
-            GetPool(Key).DestroyAll();
+            GetPool(originName).DestroyAll();
         }
 
-        public void PoolAll(GameObject key)
+        public void PoolAll(string originName)
         {
-            GetPool(key).DisableAll();
+            GetPool(originName).DisableAll();
         }
 
         public void PoolAll()
@@ -87,5 +97,4 @@ namespace AdvancedUnityPlugin
             }
         }
     }
-
 }

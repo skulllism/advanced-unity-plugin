@@ -11,3 +11,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e51b34f9d615f344d8d25f80ee147f72, type: 3}
   m_Name: AdvancedGameObjectContainer
   m_EditorClassIdentifier: 
+  origins:
+  - {fileID: 1355697483952058, guid: aa27fce75d7a37743bd65c39d280bfda, type: 2}
