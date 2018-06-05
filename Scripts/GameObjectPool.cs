@@ -93,9 +93,9 @@ namespace AdvancedUnityPlugin
 
         public void DestroyAll()
         {
-            for (int i = 0; i < gameObjects.Count; i++)
+            foreach (var item in gameObjects)
             {
-                Object.Destroy(gameObjects[i]);
+                Object.Destroy(item);
             }
 
             gameObjects.Clear();

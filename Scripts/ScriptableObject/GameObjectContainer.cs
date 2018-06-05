@@ -11,7 +11,7 @@ namespace AdvancedUnityPlugin
 
         private void OnDisable()
         {
-            DestroyAll();
+            pools.Clear();
         }
 
         private GameObjectPool GetPool(GameObject key)
