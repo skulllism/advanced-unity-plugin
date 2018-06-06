@@ -1,25 +1,26 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Events;
 
-public class GameEventListenerBehaviour : MonoBehaviour , GameEvent.Listener
+namespace AdvancedUnityPlugin
 {
-    public GameEvent gameEvent;
-    public UnityEvent response;
-
-    private void OnEnable()
+    public class GameEventListenerBehaviour : MonoBehaviour, GameEvent.Listener
     {
-        gameEvent.RegisterListener(this);
-    }
+        public GameEvent gameEvent;
+        public UnityEvent response;
 
-    private void OnDisable()
-    {
-        gameEvent.UnregisterListener(this);
-    }
+        private void OnEnable()
+        {
+            gameEvent.RegisterListener(this);
+        }
 
-    public void OnEventRaised()
-    {
-        response.Invoke();
+        private void OnDisable()
+        {
+            gameEvent.UnregisterListener(this);
+        }
+
+        public void OnEventRaised()
+        {
+            response.Invoke();
+        }
     }
 }

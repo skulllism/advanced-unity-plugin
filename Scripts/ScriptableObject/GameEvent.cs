@@ -1,31 +1,66 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu]
-public class GameEvent : ScriptableObject
+namespace AdvancedUnityPlugin
 {
-    public interface Listener
+    [CreateAssetMenu]
+    public class GameEvent : ScriptableObject
     {
-        void OnEventRaised();
-    }
-
-    private List<Listener> listeners = new List<Listener>();
-
-    public void Raise()
-    {
-        for (int i = 0; i < listeners.Count; i++)
+        public interface GameEventListener
         {
-            listeners[i].OnEventRaised();
+            void OnRegister(Listener listener);
+            void OnUnregister(Listener listener);
+            void OnRaise();
         }
-    }
 
-    public void RegisterListener(Listener listener)
-    {
-        listeners.Add(listener);
-    }
+        public interface Listener
+        {
+            void OnEventRaised();
+        }
 
-    public void UnregisterListener(Listener listener)
-    {
-        listeners.Remove(listener);
+        private List<GameEventListener> gameEventListeners = new List<GameEventListener>();
+        private List<Listener> eventListeners = new List<Listener>();
+
+        public void Raise()
+        {
+            for (int i = 0; i < gameEventListeners.Count; i++)
+            {
+                gameEventListeners[i].OnRaise();
+            }
+            for (int i = 0; i < eventListeners.Count; i++)
+            {
+                eventListeners[i].OnEventRaised();
+            }
+        }
+
+        public void RegisterGameEventListener(GameEventListener listener)
+        {
+            gameEventListeners.Add(listener);
+        }
+
+        public void UnregisterGameEventListener(GameEventListener listener)
+        {
+            gameEventListeners.Remove(listener);
+        }
+
+        public void RegisterListener(Listener listener)
+        {
+            for (int i = 0; i < gameEventListeners.Count; i++)
+            {
+                gameEventListeners[i].OnRegister(listener);
+            }
+
+            eventListeners.Add(listener);
+        }
+
+        public void UnregisterListener(Listener listener)
+        {
+            for (int i = 0; i < gameEventListeners.Count; i++)
+            {
+                gameEventListeners[i].OnUnregister(listener);
+            }
+
+            eventListeners.Remove(listener);
+        }
     }
 }
