@@ -5,22 +5,24 @@ using UnityEngine;
 namespace AdvancedUnityPlugin
 {
     [CreateAssetMenu]
-    public class Pooler : ScriptableObject
+    public class Pool : ScriptableObject
     {
         [Serializable]
-        public class Pool
+        public struct Data
         {
-            [CreateAssetMenu]
-            public class Data : ScriptableObject
-            {
-                public string originName;
-                public int count;
-            }
-
-            public string key;
-
-            public Data[] datas;
+            public string originName;
+            public int count;
         }
+
+        public string key;
+
+        public Data[] datas;
+    }
+
+    [CreateAssetMenu]
+    public class Pooler : ScriptableObject
+    {
+      
 
         public GameObjectContainer container;
         public Pool[] datas;
