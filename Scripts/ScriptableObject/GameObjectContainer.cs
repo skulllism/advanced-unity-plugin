@@ -21,16 +21,22 @@ namespace AdvancedUnityPlugin
 
         public GameObject Get(string originName)
         {
-            GameObject active = null;
             GameObjectPool pool = GetPool(originName);
 
-            if (pool == null || pool.Get() == null)
-            {
-                GameObject origin = objectContainer.GetOrigin(originName) as GameObject;
-                active = Instantiate(origin) as GameObject;
-            }
+            if (pool == null)
+                return CreateOnDemand(originName);
+
+            GameObject active = pool.Get();
+            if(!active)
+                return CreateOnDemand(originName);
 
             return active;
+        }
+
+        private GameObject CreateOnDemand(string originName)
+        {
+            GameObject origin = objectContainer.GetOrigin(originName) as GameObject;
+            return Instantiate(origin) as GameObject;
         }
 
         public void CreatePool(string originName, int max)

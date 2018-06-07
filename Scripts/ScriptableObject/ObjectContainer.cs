@@ -11,11 +11,11 @@ namespace AdvancedUnityPlugin
         {
             for (int i = 0; i < origins.Length; i++)
             {
-                if(origins[i].name == name)
+                if(origins[i].name == objectName)
                     return origins[i];
             }
 
-            Debug.Log("[ObjectContainer] Not Found : " + name);
+            Debug.Log("[ObjectContainer] Not Found : " + objectName);
             return null;
         }
     }

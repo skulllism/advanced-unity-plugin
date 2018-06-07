@@ -8,7 +8,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e51b34f9d615f344d8d25f80ee147f72, type: 3}
-  m_Name: AdvancedGameObjectContainer
+  m_Script: {fileID: 11500000, guid: 7c3198076b093d44aacf40e2360e9707, type: 3}
+  m_Name: AdvancedObjectContainer
   m_EditorClassIdentifier: 
-  objectContainer: {fileID: 11400000, guid: 3b8ff24314b31344b8db1627c6b0d947, type: 2}
+  origins:
+  - {fileID: 1355697483952058, guid: aa27fce75d7a37743bd65c39d280bfda, type: 2}
