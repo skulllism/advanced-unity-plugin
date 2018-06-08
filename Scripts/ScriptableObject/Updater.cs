@@ -7,22 +7,25 @@ namespace AdvancedUnityPlugin
     {
         public class Looper : MonoBehaviour
         {
-            private GameEvent onUpdateEvent;
+            private Updater updater;
 
-            public void Init(GameEvent onUpdateEvent)
+            public void Init(Updater updater)
             {
-                this.onUpdateEvent = onUpdateEvent;
+                this.updater = updater;
             }
 
             private void Update()
             {
-                if (!onUpdateEvent)
-                    onUpdateEvent.Raise();
+                if (!updater.isLooping)
+                    return;
+
+                if (!updater)
+                    updater.Raise();
             }
         }
 
-        [SerializeField]
-        private Looper looper;
+        public Looper looper;
+        public bool isLooping = true;
 
         private Looper CreateLooper()
         {
