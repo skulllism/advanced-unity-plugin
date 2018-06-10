@@ -11,5 +11,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1773af5e38b1e5a4f9bb11def6d018bb, type: 3}
   m_Name: AdvancedPooler
   m_EditorClassIdentifier: 
-  container: {fileID: 0}
-  datas: []
+  container: {fileID: 11400000, guid: 6a8db61b024188d448400fa2a86ec061, type: 2}
+  datas:
+  - {fileID: 0}
