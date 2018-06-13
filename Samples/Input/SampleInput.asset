@@ -11,4 +11,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d48a606976280d45ba20b1b128ca8f1, type: 3}
   m_Name: SampleInput
   m_EditorClassIdentifier: 
-  keys: []
+  keys:
+  - {fileID: 11400000, guid: 19a3da47cf5775547b8530171412b434, type: 2}
+  - {fileID: 11400000, guid: 8a0db6dc9cf36434b9766a105df3f411, type: 2}
