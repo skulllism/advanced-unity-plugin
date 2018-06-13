@@ -23,7 +23,6 @@ public class SampleInputInitializer : MonoBehaviour , AdvancedUnityPlugin.Input.
 
     private void Awake()
     {
-        input.Init();
         input.RegisterEventListener(this);
     }
 
