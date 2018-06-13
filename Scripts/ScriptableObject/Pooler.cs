@@ -1,29 +1,11 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 
 namespace AdvancedUnityPlugin
 {
     [CreateAssetMenu]
-    public class Pool : ScriptableObject
-    {
-        [Serializable]
-        public struct Data
-        {
-            public string originName;
-            public int count;
-        }
-
-        public string key;
-
-        public Data[] datas;
-    }
-
-    [CreateAssetMenu]
     public class Pooler : ScriptableObject
     {
-      
-
         public GameObjectContainer container;
         public Pool[] datas;
 
@@ -31,7 +13,7 @@ namespace AdvancedUnityPlugin
         {
             foreach (var data in datas)
             {
-                if (data.key == key)
+                if (data.name == key)
                     return data;
             }
 
