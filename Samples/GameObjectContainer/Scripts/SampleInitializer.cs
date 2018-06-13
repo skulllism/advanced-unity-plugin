@@ -13,13 +13,13 @@ public class SampleInitializer : MonoBehaviour {
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.C))
+        if (UnityEngine.Input.GetKeyDown(KeyCode.C))
             container.Get("SampleOrigin");
 
-        if (Input.GetKeyDown(KeyCode.A))
+        if (UnityEngine.Input.GetKeyDown(KeyCode.A))
             container.PoolAll("SampleOrigin");
 
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (UnityEngine.Input.GetKeyDown(KeyCode.Escape))
             container.DestroyAll("SampleOrigin");
     }
 }
