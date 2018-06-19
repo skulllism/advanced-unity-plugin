@@ -13,7 +13,10 @@ namespace AdvancedUnityPlugin
    * */
     public class StateMachine : MonoBehaviour
     {
+        public string initStateName;
+
         public State[] states;
+
 
         private State[] clones;
 
@@ -22,6 +25,7 @@ namespace AdvancedUnityPlugin
         private void Awake()
         {
             clones = PrototypeScriptableObject.SetClones(gameObject, states);
+            TransitionToState(initStateName);
         }
 
         public void TransitionToState(string ID)
@@ -41,14 +45,19 @@ namespace AdvancedUnityPlugin
 
             string next;
             if (current.IsTransition(gameObject, out next))
+            {
                 TransitionToState(next);
+                return;
+            }
+
+            current.OnUpdate(gameObject);
         }
 
         private State GetState(string ID)
         {
             for (int i = 0; i < clones.Length; i++)
             {
-                if (clones[i].ID == ID)
+                if (clones[i].id == ID)
                     return clones[i];
             }
 

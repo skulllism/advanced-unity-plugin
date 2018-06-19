@@ -25,8 +25,6 @@ namespace AdvancedUnityPlugin
         private Dictionary<string, bool> keyPressed = new Dictionary<string, bool>();
         private List<EventListener> listeners = new List<EventListener>();
 
-        private bool initialized;
-
         private KeyEventGenerator generator;
         private InputEventQueue queue;
 
@@ -37,9 +35,8 @@ namespace AdvancedUnityPlugin
             listeners.Clear();
         }
 
-        private void Init()
+        public void Init()
         {
-            initialized = true;
             for (int i = 0; i < keys.Length; i++)
             {
                 dicKeys[keys[i].name] = keys[i];
@@ -54,9 +51,6 @@ namespace AdvancedUnityPlugin
 
         public void RegisterEventListener(EventListener listener)
         {
-            if (!initialized)
-                Init();
-
             listeners.Add(listener);
         }
 
