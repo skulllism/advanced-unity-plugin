@@ -55,6 +55,8 @@ namespace AdvancedUnityPlugin
         [Header("Events")]
         public Event[] animationEvents;
 
+        private Event[] cloneEvents;
+
         private AnimationClip currentClip;
 
         private int currentFrame = 0;
@@ -66,6 +68,23 @@ namespace AdvancedUnityPlugin
 
         private void Awake()
         {
+            cloneEvents = animationEvents;
+
+            for (int i = 0; i < cloneEvents.Length; i++)
+            {
+                for (int j = 0; j < cloneEvents[i].keyframeEvents.Length; j++)
+                {
+                    cloneEvents[i].keyframeEvents[j].onKeyframeAction = PrototypeScriptableObject.SetClones(gameObject, animationEvents[i].keyframeEvents[j].onKeyframeAction);
+                }
+                for (int j = 0; j < cloneEvents[i].termEvents.Length; j++)
+                {
+                    cloneEvents[i].termEvents[j].startKeyframeEvent.onKeyframeAction = PrototypeScriptableObject.SetClones(gameObject, animationEvents[i].termEvents[j].startKeyframeEvent.onKeyframeAction);
+                }
+                for (int j = 0; j < cloneEvents[i].termEvents.Length; j++)
+                {
+                    cloneEvents[i].termEvents[j].endKeyframeEvent.onKeyframeAction = PrototypeScriptableObject.SetClones(gameObject, animationEvents[i].termEvents[j].endKeyframeEvent.onKeyframeAction);
+                }
+            }
         }
 
         private void Update()
@@ -127,10 +146,10 @@ namespace AdvancedUnityPlugin
         private List<Event> GetAnimationEvents(string animationName)
         {
             List<Event> list = new List<Event>();
-            for (int i = 0; i < animationEvents.Length; i++)
+            for (int i = 0; i < cloneEvents.Length; i++)
             {
-                if (animationEvents[i].animationName == animationName)
-                    list.Add(animationEvents[i]);
+                if (cloneEvents[i].animationName == animationName)
+                    list.Add(cloneEvents[i]);
             }
 
             return list;

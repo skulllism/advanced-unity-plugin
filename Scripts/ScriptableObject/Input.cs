@@ -76,20 +76,25 @@ namespace AdvancedUnityPlugin
 
         public void OnEvent(string keyName, InputEventQueue.EventType type)
         {
-            for (int i = 0; i < listeners.Count; i++)
+            switch (type)
             {
-                switch(type)
-                {
-                    case InputEventQueue.EventType.Down:
+                case InputEventQueue.EventType.Down:
+                    for (int i = 0; i < listeners.Count; i++)
+                    {
                         listeners[i].OnKeyDown(keyName);
-                        keyPressed[keyName] = true;
-                        continue;
-                    case InputEventQueue.EventType.Up:
+                    }
+                    keyPressed[keyName] = true;
+                    return;
+                case InputEventQueue.EventType.Up:
+                    for (int i = 0; i < listeners.Count; i++)
+                    {
                         listeners[i].OnKeyUp(keyName);
-                        keyPressed[keyName] = false;
-                        continue;
-                }
+                    }
+                    keyPressed[keyName] = false;
+                    return;
             }
+
+            
         }
     }
 }
