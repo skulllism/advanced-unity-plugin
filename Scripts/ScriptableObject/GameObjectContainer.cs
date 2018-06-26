@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace AdvancedUnityPlugin
 {
-    [CreateAssetMenu]
+    [CreateAssetMenu(menuName = "AdvancedUnityPlugin/GameObjectContainer")]
     public class GameObjectContainer : ScriptableObject
     {
         public ObjectContainer objectContainer;

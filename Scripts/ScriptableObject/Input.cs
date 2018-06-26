@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace AdvancedUnityPlugin
 {
-    [CreateAssetMenu]
+    [CreateAssetMenu(menuName = "AdvancedUnityPlugin/Input")]
     public class Input : ScriptableObject , InputEventQueue.EventListener
     {
         public abstract class Key : ScriptableObject

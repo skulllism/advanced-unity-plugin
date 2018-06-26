@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace AdvancedUnityPlugin
 {
-    [CreateAssetMenu]
+    [CreateAssetMenu(menuName = "AdvancedUnityPlugin/AttackEvent2D")]
     public class AttackEvent2D : ScriptableObject
     {
         public struct Data

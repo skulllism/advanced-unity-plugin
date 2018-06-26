@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace AdvancedUnityPlugin
 {
-    [CreateAssetMenu]
+    [CreateAssetMenu(menuName ="AdvancedUnityPlugin/GameEvent")]
     public class GameEvent : ScriptableObject
     {
         public interface Listener

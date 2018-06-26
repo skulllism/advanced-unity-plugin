@@ -11,8 +11,7 @@ namespace AdvancedUnityPlugin
  * @date 2018-05-31
  * @version 0.0.1
  * */
-    [CreateAssetMenu(menuName = "AdvancedUnityPlugin/State")]
-    public class State : PrototypeScriptableObject
+    public class State : MonoBehaviour
     {
         public string id;
 
@@ -29,16 +28,16 @@ namespace AdvancedUnityPlugin
         private Action[] cloningOnExits;
         private Transition[] cloningTransitions;
 
-        public override void Init(GameObject gameObj)
+        public virtual void Init(GameObject gameObj)
         {
-            cloningOnEnters = SetClones(gameObj, onEnters);
-            cloningOnUpdates = SetClones(gameObj, onUpdates);
-            cloningOnExits = SetClones(gameObj, onExits);
+            cloningOnEnters = PrototypeScriptableObject.SetClones(gameObj, onEnters);
+            cloningOnUpdates = PrototypeScriptableObject.SetClones(gameObj, onUpdates);
+            cloningOnExits = PrototypeScriptableObject.SetClones(gameObj, onExits);
 
-            cloningTransitions = SetClones(gameObj, transitions);
+            cloningTransitions = PrototypeScriptableObject.SetClones(gameObj, transitions);
         }
 
-        public void OnEnter(GameObject gameObj)
+        public virtual void OnEnter(GameObject gameObj)
         {
             for (int i = 0; i < cloningOnEnters.Length; i++)
             {
@@ -46,7 +45,7 @@ namespace AdvancedUnityPlugin
             }
         }
 
-        public void OnUpdate(GameObject gameObj)
+        public virtual void OnUpdate(GameObject gameObj)
         {
             for (int i = 0; i < cloningOnUpdates.Length; i++)
             {
@@ -54,7 +53,7 @@ namespace AdvancedUnityPlugin
             }
         }
 
-        public void OnExit(GameObject gameObj)
+        public virtual void OnExit(GameObject gameObj)
         {
             for (int i = 0; i < cloningOnExits.Length; i++)
             {
@@ -62,7 +61,7 @@ namespace AdvancedUnityPlugin
             }
         }
 
-        public bool IsTransition(GameObject gameObj, out string next)
+        public virtual bool IsTransition(GameObject gameObj, out string next)
         {
             for (int i = 0; i < cloningTransitions.Length; i++)
             {
@@ -72,11 +71,6 @@ namespace AdvancedUnityPlugin
 
             next = null;
             return false;
-        }
-
-        public override PrototypeScriptableObject Clone()
-        {
-            return Instantiate(this);
         }
     }
 }

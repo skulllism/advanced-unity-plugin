@@ -2,7 +2,7 @@
 
 namespace AdvancedUnityPlugin
 {
-    [CreateAssetMenu]
+    [CreateAssetMenu(menuName = "AdvancedUnityPlugin/ObejctContainer")]
     public class ObjectContainer : ScriptableObject
     {
         public Object[] origins;

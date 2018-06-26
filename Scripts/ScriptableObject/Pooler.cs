@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace AdvancedUnityPlugin
 {
-    [CreateAssetMenu]
+    [CreateAssetMenu(menuName = "AdvancedUnityPlugin/Pooler")]
     public class Pooler : ScriptableObject
     {
         public GameObjectContainer container;

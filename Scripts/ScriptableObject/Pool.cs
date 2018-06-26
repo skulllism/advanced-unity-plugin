@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace AdvancedUnityPlugin
 {
-    [CreateAssetMenu]
+    [CreateAssetMenu(menuName = "AdvancedUnityPlugin/Pool")]
     public class Pool : ScriptableObject
     {
         [Serializable]

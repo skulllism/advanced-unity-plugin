@@ -17,23 +17,24 @@ namespace AdvancedUnityPlugin
 
         public State[] states;
 
-
-        private State[] clones;
-
         private State current;
 
         private void Awake()
         {
-            clones = PrototypeScriptableObject.SetClones(gameObject, states);
+            foreach (var state in states)
+            {
+                state.Init(gameObject);
+            }
+
             TransitionToState(initStateName);
         }
 
-        public void TransitionToState(string ID)
+        public void TransitionToState(string id)
         {
             if (current)
                 current.OnExit(gameObject);
 
-            current = GetState(ID);
+            current = GetState(id);
 
             current.OnEnter(gameObject);
         }
@@ -53,12 +54,12 @@ namespace AdvancedUnityPlugin
             current.OnUpdate(gameObject);
         }
 
-        private State GetState(string ID)
+        private State GetState(string id)
         {
-            for (int i = 0; i < clones.Length; i++)
+            for (int i = 0; i < states.Length; i++)
             {
-                if (clones[i].id == ID)
-                    return clones[i];
+                if (states[i].id == id)
+                    return states[i];
             }
 
             return null;
