@@ -6,19 +6,6 @@ namespace AdvancedUnityPlugin
 {
     public class AnimationEventController : MonoBehaviour
     {
-        [Serializable]
-        public class AnimationEvent
-        {
-            [Header("Animation Name")]
-            public string animationName;
-
-            [Header("Keyframe Events")]
-            public KeyframeActionEvent[] keyframeEvents;
-
-            [Header("Term Events")]
-            public TermActionEvent[] termEvents;
-        }
-
         public bool animationPlaying;
         public Animator animator;
 
@@ -143,14 +130,6 @@ namespace AdvancedUnityPlugin
                 for (int j = 0; j < currentEvents[i].keyframeEvents.Length; j++)
                 {
                     KeyframeEventHandle(currentEvents[i].keyframeEvents[j] , currentFrame);
-                }
-
-                for (int j = 0; j < currentEvents[i].termEvents.Length; j++)
-                {
-                    if (currentEvents[i].termEvents[j].startFrame == currentFrame)
-                        currentEvents[i].termEvents[j].OnStartTermEvent();
-                    if (currentEvents[i].termEvents[j].endFrame == currentFrame)
-                        currentEvents[i].termEvents[j].OnEndTermEvent();
                 }
             }
         }
