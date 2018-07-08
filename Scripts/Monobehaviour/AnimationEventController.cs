@@ -13,10 +13,10 @@ namespace AdvancedUnityPlugin
             public string animationName;
 
             [Header("Keyframe Events")]
-            public KeyframeEvent[] keyframeEvents;
+            public KeyframeActionEvent[] keyframeEvents;
 
             [Header("Term Events")]
-            public TermEvent[] termEvents;
+            public TermActionEvent[] termEvents;
         }
 
         public bool animationPlaying;
@@ -64,7 +64,7 @@ namespace AdvancedUnityPlugin
             }
         }
 
-        private void KeyframeEventHandle(KeyframeEvent keyframeEvent , int currentFrame)
+        private void KeyframeEventHandle(KeyframeActionEvent keyframeEvent , int currentFrame)
         {
             if (keyframeEvent.eventKeyframe == currentFrame)
             {
