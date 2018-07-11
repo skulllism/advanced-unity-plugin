@@ -51,7 +51,7 @@ namespace AdvancedUnityPlugin
             }
         }
 
-        private void KeyframeEventHandle(KeyframeActionEvent keyframeEvent , int currentFrame)
+        private void KeyframeEventHandle(KeyframeEvent keyframeEvent , int currentFrame)
         {
             if (keyframeEvent.eventKeyframe == currentFrame)
             {
