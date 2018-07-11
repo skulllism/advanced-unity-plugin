@@ -12,8 +12,6 @@ namespace AdvancedUnityPlugin
         [Header("End Keyframe")]
         public float endFrame;
 
-        public abstract void OnStartTermEvent();
         public abstract void OnTermEvent();
-        public abstract void OnEndTermEvent();
     }
 }
