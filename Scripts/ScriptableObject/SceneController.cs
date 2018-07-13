@@ -8,7 +8,7 @@ namespace AdvancedUnityPlugin
     [CreateAssetMenu(menuName = "AdvancedUnityPlugin/SceneController")]
     public class SceneController : ScriptableObject
     {
-        public GameEvent onSingleLoad;
+        public GameEvent<SceneController> onSingleLoad;
 
         private List<string> activeScenes = new List<string>();
 
@@ -42,7 +42,7 @@ namespace AdvancedUnityPlugin
         public void SingleLoad(string sceneName)
         {
             if (onSingleLoad != null)
-                onSingleLoad.Raise();
+                onSingleLoad.Raise(new SceneController[1] { this });
 
             activeScenes.Clear();
             SceneManager.LoadScene(sceneName);

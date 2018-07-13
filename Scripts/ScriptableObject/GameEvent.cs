@@ -3,21 +3,20 @@ using UnityEngine;
 
 namespace AdvancedUnityPlugin
 {
-    [CreateAssetMenu(menuName ="AdvancedUnityPlugin/GameEvent")]
-    public class GameEvent : ScriptableObject
+    public abstract class GameEvent<T> : ScriptableObject
     {
         public interface Listener
         {
-            void OnEventRaised();
+            void OnEventRaised(T[] args);
         }
 
         private List<Listener> eventListeners = new List<Listener>();
 
-        public virtual void Raise()
+        public virtual void Raise(T[] args)
         {
             for (int i = 0; i < eventListeners.Count; i++)
             {
-                eventListeners[i].OnEventRaised();
+                eventListeners[i].OnEventRaised(args);
             }
         }
 
