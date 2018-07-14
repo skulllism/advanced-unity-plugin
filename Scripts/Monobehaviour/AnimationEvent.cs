@@ -1,5 +1,6 @@
-﻿using UnityEngine;
-using UnityEngine.Events;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace AdvancedUnityPlugin
 {
@@ -9,23 +10,16 @@ namespace AdvancedUnityPlugin
         public KeyframeEvent[] keyframeEvents;
         public TermEvent[] termEvents;
 
-        public UnityEvent onStart;
-        public UnityEvent onEvent;
-        public UnityEvent onFinish;
-
-        public void OnStart()
+        public virtual void OnStart()
         {
-            onStart.Invoke();
         }
 
-        public void OnEvent()
+        public virtual void OnEvent()
         {
-            onEvent.Invoke();
         }
 
-        public void OnFinish()
+        public virtual void OnFinish()
         {
-            onFinish.Invoke();
         }
     }
 }

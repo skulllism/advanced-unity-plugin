@@ -10,13 +10,13 @@ namespace AdvancedUnityPlugin
         public Animator animator;
 
         [Header("Events")]
-        public AnimationEvent[] animationEvents;
+        public AnimationUnityEvent[] animationEvents;
 
         private AnimationClip currentClip;
 
         private int currentFrame = 0;
 
-        private List<AnimationEvent> currentEvents = new List<AnimationEvent>();
+        private List<AnimationUnityEvent> currentEvents = new List<AnimationUnityEvent>();
 
         private float interval;
         private int loopCount;
@@ -74,9 +74,9 @@ namespace AdvancedUnityPlugin
                 StartAnimationEvent(nowClip);
         }
 
-        private List<AnimationEvent> GetAnimationEvents(string animationName)
+        private List<AnimationUnityEvent> GetAnimationEvents(string animationName)
         {
-            List<AnimationEvent> list = new List<AnimationEvent>();
+            List<AnimationUnityEvent> list = new List<AnimationUnityEvent>();
             for (int i = 0; i < animationEvents.Length; i++)
             {
                 if (animationEvents[i].animationName == animationName)
