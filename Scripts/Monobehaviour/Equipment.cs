@@ -28,7 +28,7 @@ namespace AdvancedUnityPlugin
         public EquipmentEvent onSelectCursor;
 
         public SlotField[] slotFields;
-        public Equipable[] equipables;
+        public List<Equipable> equipables;
 
         public Dictionary<string, Cursor> cursors = new Dictionary<string, Cursor>();
 
@@ -86,6 +86,16 @@ namespace AdvancedUnityPlugin
             return cursors[itemType];
         }
 
+        public void AddEquipable(Equipable equipable)
+        {
+            equipables.Add(equipable);
+        }
+
+        public void RemoveEquipable(Equipable equipable)
+        {
+            equipables.Remove(equipable);
+        }
+
         public void Select(string itemType, Slot slot)
         {
             GetCursor(itemType).Select(slot);
@@ -95,10 +105,10 @@ namespace AdvancedUnityPlugin
 
         public void Equip(Equipable equipable)
         {
-            Slot selected = GetCursor(equipable.itemType).selected;
+            Slot selected = GetCursor(equipable.equipType).selected;
 
             if (selected.equipped != null)
-                Unequip(equipable.itemType);
+                Unequip(equipable.equipType);
 
             selected.Equip(equipable);
 

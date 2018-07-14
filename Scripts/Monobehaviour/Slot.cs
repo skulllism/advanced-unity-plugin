@@ -11,7 +11,7 @@ namespace AdvancedUnityPlugin
 
         public void Equip(Equipable equipable)
         {
-            if (equipable.itemType != equipableType)
+            if (equipable.equipType != equipableType)
                 return;
 
             equipped = equipable;
