@@ -21,10 +21,6 @@ namespace AdvancedUnityPlugin
         public Action[] onUpdates;
         public Action[] onExits;
 
-        public UnityEvent onEnter;
-        public UnityEvent onUpdate;
-        public UnityEvent onExit;
-
         [Header("Transition")]
         public Transition[] transitions;
 
@@ -48,7 +44,6 @@ namespace AdvancedUnityPlugin
             {
                 cloningOnEnters[i].OnAction(gameObj);
             }
-            onEnter.Invoke();
         }
 
         public override void OnUpdate()
@@ -57,7 +52,6 @@ namespace AdvancedUnityPlugin
             {
                 cloningOnUpdates[i].OnAction(gameObj);
             }
-            onUpdate.Invoke();
         }
 
         public override void OnExit()
@@ -66,7 +60,6 @@ namespace AdvancedUnityPlugin
             {
                 cloningOnExits[i].OnAction(gameObj);
             }
-            onExit.Invoke();
         }
 
         public override bool IsTransition(out string next)
