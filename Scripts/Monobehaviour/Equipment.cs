@@ -86,6 +86,35 @@ namespace AdvancedUnityPlugin
             return cursors[itemType];
         }
 
+        private SlotField GetField(string equipType)
+        {
+            foreach (var field in slotFields)
+            {
+                if (field.equipableType == equipType)
+                    return field;
+            }
+
+            return null;
+        }
+
+        private bool IsAlreadyEquip(Equipable equipable, out EquipmentSlot alreadyEquipped)
+        {
+            foreach (var slot in GetField(equipable.equipType).slots)
+            {
+                if (!slot.equipped)
+                    continue;
+
+                if (slot.equipped.itemID == equipable.itemID)
+                {
+                    alreadyEquipped = slot;
+                    return true;
+                }
+            }
+
+            alreadyEquipped = null;
+            return false;
+        }
+
         public void AddEquipable(Equipable equipable)
         {
             equipables.Add(equipable);
@@ -109,6 +138,10 @@ namespace AdvancedUnityPlugin
 
             if (selected.equipped != null)
                 Unequip(equipable.equipType);
+
+            EquipmentSlot alreadyEquipped;
+            if(IsAlreadyEquip(equipable, out alreadyEquipped))
+                alreadyEquipped.Unequip();
 
             selected.Equip(equipable);
 
