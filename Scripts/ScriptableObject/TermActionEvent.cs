@@ -24,14 +24,6 @@ namespace AdvancedUnityPlugin
             cloneEndKeyframeActions = PrototypeScriptableObject.SetClones(gameObj, endKeyframeActions);
         }
 
-        //public override void OnStartTermEvent()
-        //{
-        //    for (int i = 0; i < cloneStartKeyframeActions.Length; i++)
-        //    {
-        //        cloneStartKeyframeActions[i].OnAction(gameObj);
-        //    }
-        //}
-
         public override void OnTermEvent()
         {
             for (int i = 0; i < cloneOnTermActions.Length; i++)
@@ -40,12 +32,20 @@ namespace AdvancedUnityPlugin
             }
         }
 
-        //public override void OnEndTermEvent()
-        //{
-        //    for (int i = 0; i < cloneEndKeyframeActions.Length; i++)
-        //    {
-        //        cloneEndKeyframeActions[i].OnAction(gameObj);
-        //    }
-        //}
+        public override void OnTermStart()
+        {
+            for (int i = 0; i < cloneStartKeyframeActions.Length; i++)
+            {
+                cloneStartKeyframeActions[i].OnAction(gameObj);
+            }
+        }
+
+        public override void OnTermEnd()
+        {
+            for (int i = 0; i < cloneEndKeyframeActions.Length; i++)
+            {
+                cloneEndKeyframeActions[i].OnAction(gameObj);
+            }
+        }
     }
 }
