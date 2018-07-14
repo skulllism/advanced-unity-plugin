@@ -31,6 +31,11 @@ namespace AdvancedUnityPlugin
             if (!animationPlaying)
                 return;
 
+            for (int i = 0; i < currentEvents.Count; i++)
+            {
+                currentEvents[i].OnEvent();
+            }
+
             TermEventHandle(currentFrame);
 
             FrameUpdate();
@@ -110,7 +115,8 @@ namespace AdvancedUnityPlugin
 
         private void SetFrame(int frame)
         {
-            if (frame >= currentClip.length / interval)
+            Debug.Log(frame + " / " + (int)(currentClip.length / interval));
+            if (frame >= (int)(currentClip.length / interval))
             {
                 for (int i = 0; i < currentEvents.Count; i++)
                 {

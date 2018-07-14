@@ -12,7 +12,7 @@ public class Test : MonoBehaviour, GameEvent<Equipable>.Listener
     public Event response;
 
     public Equipment equipment;
-    public Slot slot;
+    public EquipmentSlot slot;
 
     private void OnEnable()
     {

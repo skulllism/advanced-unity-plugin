@@ -10,14 +10,14 @@ namespace AdvancedUnityPlugin
         public class SlotField
         {
             public string equipableType;
-            public Slot[] slots;
+            public EquipmentSlot[] slots;
         }
 
         public class Cursor
         {
-            public Slot selected { private set; get; }
+            public EquipmentSlot selected { private set; get; }
 
-            public void Select(Slot slot)
+            public void Select(EquipmentSlot slot)
             {
                 selected = slot;
             }
@@ -96,7 +96,7 @@ namespace AdvancedUnityPlugin
             equipables.Remove(equipable);
         }
 
-        public void Select(string itemType, Slot slot)
+        public void Select(string itemType, EquipmentSlot slot)
         {
             GetCursor(itemType).Select(slot);
 
@@ -105,7 +105,7 @@ namespace AdvancedUnityPlugin
 
         public void Equip(Equipable equipable)
         {
-            Slot selected = GetCursor(equipable.equipType).selected;
+            EquipmentSlot selected = GetCursor(equipable.equipType).selected;
 
             if (selected.equipped != null)
                 Unequip(equipable.equipType);

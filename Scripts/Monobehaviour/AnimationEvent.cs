@@ -10,11 +10,17 @@ namespace AdvancedUnityPlugin
         public TermEvent[] termEvents;
 
         public UnityEvent onStart;
+        public UnityEvent onEvent;
         public UnityEvent onFinish;
 
         public void OnStart()
         {
             onStart.Invoke();
+        }
+
+        public void OnEvent()
+        {
+            onEvent.Invoke();
         }
 
         public void OnFinish()

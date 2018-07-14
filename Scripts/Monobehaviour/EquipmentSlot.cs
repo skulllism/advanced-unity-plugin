@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace AdvancedUnityPlugin
 {
-    public class Slot : MonoBehaviour
+    public class EquipmentSlot : MonoBehaviour
     {
         public string equipableType { set; get; }
         public Equipable equipped { set; get; }
