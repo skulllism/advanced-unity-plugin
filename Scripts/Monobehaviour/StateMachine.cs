@@ -19,7 +19,7 @@ namespace AdvancedUnityPlugin
 
         private State current;
 
-        private void Awake()
+        private void Start()
         {
             TransitionToState(initStateName);
         }
