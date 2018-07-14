@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace AdvancedUnityPlugin
 {
@@ -20,6 +21,10 @@ namespace AdvancedUnityPlugin
         public Action[] onUpdates;
         public Action[] onExits;
 
+        public UnityEvent onEnter;
+        public UnityEvent onUpdate;
+        public UnityEvent onExit;
+
         [Header("Transition")]
         public Transition[] transitions;
 
@@ -28,7 +33,7 @@ namespace AdvancedUnityPlugin
         private Action[] cloningOnExits;
         private Transition[] cloningTransitions;
 
-        private void Awake()
+        protected virtual void Awake()
         {
             cloningOnEnters = PrototypeScriptableObject.SetClones(gameObj, onEnters);
             cloningOnUpdates = PrototypeScriptableObject.SetClones(gameObj, onUpdates);
@@ -43,6 +48,7 @@ namespace AdvancedUnityPlugin
             {
                 cloningOnEnters[i].OnAction(gameObj);
             }
+            onEnter.Invoke();
         }
 
         public override void OnUpdate()
@@ -51,6 +57,7 @@ namespace AdvancedUnityPlugin
             {
                 cloningOnUpdates[i].OnAction(gameObj);
             }
+            onUpdate.Invoke();
         }
 
         public override void OnExit()
@@ -59,6 +66,7 @@ namespace AdvancedUnityPlugin
             {
                 cloningOnExits[i].OnAction(gameObj);
             }
+            onExit.Invoke();
         }
 
         public override bool IsTransition(out string next)

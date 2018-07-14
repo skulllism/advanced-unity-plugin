@@ -12,12 +12,12 @@ namespace AdvancedUnityPlugin
         public UnityEvent onStart;
         public UnityEvent onFinish;
 
-        public void OnStart()
+        public virtual void OnStart()
         {
             onStart.Invoke();
         }
 
-        public void OnFinish()
+        public virtual void OnFinish()
         {
             onFinish.Invoke();
         }
