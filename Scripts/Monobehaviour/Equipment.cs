@@ -32,7 +32,7 @@ namespace AdvancedUnityPlugin
 
         public Dictionary<string, Cursor> cursors = new Dictionary<string, Cursor>();
 
-        private void OnEnable()
+        private void Awake()
         {
             foreach (var field in slotFields)
             {
@@ -40,11 +40,14 @@ namespace AdvancedUnityPlugin
                 {
                     slot.equipableType = field.equipableType;
                 }
-                cursors.Add(field.equipableType, new Cursor());
+
+                Cursor cursor = new Cursor();
+                cursor.Select(field.slots[0]);
+                cursors.Add(field.equipableType, cursor);
             }
         }
 
-        private void OnDisable()
+        private void OnDestroy()
         {
             foreach (var field in slotFields)
             {

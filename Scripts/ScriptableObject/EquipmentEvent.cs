@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace AdvancedUnityPlugin
 {
-    [CreateAssetMenu(menuName = "AdvancedUnityPlugin/EquipmentEvent")]
+    [CreateAssetMenu(menuName = "AdvancedUnityPlugin/Event/Equipment")]
     public class EquipmentEvent : GameEvent<Equipable>
     {
     }

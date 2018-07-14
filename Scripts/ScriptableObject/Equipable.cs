@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace AdvancedUnityPlugin
 {
-    [CreateAssetMenu(menuName = "AdvancedUnityPlugin/Equipable")]
+    [CreateAssetMenu(menuName = "AdvancedUnityPlugin/Equipment/Equipable")]
     public class Equipable : ScriptableObject
     {
         public string itemType;
