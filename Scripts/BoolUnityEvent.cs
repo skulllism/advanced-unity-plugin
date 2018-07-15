@@ -4,5 +4,5 @@ using System;
 namespace AdvancedUnityPlugin
 {
     [Serializable]
-    public class StringUnityEvent : UnityEvent<string> { }
+    public class BoolUnityEvent : UnityEvent<bool> { }
 }

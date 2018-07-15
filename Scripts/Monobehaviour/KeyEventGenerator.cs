@@ -6,13 +6,13 @@ namespace AdvancedUnityPlugin
 {
     public class KeyEventGenerator : MonoBehaviour
     {
-        private InputEventQueue queue;
+        private StringGameEvent onInputEvent;
         private Input.Key[] keys;
 
-        public void Init(Input.Key[] keys , InputEventQueue queue)
+        public void Init(Input.Key[] keys , StringGameEvent onInputEvent)
         {
             this.keys = keys;
-            this.queue = queue;
+            this.onInputEvent = onInputEvent;
         }
 
         private void Update()
@@ -21,13 +21,13 @@ namespace AdvancedUnityPlugin
             {
                 if (keys[i].GetKeyDown())
                 {
-                    queue.EnqueueEvent(keys[i].name, InputEventQueue.EventType.Down);
+                    onInputEvent.Raise(new string[2] { "DOWN", keys[i].name });
                     continue;
                 }
 
                 if (keys[i].GetKeyUp())
                 {
-                    queue.EnqueueEvent(keys[i].name, InputEventQueue.EventType.Up);
+                    onInputEvent.Raise(new string[2] { "UP", keys[i].name });
                     continue;
                 }
             }

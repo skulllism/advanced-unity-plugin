@@ -5,7 +5,7 @@ using UnityEngine;
 namespace AdvancedUnityPlugin
 {
     [CreateAssetMenu(menuName = "AdvancedUnityPlugin/Input")]
-    public class Input : ScriptableObject , InputEventQueue.EventListener
+    public class Input : ScriptableObject , StringGameEvent.Listener
     {
         public abstract class Key : ScriptableObject
         {
@@ -13,21 +13,26 @@ namespace AdvancedUnityPlugin
             public abstract bool GetKeyUp();
         }
 
-        public Key[] keys;
+        public StringGameEvent onInputEvent;
 
-        public StringGameEvent onKeyDown;
-        public StringGameEvent onKeyUp;
+        public Key[] keys;
 
         private Dictionary<string, Key> dicKeys = new Dictionary<string, Key>();
         private Dictionary<string, bool> keyPressed = new Dictionary<string, bool>();
 
         private KeyEventGenerator generator;
-        private InputEventQueue queue;
 
         private void OnEnable()
         {
             dicKeys.Clear();
             keyPressed.Clear();
+
+            onInputEvent.RegisterListener(this);
+        }
+
+        private void OnDisable()
+        {
+            onInputEvent.UnregisterListener(this);
         }
 
         public void Init()
@@ -38,10 +43,8 @@ namespace AdvancedUnityPlugin
                 keyPressed[keys[i].name] = false;
             }
 
-            queue = new GameObject("InputEventQueue").AddComponent<InputEventQueue>();
-            queue.RegisterEventListener(this);
             generator = new GameObject("KeyEventGenerator").AddComponent<KeyEventGenerator>();
-            generator.Init(keys, queue);
+            generator.Init(keys, onInputEvent);
         }
 
         public bool GetKey(string keyName)
@@ -59,21 +62,19 @@ namespace AdvancedUnityPlugin
             return dicKeys[keyName].GetKeyUp();
         }
 
-        public void OnEvent(string keyName, InputEventQueue.EventType type)
+        public void OnEventRaised(string[] args)
         {
-            switch (type)
+            if (args[0] == "DOWN")
             {
-                case InputEventQueue.EventType.Down:
-                    onKeyDown.Raise(new string[1] { keyName });
-                    keyPressed[keyName] = true;
-                    return;
-                case InputEventQueue.EventType.Up:
-                    onKeyUp.Raise(new string[1] { keyName });
-                    keyPressed[keyName] = false;
-                    return;
+                keyPressed[args[1]] = true;
+                return;
             }
 
-            
+            if (args[0] == "UP")
+            {
+                keyPressed[args[1]] = false;
+                return;
+            }
         }
     }
 }

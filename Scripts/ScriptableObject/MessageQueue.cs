@@ -6,14 +6,14 @@ namespace AdvancedUnityPlugin
     [CreateAssetMenu(menuName = "AdvancedUnityPlugin/MessageQueue")]
     public class MessageQueue : ScriptableObject
     {
-        private Queue<string> queue = new Queue<string>();
+        private Queue<string[]> queue = new Queue<string[]>();
 
-        public void Post(string message)
+        public void Post(string[] messages)
         {
-            queue.Enqueue(message);
+            queue.Enqueue(messages);
         }
 
-        public string Get()
+        public string[] Get()
         {
             if (queue.Count <= 0)
                 return null;

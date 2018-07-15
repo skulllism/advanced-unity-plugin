@@ -115,7 +115,7 @@ namespace AdvancedUnityPlugin
 
         private void SetFrame(int frame)
         {
-            Debug.Log(frame + " / " + (int)(currentClip.length / interval));
+            //Debug.Log(frame + " / " + (int)(currentClip.length / interval));
             if (frame >= (int)(currentClip.length / interval))
             {
                 for (int i = 0; i < currentEvents.Count; i++)
