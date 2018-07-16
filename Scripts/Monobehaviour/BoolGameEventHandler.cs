@@ -1,27 +1,25 @@
 ﻿using UnityEngine;
-using UnityEngine.Events;
 
 namespace AdvancedUnityPlugin
 {
-    public class BoolGameEventHandler : MonoBehaviour , GameEvent<bool>.Listener
+    public class BoolGameEventHandler : MonoBehaviour
     {
         public BoolGameEvent gameEvent;
         public BoolUnityEvent onEvent;
 
         private void Awake()
         {
-            gameEvent.RegisterListener(this);
+            gameEvent.onEventRaised += OnEventRaised;
+        }
+
+        private void OnEventRaised(bool arg)
+        {
+            onEvent.Invoke(arg);
         }
 
         private void OnDestroy()
         {
-            gameEvent.UnregisterListener(this);
-        }
-
-
-        public void OnEventRaised(bool[] args)
-        {
-            onEvent.Invoke(args[0]);
+            gameEvent.onEventRaised -= OnEventRaised;
         }
     }
 }

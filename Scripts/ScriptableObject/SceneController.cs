@@ -8,30 +8,18 @@ namespace AdvancedUnityPlugin
     [CreateAssetMenu(menuName = "AdvancedUnityPlugin/SceneController")]
     public class SceneController : ScriptableObject
     {
-        public GameEvent<SceneController> onSingleLoad;
+        public GameEvent onSingleLoad;
 
-        private List<string> activeScenes = new List<string>();
+        private Queue<string> loadedScene = new Queue<string>();
 
         private Dictionary<string, AsyncOperation> loadingOperations = new Dictionary<string, AsyncOperation>();
         private Dictionary<string, AsyncOperation> unloadingOperations = new Dictionary<string, AsyncOperation>();
-
-        private void OnEnable()
-        {
-            SceneManager.sceneLoaded += onSceneLoaded;
-        }
 
         private void OnDisable()
         {
             loadingOperations.Clear();
             unloadingOperations.Clear();
-            activeScenes.Clear();
-            SceneManager.sceneLoaded -= onSceneLoaded;
-        }
-
-        private void onSceneLoaded(Scene arg0, LoadSceneMode arg1)
-        {
-            if (arg1 == LoadSceneMode.Additive)
-                SceneManager.SetActiveScene(arg0);
+            loadedScene.Clear();
         }
 
         public void Unload(MonoBehaviour caller , string sceneName, System.Action onStart = null, System.Action onComplete = null)
@@ -42,9 +30,9 @@ namespace AdvancedUnityPlugin
         public void SingleLoad(string sceneName)
         {
             if (onSingleLoad != null)
-                onSingleLoad.Raise(new SceneController[1] { this });
+                onSingleLoad.Raise();
 
-            activeScenes.Clear();
+            loadedScene.Clear();
             SceneManager.LoadScene(sceneName);
         }
 
@@ -70,7 +58,7 @@ namespace AdvancedUnityPlugin
 
             operation.allowSceneActivation = true;
             loadingOperations.Remove(sceneName);
-            activeScenes.Add(sceneName);
+            //activeScenes.Add(sceneName);
         }
 
         private AsyncOperation GetUnloadingOperation(string sceneName)
@@ -137,7 +125,9 @@ namespace AdvancedUnityPlugin
             }
 
             unloadingOperations.Remove(sceneName);
-            activeScenes.Remove(sceneName);
+            //activeScenes.Remove(sceneName);
+
+            //onUnloaded.Raise();
 
             if (onComplete != null)
                 onComplete.Invoke();
@@ -145,11 +135,11 @@ namespace AdvancedUnityPlugin
 
         private IEnumerator AdditiveLoading(string sceneName, bool autoActivate, System.Action onStart, System.Action onComplete)
         {
-            if (activeScenes.Contains(sceneName))
-            {
-                Debug.Log("[ASC] Already Loaded : " + sceneName);
-                yield break;
-            }
+            //if (activeScenes.Contains(sceneName))
+            //{
+            //    Debug.Log("[ASC] Already Loaded : " + sceneName);
+            //    yield break;
+            //}
 
             yield return null;
 

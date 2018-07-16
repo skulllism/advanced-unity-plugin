@@ -129,7 +129,7 @@ namespace AdvancedUnityPlugin
         {
             GetCursor(itemType).Select(slot);
 
-            onSelectCursor.Raise(new Equipable[1] { slot.equipped });
+            onSelectCursor.Raise(slot.equipped);
         }
 
         public void Equip(Equipable equipable)
@@ -145,7 +145,7 @@ namespace AdvancedUnityPlugin
 
             selected.Equip(equipable);
 
-            onEquip.Raise(new Equipable[1] { equipable });
+            onEquip.Raise(equipable);
         }
 
         public void Equip(string equipableName)
@@ -162,7 +162,7 @@ namespace AdvancedUnityPlugin
         {
             Equipable equipped = GetCursor(itemType).selected.Unequip();
 
-            onUnequip.Raise(new Equipable[1] { equipped });
+            onUnequip.Raise(equipped);
         }
     }
 
