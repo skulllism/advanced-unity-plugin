@@ -3,20 +3,19 @@ using UnityEngine.Events;
 
 namespace AdvancedUnityPlugin
 {
-    public class GameEventHandler : MonoBehaviour, GameEvent.Listener
+    public class GameEventHandler : MonoBehaviour
     {
         public GameEvent gameEvent;
-
         public UnityEvent onEvent;
 
         private void Awake()
         {
-            gameEvent.RegisterListener(this);
+            gameEvent.onEventRaised += OnEventRaised;
         }
 
         private void OnDestroy()
         {
-            gameEvent.UnregisterListener(this);
+            gameEvent.onEventRaised -= OnEventRaised;
         }
 
         public void OnEventRaised()

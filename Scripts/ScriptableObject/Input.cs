@@ -5,7 +5,7 @@ using UnityEngine;
 namespace AdvancedUnityPlugin
 {
     [CreateAssetMenu(menuName = "AdvancedUnityPlugin/Input")]
-    public class Input : ScriptableObject , StringGameEvent.Listener
+    public class Input : ScriptableObject
     {
         public abstract class Key : ScriptableObject
         {
@@ -13,7 +13,8 @@ namespace AdvancedUnityPlugin
             public abstract bool GetKeyUp();
         }
 
-        public StringGameEvent onInputEvent;
+        public StringGameEvent onKeyDown;
+        public StringGameEvent onKeyUp;
 
         public Key[] keys;
 
@@ -27,12 +28,18 @@ namespace AdvancedUnityPlugin
             dicKeys.Clear();
             keyPressed.Clear();
 
-            onInputEvent.RegisterListener(this);
+            onKeyDown.onEventRaised += OnKeyDown;
+            onKeyUp.onEventRaised += OnKeyUp;
         }
 
-        private void OnDisable()
+        private void OnKeyUp(string arg)
         {
-            onInputEvent.UnregisterListener(this);
+            keyPressed[arg] = false;
+        }
+
+        private void OnKeyDown(string arg)
+        {
+            keyPressed[arg] = true;
         }
 
         public void Init()
@@ -44,7 +51,7 @@ namespace AdvancedUnityPlugin
             }
 
             generator = new GameObject("KeyEventGenerator").AddComponent<KeyEventGenerator>();
-            generator.Init(keys, onInputEvent);
+            generator.Init(keys, onKeyUp , onKeyDown);
         }
 
         public bool GetKey(string keyName)
@@ -60,21 +67,6 @@ namespace AdvancedUnityPlugin
         public bool GetKeyUp(string keyName)
         {
             return dicKeys[keyName].GetKeyUp();
-        }
-
-        public void OnEventRaised(string[] args)
-        {
-            if (args[0] == "DOWN")
-            {
-                keyPressed[args[1]] = true;
-                return;
-            }
-
-            if (args[0] == "UP")
-            {
-                keyPressed[args[1]] = false;
-                return;
-            }
         }
     }
 }
