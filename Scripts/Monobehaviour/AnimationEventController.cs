@@ -92,6 +92,11 @@ namespace AdvancedUnityPlugin
             interval = 1.0f / currentClip.frameRate;
             loopCount = 0;
 
+            foreach (var currentEvent in currentEvents)
+            {
+                currentEvent.OnReset();
+            }
+
             currentEvents = GetAnimationEvents(currentClip.name);
             SetFrame(0);
 

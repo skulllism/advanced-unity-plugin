@@ -21,5 +21,7 @@ namespace AdvancedUnityPlugin
         public virtual void OnFinish()
         {
         }
+
+        public virtual void OnReset() { }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace AdvancedUnityPlugin
@@ -15,21 +14,34 @@ namespace AdvancedUnityPlugin
 
         public StringGameEvent onKeyDown;
         public StringGameEvent onKeyUp;
+        public GameEvent onUpdate;
 
         public Key[] keys;
 
         private Dictionary<string, Key> dicKeys = new Dictionary<string, Key>();
         private Dictionary<string, bool> keyPressed = new Dictionary<string, bool>();
 
-        private KeyEventGenerator generator;
-
         private void OnEnable()
+        {
+            for (int i = 0; i < keys.Length; i++)
+            {
+                dicKeys[keys[i].name] = keys[i];
+                keyPressed[keys[i].name] = false;
+            }
+
+            onKeyDown.onEventRaised += OnKeyDown;
+            onKeyUp.onEventRaised += OnKeyUp;
+            onUpdate.onEventRaised += OnUpdate;
+        }
+
+        private void OnDisable()
         {
             dicKeys.Clear();
             keyPressed.Clear();
 
-            onKeyDown.onEventRaised += OnKeyDown;
-            onKeyUp.onEventRaised += OnKeyUp;
+            onKeyDown.onEventRaised -= OnKeyDown;
+            onKeyUp.onEventRaised -= OnKeyUp;
+            onUpdate.onEventRaised -= OnUpdate;
         }
 
         private void OnKeyUp(string arg)
@@ -42,16 +54,22 @@ namespace AdvancedUnityPlugin
             keyPressed[arg] = true;
         }
 
-        public void Init()
+        private void OnUpdate()
         {
             for (int i = 0; i < keys.Length; i++)
             {
-                dicKeys[keys[i].name] = keys[i];
-                keyPressed[keys[i].name] = false;
-            }
+                if (keys[i].GetKeyDown())
+                {
+                    onKeyDown.Raise(keys[i].name);
+                    continue;
+                }
 
-            generator = new GameObject("KeyEventGenerator").AddComponent<KeyEventGenerator>();
-            generator.Init(keys, onKeyUp , onKeyDown);
+                if (keys[i].GetKeyUp())
+                {
+                    onKeyUp.Raise(keys[i].name);
+                    continue;
+                }
+            }
         }
 
         public bool GetKey(string keyName)

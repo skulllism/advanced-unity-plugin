@@ -8,6 +8,7 @@ namespace AdvancedUnityPlugin
         public UnityEvent onStart;
         public UnityEvent onEvent;
         public UnityEvent onFinish;
+        public UnityEvent onReset;
 
         public override void OnStart()
         {
@@ -22,6 +23,11 @@ namespace AdvancedUnityPlugin
         public override void OnFinish()
         {
             onFinish.Invoke();
+        }
+
+        public override void OnReset()
+        {
+            onReset.Invoke();
         }
     }
 }
