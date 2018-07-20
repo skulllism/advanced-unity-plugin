@@ -81,7 +81,7 @@ namespace AdvancedUnityPlugin
             return null;
         }
 
-        private Cursor GetCursor(string itemType)
+        public Cursor GetCursor(string itemType)
         {
             return cursors[itemType];
         }
