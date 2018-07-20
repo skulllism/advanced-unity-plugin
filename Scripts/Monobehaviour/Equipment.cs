@@ -59,17 +59,6 @@ namespace AdvancedUnityPlugin
             }
         }
 
-        private Equipable GetEquipableByName(string name)
-        {
-            foreach (var equipable in equipables)
-            {
-                if (equipable.name == name)
-                    return equipable;
-            }
-
-            return null;
-        }
-
         private Equipable GetEquipableByitemID(string itemID)
         {
             foreach (var equipable in equipables)
@@ -101,7 +90,7 @@ namespace AdvancedUnityPlugin
         {
             foreach (var slot in GetField(equipable.equipType).slots)
             {
-                if (!slot.equipped)
+                if (slot.equipped != null)
                     continue;
 
                 if (slot.equipped.itemID == equipable.itemID)
@@ -115,13 +104,23 @@ namespace AdvancedUnityPlugin
             return false;
         }
 
-        public void AddEquipable(Equipable equipable)
+        public void AddEquipable(string equipType, string itemID)
         {
+            Equipable equipable = new Equipable(equipType, itemID);
+
+            if (equipables.Contains(equipable))
+                return;
+
             equipables.Add(equipable);
         }
 
-        public void RemoveEquipable(Equipable equipable)
+        public void RemoveEquipable(string itemID)
         {
+            Equipable equipable = GetEquipableByitemID(itemID);
+
+            if (equipable == null)
+                return;
+
             equipables.Remove(equipable);
         }
 
@@ -136,11 +135,6 @@ namespace AdvancedUnityPlugin
         {
             EquipmentSlot selected = GetCursor(equipable.equipType).selected;
             Equip(selected, equipable);
-        }
-
-        public void Equip(string equipableName)
-        {
-            Equip(GetEquipableByName(equipableName));
         }
 
         public void Equip(EquipmentSlot slot , Equipable equipable)
