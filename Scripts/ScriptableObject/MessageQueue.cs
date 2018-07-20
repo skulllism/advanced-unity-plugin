@@ -8,9 +8,9 @@ namespace AdvancedUnityPlugin
     {
         private Queue<string> queue = new Queue<string>();
 
-        public void Post(string message)
+        public void Post(string messages)
         {
-            queue.Enqueue(message);
+            queue.Enqueue(messages);
         }
 
         public string Get()

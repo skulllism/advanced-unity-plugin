@@ -10,14 +10,14 @@ namespace AdvancedUnityPlugin
         public class SlotField
         {
             public string equipableType;
-            public Slot[] slots;
+            public EquipmentSlot[] slots;
         }
 
         public class Cursor
         {
-            public Slot selected { private set; get; }
+            public EquipmentSlot selected { private set; get; }
 
-            public void Select(Slot slot)
+            public void Select(EquipmentSlot slot)
             {
                 selected = slot;
             }
@@ -28,11 +28,11 @@ namespace AdvancedUnityPlugin
         public EquipmentEvent onSelectCursor;
 
         public SlotField[] slotFields;
-        public Equipable[] equipables;
+        public List<Equipable> equipables;
 
         public Dictionary<string, Cursor> cursors = new Dictionary<string, Cursor>();
 
-        private void OnEnable()
+        private void Awake()
         {
             foreach (var field in slotFields)
             {
@@ -40,11 +40,14 @@ namespace AdvancedUnityPlugin
                 {
                     slot.equipableType = field.equipableType;
                 }
-                cursors.Add(field.equipableType, new Cursor());
+
+                Cursor cursor = new Cursor();
+                cursor.Select(field.slots[0]);
+                cursors.Add(field.equipableType, cursor);
             }
         }
 
-        private void OnDisable()
+        private void OnDestroy()
         {
             foreach (var field in slotFields)
             {
@@ -78,28 +81,71 @@ namespace AdvancedUnityPlugin
             return null;
         }
 
-        private Cursor GetCursor(string itemType)
+        public Cursor GetCursor(string itemType)
         {
             return cursors[itemType];
         }
 
-        public void Select(string itemType, Slot slot)
+        private SlotField GetField(string equipType)
+        {
+            foreach (var field in slotFields)
+            {
+                if (field.equipableType == equipType)
+                    return field;
+            }
+
+            return null;
+        }
+
+        private bool IsAlreadyEquip(Equipable equipable, out EquipmentSlot alreadyEquipped)
+        {
+            foreach (var slot in GetField(equipable.equipType).slots)
+            {
+                if (!slot.equipped)
+                    continue;
+
+                if (slot.equipped.itemID == equipable.itemID)
+                {
+                    alreadyEquipped = slot;
+                    return true;
+                }
+            }
+
+            alreadyEquipped = null;
+            return false;
+        }
+
+        public void AddEquipable(Equipable equipable)
+        {
+            equipables.Add(equipable);
+        }
+
+        public void RemoveEquipable(Equipable equipable)
+        {
+            equipables.Remove(equipable);
+        }
+
+        public void Select(string itemType, EquipmentSlot slot)
         {
             GetCursor(itemType).Select(slot);
 
-            onSelectCursor.Raise(new Equipable[1] { slot.equipped });
+            onSelectCursor.Raise(slot.equipped);
         }
 
         public void Equip(Equipable equipable)
         {
-            Slot selected = GetCursor(equipable.itemType).selected;
+            EquipmentSlot selected = GetCursor(equipable.equipType).selected;
 
             if (selected.equipped != null)
-                Unequip(equipable.itemType);
+                Unequip(equipable.equipType);
+
+            EquipmentSlot alreadyEquipped;
+            if(IsAlreadyEquip(equipable, out alreadyEquipped))
+                alreadyEquipped.Unequip();
 
             selected.Equip(equipable);
 
-            onEquip.Raise(new Equipable[1] { equipable });
+            onEquip.Raise(equipable);
         }
 
         public void Equip(string equipableName)
@@ -116,7 +162,7 @@ namespace AdvancedUnityPlugin
         {
             Equipable equipped = GetCursor(itemType).selected.Unequip();
 
-            onUnequip.Raise(new Equipable[1] { equipped });
+            onUnequip.Raise(equipped);
         }
     }
 

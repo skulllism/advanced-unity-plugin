@@ -4,14 +4,14 @@ using UnityEngine;
 
 namespace AdvancedUnityPlugin
 {
-    public class Slot : MonoBehaviour
+    public class EquipmentSlot : MonoBehaviour
     {
         public string equipableType { set; get; }
         public Equipable equipped { set; get; }
 
         public void Equip(Equipable equipable)
         {
-            if (equipable.itemType != equipableType)
+            if (equipable.equipType != equipableType)
                 return;
 
             equipped = equipable;

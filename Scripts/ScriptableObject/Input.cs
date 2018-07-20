@@ -1,11 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace AdvancedUnityPlugin
 {
     [CreateAssetMenu(menuName = "AdvancedUnityPlugin/Input")]
-    public class Input : ScriptableObject , InputEventQueue.EventListener
+    public class Input : ScriptableObject
     {
         public abstract class Key : ScriptableObject
         {
@@ -13,29 +12,16 @@ namespace AdvancedUnityPlugin
             public abstract bool GetKeyUp();
         }
 
-        public interface EventListener
-        {
-            void OnKeyDown(string keyName);
-            void OnKeyUp(string keyName);
-        }
+        public StringGameEvent onKeyDown;
+        public StringGameEvent onKeyUp;
+        public GameEvent onUpdate;
 
         public Key[] keys;
 
         private Dictionary<string, Key> dicKeys = new Dictionary<string, Key>();
         private Dictionary<string, bool> keyPressed = new Dictionary<string, bool>();
-        private List<EventListener> listeners = new List<EventListener>();
-
-        private KeyEventGenerator generator;
-        private InputEventQueue queue;
 
         private void OnEnable()
-        {
-            dicKeys.Clear();
-            keyPressed.Clear();
-            listeners.Clear();
-        }
-
-        public void Init()
         {
             for (int i = 0; i < keys.Length; i++)
             {
@@ -43,20 +29,47 @@ namespace AdvancedUnityPlugin
                 keyPressed[keys[i].name] = false;
             }
 
-            queue = new GameObject("InputEventQueue").AddComponent<InputEventQueue>();
-            queue.RegisterEventListener(this);
-            generator = new GameObject("KeyEventGenerator").AddComponent<KeyEventGenerator>();
-            generator.Init(keys, queue);
+            onKeyDown.onEventRaised += OnKeyDown;
+            onKeyUp.onEventRaised += OnKeyUp;
+            onUpdate.onEventRaised += OnUpdate;
         }
 
-        public void RegisterEventListener(EventListener listener)
+        private void OnDisable()
         {
-            listeners.Add(listener);
+            dicKeys.Clear();
+            keyPressed.Clear();
+
+            onKeyDown.onEventRaised -= OnKeyDown;
+            onKeyUp.onEventRaised -= OnKeyUp;
+            onUpdate.onEventRaised -= OnUpdate;
         }
 
-        public void UnregisterEventListener(EventListener listener)
+        private void OnKeyUp(string arg)
         {
-            listeners.Remove(listener);
+            keyPressed[arg] = false;
+        }
+
+        private void OnKeyDown(string arg)
+        {
+            keyPressed[arg] = true;
+        }
+
+        private void OnUpdate()
+        {
+            for (int i = 0; i < keys.Length; i++)
+            {
+                if (keys[i].GetKeyDown())
+                {
+                    onKeyDown.Raise(keys[i].name);
+                    continue;
+                }
+
+                if (keys[i].GetKeyUp())
+                {
+                    onKeyUp.Raise(keys[i].name);
+                    continue;
+                }
+            }
         }
 
         public bool GetKey(string keyName)
@@ -72,29 +85,6 @@ namespace AdvancedUnityPlugin
         public bool GetKeyUp(string keyName)
         {
             return dicKeys[keyName].GetKeyUp();
-        }
-
-        public void OnEvent(string keyName, InputEventQueue.EventType type)
-        {
-            switch (type)
-            {
-                case InputEventQueue.EventType.Down:
-                    for (int i = 0; i < listeners.Count; i++)
-                    {
-                        listeners[i].OnKeyDown(keyName);
-                    }
-                    keyPressed[keyName] = true;
-                    return;
-                case InputEventQueue.EventType.Up:
-                    for (int i = 0; i < listeners.Count; i++)
-                    {
-                        listeners[i].OnKeyUp(keyName);
-                    }
-                    keyPressed[keyName] = false;
-                    return;
-            }
-
-            
         }
     }
 }

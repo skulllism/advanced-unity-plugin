@@ -1,36 +1,35 @@
 ﻿using UnityEngine;
 using AdvancedUnityPlugin;
 
-public class SampleInputInitializer : MonoBehaviour , AdvancedUnityPlugin.Input.EventListener
-{
-    public AdvancedUnityPlugin.Input input;
+//public class SampleInputInitializer : MonoBehaviour , StringGameEvent.Listener
+//{
+//    public AdvancedUnityPlugin.Input input;
 
-    public void OnKeyDown(string keyName)
-    {
-        if (keyName == "SampleA")
-            Debug.Log("Raised SampleA Down Event!");
-        if (keyName == "SampleB")
-            Debug.Log("Raised SampleB Down Event!");
-    }
+//    public StringGameEvent onKeyDown;
 
-    public void OnKeyUp(string keyName)
-    {
-        if (keyName == "SampleA")
-            Debug.Log("Raised SampleA Up Event!");
-        if (keyName == "SampleB")
-            Debug.Log("Raised SampleB Up Event!");
-    }
+//    public void OnEventRaised(string[] args)
+//    {
+//        if (args[0] == "SampleA")
+//            Debug.Log("Raised SampleA Down Event!");
+//        if (args[0] == "SampleB")
+//            Debug.Log("Raised SampleB Down Event!");
+//    }
 
-    private void Awake()
-    {
-        input.RegisterEventListener(this);
-    }
+//    private void Awake()
+//    {
+//        onKeyDown.RegisterListener(this);
+//    }
 
-    private void Update()
-    {
-        if (input.GetKeyDown("SampleA"))
-            Debug.Log("SampleA is down");
-        if (input.GetKeyDown("SampleB"))
-            Debug.Log("SampleB is down");
-    }
-}
+//    private void OnDestroy()
+//    {
+//        onKeyDown.UnregisterListener(this);
+//    }
+
+//    private void Update()
+//    {
+//        if (input.GetKeyDown("SampleA"))
+//            Debug.Log("SampleA is down");
+//        if (input.GetKeyDown("SampleB"))
+//            Debug.Log("SampleB is down");
+//    }
+//}

@@ -19,24 +19,20 @@ namespace AdvancedUnityPlugin
 
         private State current;
 
-        private void Awake()
+        private void Start()
         {
-            foreach (var state in states)
-            {
-                state.Init(gameObject);
-            }
-
             TransitionToState(initStateName);
         }
 
         public void TransitionToState(string id)
         {
             if (current)
-                current.OnExit(gameObject);
+                current.OnExit();
 
             current = GetState(id);
 
-            current.OnEnter(gameObject);
+            current.OnEnter();
+            Debug.Log(current);
         }
 
         private void Update()
@@ -45,13 +41,13 @@ namespace AdvancedUnityPlugin
                 return;
 
             string next;
-            if (current.IsTransition(gameObject, out next))
+            if (current.IsTransition(out next))
             {
                 TransitionToState(next);
                 return;
             }
 
-            current.OnUpdate(gameObject);
+            current.OnUpdate();
         }
 
         private State GetState(string id)

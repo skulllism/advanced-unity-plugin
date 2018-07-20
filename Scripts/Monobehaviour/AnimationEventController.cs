@@ -31,6 +31,11 @@ namespace AdvancedUnityPlugin
             if (!animationPlaying)
                 return;
 
+            for (int i = 0; i < currentEvents.Count; i++)
+            {
+                currentEvents[i].OnEvent();
+            }
+
             TermEventHandle(currentFrame);
 
             FrameUpdate();
@@ -87,6 +92,11 @@ namespace AdvancedUnityPlugin
             interval = 1.0f / currentClip.frameRate;
             loopCount = 0;
 
+            foreach (var currentEvent in currentEvents)
+            {
+                currentEvent.OnReset();
+            }
+
             currentEvents = GetAnimationEvents(currentClip.name);
             SetFrame(0);
 
@@ -110,8 +120,14 @@ namespace AdvancedUnityPlugin
 
         private void SetFrame(int frame)
         {
-            if (frame >= currentClip.length / interval)
+            //Debug.Log(frame + " / " + (int)(currentClip.length / interval));
+            if (frame >= (int)(currentClip.length / interval))
             {
+                for (int i = 0; i < currentEvents.Count; i++)
+                {
+                    currentEvents[i].OnFinish();
+                }
+
                 if (currentClip.isLooping)
                 {
                     currentFrame = 0;
@@ -125,11 +141,32 @@ namespace AdvancedUnityPlugin
 
             currentFrame = frame;
 
+            if(currentFrame == 0)
+            {
+                for (int i = 0; i < currentEvents.Count; i++)
+                {
+                    currentEvents[i].OnStart();
+                }
+            }
+        
+
             for (int i = 0; i < currentEvents.Count; i++)
             {
                 for (int j = 0; j < currentEvents[i].keyframeEvents.Length; j++)
                 {
                     KeyframeEventHandle(currentEvents[i].keyframeEvents[j] , currentFrame);
+                }
+            }
+
+            for (int i = 0; i < currentEvents.Count; i++)
+            {
+                for (int j = 0; j < currentEvents[i].termEvents.Length; j++)
+                {
+                    if (currentFrame == currentEvents[i].termEvents[j].startFrame)
+                        currentEvents[i].termEvents[j].OnTermStart();
+
+                    if (currentFrame == currentEvents[i].termEvents[j].endFrame)
+                        currentEvents[i].termEvents[j].OnTermEnd();
                 }
             }
         }

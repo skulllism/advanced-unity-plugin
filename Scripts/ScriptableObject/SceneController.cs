@@ -8,44 +8,47 @@ namespace AdvancedUnityPlugin
     [CreateAssetMenu(menuName = "AdvancedUnityPlugin/SceneController")]
     public class SceneController : ScriptableObject
     {
-        public GameEvent<SceneController> onSingleLoad;
+        public Scene latest { private set; get; }
+        public Scene prev { private set; get; }
 
-        private List<string> activeScenes = new List<string>();
+        public readonly List<Scene> loadedScene = new List<Scene>();
 
         private Dictionary<string, AsyncOperation> loadingOperations = new Dictionary<string, AsyncOperation>();
         private Dictionary<string, AsyncOperation> unloadingOperations = new Dictionary<string, AsyncOperation>();
 
         private void OnEnable()
         {
-            SceneManager.sceneLoaded += onSceneLoaded;
+            SceneManager.sceneLoaded += OnSceneLoaded;
+            SceneManager.sceneUnloaded += OnSceneUnloaded;
         }
 
         private void OnDisable()
         {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+            SceneManager.sceneUnloaded -= OnSceneUnloaded;
             loadingOperations.Clear();
             unloadingOperations.Clear();
-            activeScenes.Clear();
-            SceneManager.sceneLoaded -= onSceneLoaded;
+            loadedScene.Clear();
         }
 
-        private void onSceneLoaded(Scene arg0, LoadSceneMode arg1)
+        private void OnSceneUnloaded(Scene arg0)
         {
-            if (arg1 == LoadSceneMode.Additive)
-                SceneManager.SetActiveScene(arg0);
+            loadedScene.Remove(arg0);
+        }
+
+        private void OnSceneLoaded(Scene arg0, LoadSceneMode arg1)
+        {
+            if(arg1 == LoadSceneMode.Single)
+                loadedScene.Clear();
+
+            loadedScene.Add(arg0);
+            prev = latest;
+            latest = arg0;
         }
 
         public void Unload(MonoBehaviour caller , string sceneName, System.Action onStart = null, System.Action onComplete = null)
         {
             caller.StartCoroutine(Unloading(caller, sceneName, onStart, onComplete));
-        }
-
-        public void SingleLoad(string sceneName)
-        {
-            if (onSingleLoad != null)
-                onSingleLoad.Raise(new SceneController[1] { this });
-
-            activeScenes.Clear();
-            SceneManager.LoadScene(sceneName);
         }
 
         public void AdditiveLoad(MonoBehaviour caller , string sceneName, bool autoActivate = true, System.Action onStart = null, System.Action onComplete = null)
@@ -70,7 +73,6 @@ namespace AdvancedUnityPlugin
 
             operation.allowSceneActivation = true;
             loadingOperations.Remove(sceneName);
-            activeScenes.Add(sceneName);
         }
 
         private AsyncOperation GetUnloadingOperation(string sceneName)
@@ -137,7 +139,6 @@ namespace AdvancedUnityPlugin
             }
 
             unloadingOperations.Remove(sceneName);
-            activeScenes.Remove(sceneName);
 
             if (onComplete != null)
                 onComplete.Invoke();
@@ -145,7 +146,7 @@ namespace AdvancedUnityPlugin
 
         private IEnumerator AdditiveLoading(string sceneName, bool autoActivate, System.Action onStart, System.Action onComplete)
         {
-            if (activeScenes.Contains(sceneName))
+            if (loadedScene.Contains(SceneManager.GetSceneByName(sceneName)))
             {
                 Debug.Log("[ASC] Already Loaded : " + sceneName);
                 yield break;
