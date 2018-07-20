@@ -135,22 +135,26 @@ namespace AdvancedUnityPlugin
         public void Equip(Equipable equipable)
         {
             EquipmentSlot selected = GetCursor(equipable.equipType).selected;
-
-            if (selected.equipped != null)
-                Unequip(equipable.equipType);
-
-            EquipmentSlot alreadyEquipped;
-            if(IsAlreadyEquip(equipable, out alreadyEquipped))
-                alreadyEquipped.Unequip();
-
-            selected.Equip(equipable);
-
-            onEquip.Raise(equipable);
+            Equip(selected, equipable);
         }
 
         public void Equip(string equipableName)
         {
             Equip(GetEquipableByName(equipableName));
+        }
+
+        public void Equip(EquipmentSlot slot , Equipable equipable)
+        {
+            if (slot.equipped != null)
+                Unequip(equipable.equipType);
+
+            EquipmentSlot alreadyEquipped;
+            if (IsAlreadyEquip(equipable, out alreadyEquipped))
+                alreadyEquipped.Unequip();
+
+            slot.Equip(equipable);
+
+            onEquip.Raise(equipable);
         }
 
         public void EquipByItemID(string itemID)
