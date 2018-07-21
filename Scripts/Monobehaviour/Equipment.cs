@@ -28,7 +28,7 @@ namespace AdvancedUnityPlugin
         public EquipmentEvent onSelectCursor;
 
         public SlotField[] slotFields;
-        public List<Equipable> equipables;
+        private List<Equipable> equipables = new List<Equipable>();
 
         public Dictionary<string, Cursor> cursors = new Dictionary<string, Cursor>();
 
@@ -59,7 +59,7 @@ namespace AdvancedUnityPlugin
             }
         }
 
-        private Equipable GetEquipableByitemID(string itemID)
+        public Equipable GetEquipableByitemID(string itemID)
         {
             foreach (var equipable in equipables)
             {
@@ -90,7 +90,7 @@ namespace AdvancedUnityPlugin
         {
             foreach (var slot in GetField(equipable.equipType).slots)
             {
-                if (slot.equipped != null)
+                if (slot.equipped == null)
                     continue;
 
                 if (slot.equipped.itemID == equipable.itemID)
