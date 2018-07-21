@@ -8,6 +8,11 @@ namespace AdvancedUnityPlugin
     [CreateAssetMenu(menuName = "AdvancedUnityPlugin/SceneController")]
     public class SceneController : ScriptableObject
     {
+        public StringGameEvent onUnload;
+        public StringGameEvent onSingleLoad;
+        public StringGameEvent onAdditiveLoad;
+        public StringGameEvent onActivate;
+
         public Scene latest { private set; get; }
         public Scene prev { private set; get; }
 
@@ -46,18 +51,28 @@ namespace AdvancedUnityPlugin
             latest = arg0;
         }
 
+        public void SingleLoad(string sceneName)
+        {
+            onSingleLoad.Raise(sceneName);
+            SceneManager.LoadScene(sceneName);
+        }
+
         public void Unload(MonoBehaviour caller , string sceneName, System.Action onStart = null, System.Action onComplete = null)
         {
+            onUnload.Raise(sceneName);
             caller.StartCoroutine(Unloading(caller, sceneName, onStart, onComplete));
         }
 
         public void AdditiveLoad(MonoBehaviour caller , string sceneName, bool autoActivate = true, System.Action onStart = null, System.Action onComplete = null)
         {
+            onAdditiveLoad.Raise(sceneName);
             caller.StartCoroutine(AdditiveLoading(sceneName, autoActivate, onStart, onComplete));
         }
 
         public void ActivateAdditiveScene(string sceneName)
         {
+            onActivate.Raise(sceneName);
+
             AsyncOperation operation = GetLoadingOperation(sceneName);
             if (operation == null)
             {
