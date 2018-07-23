@@ -13,7 +13,7 @@ namespace AdvancedUnityPlugin
 
         public bool isLooping = true;
 
-        private LooperInstance looper;
+        public LooperInstance monoBehaviour { private set; get; }
 
         private void OnEnable()
         {
@@ -27,7 +27,7 @@ namespace AdvancedUnityPlugin
 
         private void OnSceneLoaded(Scene arg0, LoadSceneMode arg1)
         {
-            if (looper)
+            if (monoBehaviour)
                 return;
 
             SetLooper();
@@ -35,8 +35,8 @@ namespace AdvancedUnityPlugin
 
         public void SetLooper()
         {
-            looper = new GameObject("Looper").AddComponent<LooperInstance>();
-            looper.Init(this);
+            monoBehaviour = new GameObject("Looper").AddComponent<LooperInstance>();
+            monoBehaviour.Init(this);
         }
     }
 }

@@ -12,6 +12,7 @@ namespace AdvancedUnityPlugin
         public StringGameEvent onSingleLoad;
         public StringGameEvent onAdditiveLoad;
         public StringGameEvent onActivate;
+        public StringGameEvent onUnloaded;
 
         public Scene latest { private set; get; }
         public Scene prev { private set; get; }
@@ -154,6 +155,8 @@ namespace AdvancedUnityPlugin
             }
 
             unloadingOperations.Remove(sceneName);
+
+            onUnloaded.Raise(sceneName);
 
             if (onComplete != null)
                 onComplete.Invoke();
