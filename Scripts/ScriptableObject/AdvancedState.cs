@@ -21,21 +21,15 @@ namespace AdvancedUnityPlugin
         public Action[] onUpdates;
         public Action[] onExits;
 
-        [Header("Transition")]
-        public Transition[] transitions;
-
         private Action[] cloningOnEnters;
         private Action[] cloningOnUpdates;
         private Action[] cloningOnExits;
-        private Transition[] cloningTransitions;
 
         protected virtual void Awake()
         {
             cloningOnEnters = PrototypeScriptableObject.SetClones(gameObj, onEnters);
             cloningOnUpdates = PrototypeScriptableObject.SetClones(gameObj, onUpdates);
             cloningOnExits = PrototypeScriptableObject.SetClones(gameObj, onExits);
-
-            cloningTransitions = PrototypeScriptableObject.SetClones(gameObj, transitions);
         }
 
         public override void OnEnter()
@@ -60,18 +54,6 @@ namespace AdvancedUnityPlugin
             {
                 cloningOnExits[i].OnAction(gameObj);
             }
-        }
-
-        public override bool IsTransition(out string next)
-        {
-            for (int i = 0; i < cloningTransitions.Length; i++)
-            {
-                if (cloningTransitions[i].CanBeTransit(gameObj, out next))
-                    return true;
-            }
-
-            next = null;
-            return false;
         }
     }
 }

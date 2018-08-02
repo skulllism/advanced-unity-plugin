@@ -40,13 +40,6 @@ namespace AdvancedUnityPlugin
             if (!current)
                 return;
 
-            string next;
-            if (current.IsTransition(out next))
-            {
-                TransitionToState(next);
-                return;
-            }
-
             current.OnUpdate();
         }
 

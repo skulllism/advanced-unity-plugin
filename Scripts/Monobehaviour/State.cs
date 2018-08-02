@@ -11,7 +11,5 @@ namespace AdvancedUnityPlugin
         public abstract void OnUpdate();
 
         public abstract void OnExit();
-
-        public abstract bool IsTransition(out string next);
     }
 }

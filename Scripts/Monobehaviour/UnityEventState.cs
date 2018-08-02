@@ -8,12 +8,6 @@ namespace AdvancedUnityPlugin
         public UnityEvent onExit;
         public UnityEvent onUpdate;
 
-        public override bool IsTransition(out string next)
-        {
-            next = "";
-            return false;
-        }
-
         public override void OnEnter()
         {
             onEnter.Invoke();
