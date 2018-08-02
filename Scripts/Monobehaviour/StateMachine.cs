@@ -17,7 +17,7 @@ namespace AdvancedUnityPlugin
 
         public State[] states;
 
-        private State current;
+        public State current { private set; get; }
 
         private void Start()
         {
@@ -32,7 +32,7 @@ namespace AdvancedUnityPlugin
             current = GetState(id);
 
             current.OnEnter();
-            Debug.Log(current);
+    
         }
 
         private void Update()
