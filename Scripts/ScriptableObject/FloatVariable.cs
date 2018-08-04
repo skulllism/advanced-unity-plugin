@@ -1,20 +1,21 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using System;
 
-[CreateAssetMenu]
-public class FloatVariable : ScriptableObject, ISerializationCallbackReceiver
+namespace AdvancedUnityPlugin
 {
-    public float initialValue;
-
-    [NonSerialized]
-    public float runtimeValue;
-
-    public void OnAfterDeserialize()
+    [CreateAssetMenu(menuName = "AdvancedUnityPlugin/DataType/Float")]
+    public class FloatVariable : ScriptableObject, ISerializationCallbackReceiver
     {
-        runtimeValue = initialValue;
-    }
+        public float initialValue;
 
-    public void OnBeforeSerialize() { }
+        [NonSerialized]
+        public float runtimeValue;
+
+        public void OnAfterDeserialize()
+        {
+            runtimeValue = initialValue;
+        }
+
+        public void OnBeforeSerialize() { }
+    }
 }
