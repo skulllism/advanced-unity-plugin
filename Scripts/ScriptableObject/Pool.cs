@@ -9,7 +9,7 @@ namespace AdvancedUnityPlugin
         [Serializable]
         public struct Data
         {
-            public string originName;
+            public GameObject origin;
             public int count;
         }
 

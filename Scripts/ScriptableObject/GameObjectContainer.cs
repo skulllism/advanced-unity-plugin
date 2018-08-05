@@ -6,50 +6,47 @@ namespace AdvancedUnityPlugin
     [CreateAssetMenu(menuName = "AdvancedUnityPlugin/GameObjectContainer")]
     public class GameObjectContainer : ScriptableObject
     {
-        public ObjectContainer objectContainer;
+        private Dictionary<GameObject, GameObjectPool> pools = new Dictionary<GameObject, GameObjectPool>();
 
-        private Dictionary<string, GameObjectPool> pools = new Dictionary<string, GameObjectPool>();
-
-        private GameObjectPool GetPool(string originName)
+        private GameObjectPool GetPool(GameObject origin)
         {
             GameObjectPool pool;
-            if (pools.TryGetValue(originName, out pool))
+            if (pools.TryGetValue(origin, out pool))
                 return pool;
 
             return null;
         }
 
-        public GameObject Get(string originName)
+        public GameObject Get(GameObject origin)
         {
-            GameObjectPool pool = GetPool(originName);
+            GameObjectPool pool = GetPool(origin);
 
             if (pool == null)
-                return CreateOnDemand(originName);
+                return CreateOnDemand(origin);
 
             GameObject active = pool.Get();
             if(!active)
-                return CreateOnDemand(originName);
+                return CreateOnDemand(origin);
 
             return active;
         }
 
-        private GameObject CreateOnDemand(string originName)
+        private GameObject CreateOnDemand(GameObject origin)
         {
-            GameObject origin = objectContainer.GetOrigin(originName) as GameObject;
             return Instantiate(origin) as GameObject;
         }
 
-        public void CreatePool(string originName, int max)
+        public void CreatePool(GameObject origin, int max)
         {
-            GameObjectPool tmp = new GameObjectPool(objectContainer.GetOrigin(originName) as GameObject);
+            GameObjectPool tmp = new GameObjectPool(origin);
 
-            if (pools.ContainsKey(originName))
+            if (pools.ContainsKey(origin))
                 return;
             if (pools.ContainsValue(tmp))
                 return;
 
             tmp.CreateAndDisable(max);
-            pools.Add(originName, tmp);
+            pools.Add(origin, tmp);
         }
 
         public void DestroyAll()
@@ -60,14 +57,14 @@ namespace AdvancedUnityPlugin
             }
         }
 
-        public void DestroyAll(string originName)
+        public void DestroyAll(GameObject origin)
         {
-            GetPool(originName).DestroyAll();
+            GetPool(origin).DestroyAll();
         }
 
-        public void PoolAll(string originName)
+        public void PoolAll(GameObject origin)
         {
-            GetPool(originName).DisableAll();
+            GetPool(origin).DisableAll();
         }
 
         public void PoolAll()

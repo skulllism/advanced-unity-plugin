@@ -32,7 +32,7 @@ namespace AdvancedUnityPlugin
 
             foreach (var poolData in data.datas)
             {
-                container.CreatePool(poolData.originName, poolData.count);
+                container.CreatePool(poolData.origin, poolData.count);
                 yield return null;
             }
 
