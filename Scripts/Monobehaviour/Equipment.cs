@@ -140,7 +140,7 @@ namespace AdvancedUnityPlugin
         public void Equip(EquipmentSlot slot , Equipable equipable)
         {
             if (slot.equipped != null)
-                Unequip(equipable.equipType);
+                Unequip(slot);
 
             EquipmentSlot alreadyEquipped;
             if (IsAlreadyEquip(equipable, out alreadyEquipped))
@@ -159,6 +159,13 @@ namespace AdvancedUnityPlugin
         public void Unequip(string itemType)
         {
             Equipable equipped = GetCursor(itemType).selected.Unequip();
+
+            onUnequip.Raise(equipped);
+        }
+
+        public void Unequip(EquipmentSlot slot)
+        {
+            Equipable equipped = slot.Unequip();
 
             onUnequip.Raise(equipped);
         }
