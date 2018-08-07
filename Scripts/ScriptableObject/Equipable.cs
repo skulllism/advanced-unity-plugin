@@ -6,13 +6,15 @@ namespace AdvancedUnityPlugin
 {
     public class Equipable 
     {
-        public string equipType;
+        public string category;
+        public string timeStamp;
         public string itemID;
 
-        public Equipable(string equipType , string itemID)
+        public Equipable(string category , string itemID , string timeStamp)
         {
-            this.equipType = equipType;
-            this.itemID = itemID;
+            this.category  = category;
+            this.itemID    = itemID;
+            this.timeStamp = timeStamp;
         }
     }
 }

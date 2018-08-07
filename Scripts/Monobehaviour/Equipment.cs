@@ -9,7 +9,7 @@ namespace AdvancedUnityPlugin
         [Serializable]
         public class SlotField
         {
-            public string equipableType;
+            public string equipableCategory;
             public EquipmentSlot[] slots;
         }
 
@@ -23,8 +23,11 @@ namespace AdvancedUnityPlugin
             }
         }
 
-        public EquipmentEvent onEquip;
-        public EquipmentEvent onUnequip;
+        public EquipmentEvent onSlotEquip;
+        public EquipmentEvent onSlotUnequip;
+        public EquipmentEvent onCursorEquip;
+        public EquipmentEvent onCursorUnequip;
+
         public EquipmentEvent onSelectCursor;
 
         public SlotField[] slotFields;
@@ -38,12 +41,12 @@ namespace AdvancedUnityPlugin
             {
                 foreach (var slot in field.slots)
                 {
-                    slot.equipableType = field.equipableType;
+                    slot.equipableCategory = field.equipableCategory;
                 }
 
                 Cursor cursor = new Cursor();
                 cursor.Select(field.slots[0]);
-                cursors.Add(field.equipableType, cursor);
+                cursors.Add(field.equipableCategory, cursor);
             }
         }
 
@@ -53,33 +56,33 @@ namespace AdvancedUnityPlugin
             {
                 foreach (var slot in field.slots)
                 {
-                    slot.equipableType = null;
+                    slot.equipableCategory = null;
                     slot.equipped = null;
                 }
             }
         }
 
-        public Equipable GetEquipableByitemID(string itemID)
+        public Equipable GetEquipableByitemTimeStamp(string itemTimeStamp)
         {
             foreach (var equipable in equipables)
             {
-                if (equipable.itemID == itemID)
+                if (equipable.timeStamp == itemTimeStamp)
                     return equipable;
             }
 
             return null;
         }
 
-        public Cursor GetCursor(string itemType)
+        public Cursor GetCursor(string equipCategory)
         {
-            return cursors[itemType];
+            return cursors[equipCategory];
         }
 
-        private SlotField GetField(string equipType)
+        private SlotField GetField(string equipCategory)
         {
             foreach (var field in slotFields)
             {
-                if (field.equipableType == equipType)
+                if (field.equipableCategory == equipCategory)
                     return field;
             }
 
@@ -88,12 +91,12 @@ namespace AdvancedUnityPlugin
 
         private bool IsAlreadyEquip(Equipable equipable, out EquipmentSlot alreadyEquipped)
         {
-            foreach (var slot in GetField(equipable.equipType).slots)
+            foreach (var slot in GetField(equipable.category).slots)
             {
                 if (slot.equipped == null)
                     continue;
 
-                if (slot.equipped.itemID == equipable.itemID)
+                if (slot.equipped.timeStamp == equipable.timeStamp)
                 {
                     alreadyEquipped = slot;
                     return true;
@@ -104,9 +107,9 @@ namespace AdvancedUnityPlugin
             return false;
         }
 
-        public void AddEquipable(string equipType, string itemID)
+        public void AddEquipable(string equipType, string itemID , string timeStamp)
         {
-            Equipable equipable = new Equipable(equipType, itemID);
+            Equipable equipable = new Equipable(equipType, itemID , timeStamp);
 
             if (equipables.Contains(equipable))
                 return;
@@ -114,27 +117,54 @@ namespace AdvancedUnityPlugin
             equipables.Add(equipable);
         }
 
-        public void RemoveEquipable(string itemID)
+        public void RemoveEquipable(string itemTimeStamp)
         {
-            Equipable equipable = GetEquipableByitemID(itemID);
+            Equipable equipable = GetEquipableByitemTimeStamp(itemTimeStamp);
 
             if (equipable == null)
                 return;
 
+            RemoveEquipableOfSlot(equipable);
+
             equipables.Remove(equipable);
         }
 
-        public void Select(string itemType, EquipmentSlot slot)
+        private void RemoveEquipableOfSlot(Equipable equipable)
         {
-            GetCursor(itemType).Select(slot);
+            foreach (var field in slotFields)
+            {
+                if (field.equipableCategory != equipable.category)
+                    continue;
+                
+                foreach (var slot in field.slots)
+                {
+                    if(slot.equipped == equipable)
+                    {
+                        Unequip(slot);
+                        break;
+                    }
+                }
+            }
+        }
+
+        public void Select(string equipType, EquipmentSlot slot)
+        {
+            GetCursor(equipType).Select(slot);
 
             onSelectCursor.Raise(slot.equipped);
         }
 
+        public void EquipByItemTimeStamp(string itemTimeStamp)
+        {
+            Equip(GetEquipableByitemTimeStamp(itemTimeStamp));
+        }
+
         public void Equip(Equipable equipable)
         {
-            EquipmentSlot selected = GetCursor(equipable.equipType).selected;
+            EquipmentSlot selected = GetCursor(equipable.category).selected;
             Equip(selected, equipable);
+
+            onCursorEquip.Raise(equipable);
         }
 
         public void Equip(EquipmentSlot slot , Equipable equipable)
@@ -148,27 +178,21 @@ namespace AdvancedUnityPlugin
 
             slot.Equip(equipable);
 
-            onEquip.Raise(equipable);
+            onSlotEquip.Raise(equipable);
         }
 
-        public void EquipByItemID(string itemID)
+        public void Unequip(string category)
         {
-            Equip(GetEquipableByitemID(itemID));
-        }
+            Equipable equipped = GetCursor(category).selected.Unequip();
 
-        public void Unequip(string itemType)
-        {
-            Equipable equipped = GetCursor(itemType).selected.Unequip();
-
-            onUnequip.Raise(equipped);
+            onCursorUnequip.Raise(equipped);
         }
 
         public void Unequip(EquipmentSlot slot)
         {
             Equipable equipped = slot.Unequip();
 
-            onUnequip.Raise(equipped);
+            onSlotUnequip.Raise(equipped);
         }
     }
-
 }

@@ -6,12 +6,12 @@ namespace AdvancedUnityPlugin
 {
     public class EquipmentSlot : MonoBehaviour
     {
-        public string equipableType { set; get; }
+        public string equipableCategory { set; get; }
         public Equipable equipped { set; get; }
 
         public void Equip(Equipable equipable)
         {
-            if (equipable.equipType != equipableType)
+            if (equipable.category != equipableCategory)
                 return;
 
             equipped = equipable;
