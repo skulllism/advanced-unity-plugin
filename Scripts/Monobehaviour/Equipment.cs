@@ -25,10 +25,10 @@ namespace AdvancedUnityPlugin
 
         public EquipmentEvent onSlotEquip;
         public EquipmentEvent onSlotUnequip;
-        public EquipmentEvent onCursorEquip;
-        public EquipmentEvent onCursorUnequip;
 
-        public EquipmentEvent onSelectCursor;
+        public EquipmentCursorEvent onCursorEquip;
+        public EquipmentCursorEvent onCursorUnequip;
+        public EquipmentCursorEvent onSelectCursor;
 
         public SlotField[] slotFields;
         private List<Equipable> equipables = new List<Equipable>();
@@ -150,8 +150,8 @@ namespace AdvancedUnityPlugin
         public void Select(string equipType, EquipmentSlot slot)
         {
             GetCursor(equipType).Select(slot);
-
-            onSelectCursor.Raise(slot.equipped);
+            onSelectCursor.Raise(GetCursor(equipType));
+            Debug.Log("Cursor 변경 : " + equipType + " - " + slot);
         }
 
         public void EquipByItemTimeStamp(string itemTimeStamp)
@@ -164,7 +164,7 @@ namespace AdvancedUnityPlugin
             EquipmentSlot selected = GetCursor(equipable.category).selected;
             Equip(selected, equipable);
 
-            onCursorEquip.Raise(equipable);
+            onCursorEquip.Raise(GetCursor(equipable.category));
         }
 
         public void Equip(EquipmentSlot slot , Equipable equipable)
@@ -185,7 +185,7 @@ namespace AdvancedUnityPlugin
         {
             Equipable equipped = GetCursor(category).selected.Unequip();
 
-            onCursorUnequip.Raise(equipped);
+            onCursorUnequip.Raise(GetCursor(category));
         }
 
         public void Unequip(EquipmentSlot slot)
