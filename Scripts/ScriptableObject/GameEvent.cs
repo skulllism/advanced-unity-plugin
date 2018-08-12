@@ -29,19 +29,4 @@ namespace AdvancedUnityPlugin
                 onEventRaised.Invoke(arg);
         }
     }
-
-    public abstract class GetEvent<T> :ScriptableObject
-    {
-        public delegate T GetEventHandler();
-
-        public GetEventHandler onGet;
-
-        public virtual T Get()
-        {
-            if (onGet == null)
-                return default(T);
-
-            return onGet();
-        }
-    }
 }
