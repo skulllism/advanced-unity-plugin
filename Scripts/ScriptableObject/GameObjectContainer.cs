@@ -25,9 +25,9 @@ namespace AdvancedUnityPlugin
                 return CreateOnDemand(origin);
 
             GameObject active = pool.Get();
-            if(!active)
+            if (!active)
                 return CreateOnDemand(origin);
-
+            
             return active;
         }
 
