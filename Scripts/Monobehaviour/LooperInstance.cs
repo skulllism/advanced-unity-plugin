@@ -4,16 +4,12 @@ namespace AdvancedUnityPlugin
 {
     public class LooperInstance : MonoBehaviour
     {
-        private Looper looper;
-
-        public void Init(Looper looper)
-        {
-            this.looper = looper;
-        }
+        public Looper looper;
+        public Worker worker;
 
         private void Awake()
         {
-            DontDestroyOnLoad(gameObject);
+            looper.monoBehaviour = this;
         }
 
         private void FixedUpdate()
