@@ -1,13 +1,15 @@
 ﻿using System.Collections;
 using UnityEngine;
+using AdvancedUnityPlugin;
+using UnityEngine.Events;
 
-namespace AdvancedUnityPlugin
+namespace VaporWorld
 {
-    [CreateAssetMenu(menuName = "AdvancedUnityPlugin/Pooler")]
-    public class Pooler : ScriptableObject
+    public class Pooler : MonoBehaviour
     {
         public GameObjectContainer container;
         public Pool[] datas;
+        public UnityEvent onFinishPooling;
 
         private Pool GetData(string key)
         {
@@ -21,11 +23,8 @@ namespace AdvancedUnityPlugin
             return null;
         }
 
-        public IEnumerator Pooling(string key, System.Action onStart, System.Action onFinish)
+        public IEnumerator Pooling(string key)
         {
-            if (onStart != null)
-                onStart();
-
             yield return null;
 
             Pool data = GetData(key);
@@ -36,8 +35,7 @@ namespace AdvancedUnityPlugin
                 yield return null;
             }
 
-            if(onFinish !=null)
-                onFinish();
+            onFinishPooling.Invoke();
         }
     }
 }
