@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 namespace AdvancedUnityPlugin
 {
     [CreateAssetMenu(menuName = "AdvancedUnityPlugin/SceneController")]
-    public class MultiSceneController : ScriptableObject
+    public class SceneController : ScriptableObject
     {
         public StringGameEvent onUnload;
         public StringGameEvent onSingleLoad;
