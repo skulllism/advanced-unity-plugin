@@ -7,11 +7,6 @@ namespace AdvancedUnityPlugin
         public Looper looper;
         public Worker worker;
 
-        private void Awake()
-        {
-            looper.monoBehaviour = this;
-        }
-
         private void FixedUpdate()
         {
             if (!looper.isLooping)

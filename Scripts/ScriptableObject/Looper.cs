@@ -9,9 +9,25 @@ namespace AdvancedUnityPlugin
         public GameEvent onFixedUpdate;
         public GameEvent onLateUpdate;
 
+        public GameObject origin;
+
         public bool isLooping = true;
 
-        public LooperInstance monoBehaviour { set; get; }
+        public LooperInstance monoBehaviour
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = Instantiate(origin).GetComponent<LooperInstance>();
+                    DontDestroyOnLoad(instance);
+                }
+
+                return instance;
+            }
+        }
+
+        private LooperInstance instance = null;
     }
 }
 
