@@ -58,6 +58,11 @@ namespace AdvancedUnityPlugin
             SceneManager.LoadScene(sceneName);
         }
 
+        public void SetActiveScene(string sceneName)
+        {
+            SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
+        }
+
         public void ActivateAdditiveScene(string sceneName)
         {
             onActivate.Raise(sceneName);
