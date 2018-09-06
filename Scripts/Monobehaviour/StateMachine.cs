@@ -19,6 +19,11 @@ namespace AdvancedUnityPlugin
 
         public State current { private set; get; }
 
+        public bool IsState(string stateName)
+        {
+            return current.name == stateName;
+        }
+
         private void Start()
         {
             TransitionToState(initStateName);
