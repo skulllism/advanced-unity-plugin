@@ -7,15 +7,28 @@ namespace AdvancedUnityPlugin
 {
     public class Worker : MonoBehaviour
     {
-        public UnityEvent onStart;
-        public UnityEvent onFinished;
+        public StringUnityEvent onStart;
+        public StringUnityEvent onFinished;
 
-        public Coroutine StartWork(Queue<IEnumerator> queue)
+        private Dictionary<string, Queue<IEnumerator>> currents = new Dictionary<string, Queue<IEnumerator>>();
+
+        public Coroutine StartWork(string name, Queue<IEnumerator> queue)
         {
-            return StartCoroutine(WorkingRoutine(queue));
+            if(currents.ContainsKey(name))
+            {
+                while(queue.Count > 0)
+                {
+                    currents[name].Enqueue(queue.Dequeue());
+                }
+
+                Debug.Log(" [continue] / " + currents[name].Count);
+                return null;
+            }
+
+            return StartCoroutine(WorkingRoutine(name , queue));
         }
 
-        public Coroutine StartWork(params IEnumerator[] works)
+        public Coroutine StartWork(string name , params IEnumerator[] works)
         {
             Queue<IEnumerator> queue = new Queue<IEnumerator>();
 
@@ -24,13 +37,14 @@ namespace AdvancedUnityPlugin
                 queue.Enqueue(work);
             }
 
-            return StartWork(queue);
+            return StartWork(name , queue);
         }
 
-        private IEnumerator WorkingRoutine(Queue<IEnumerator> queue)
+        private IEnumerator WorkingRoutine(string name , Queue<IEnumerator> queue)
         {
-            //Debug.Log("start");
-            onStart.Invoke();
+            currents.Add(name, queue);
+            onStart.Invoke(name);
+            Debug.Log(name + " [added] / " + currents.Count);
 
             while (queue.Count > 0)
             {
@@ -38,8 +52,9 @@ namespace AdvancedUnityPlugin
                 //Debug.Log("start new work");
             }
 
-            //Debug.Log("finished");
-            onFinished.Invoke();
+            currents.Remove(name);
+            onFinished.Invoke(name);
+            Debug.Log(name + " [removed] / " + currents.Count);
         }
     }
 }
