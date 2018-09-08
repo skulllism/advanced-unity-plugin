@@ -1,9 +1,9 @@
 ﻿using System;
 using UnityEngine;
 
-namespace VaporWorld
+namespace AdvancedUnityPlugin
 {
-    [CreateAssetMenu(menuName = "VaporWorld/Pool")]
+    [CreateAssetMenu(menuName = "AdvancedUnityPlugin/Pool")]
     public class Pool : ScriptableObject
     {
         [Serializable]

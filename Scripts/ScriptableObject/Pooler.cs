@@ -1,41 +1,20 @@
 ﻿using System.Collections;
 using UnityEngine;
-using AdvancedUnityPlugin;
 using UnityEngine.Events;
 
-namespace VaporWorld
+namespace AdvancedUnityPlugin
 {
-    public class Pooler : MonoBehaviour
+    [CreateAssetMenu(menuName = "AdvancedUnityPlugin/Pooler")]
+    public class Pooler : ScriptableObject
     {
         public GameObjectContainer container;
-        public Pool[] datas;
-        public UnityEvent onFinishPooling;
 
-        private Pool GetData(string key)
+        public void Pooling(Pool pool)
         {
-            foreach (var data in datas)
-            {
-                if (data.name == key)
-                    return data;
-            }
-
-            Debug.Log("[Pooler] Not Found Data : " + key);
-            return null;
-        }
-
-        public IEnumerator Pooling(string key)
-        {
-            yield return null;
-
-            Pool data = GetData(key);
-
-            foreach (var poolData in data.datas)
+            foreach (var poolData in pool.datas)
             {
                 container.CreatePool(poolData.origin, poolData.count);
-                yield return null;
             }
-
-            onFinishPooling.Invoke();
         }
     }
 }
