@@ -52,10 +52,12 @@ namespace AdvancedUnityPlugin
             latest = arg0;
         }
 
-        public void SingleLoad(string sceneName)
+        public IEnumerator SingleLoad(string sceneName)
         {
             onSingleLoad.Raise(sceneName);
             SceneManager.LoadScene(sceneName);
+
+            yield return null;
         }
 
         public void SetActiveScene(string sceneName)
