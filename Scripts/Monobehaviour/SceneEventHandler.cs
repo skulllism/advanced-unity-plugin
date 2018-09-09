@@ -13,12 +13,8 @@ namespace AdvancedUnityPlugin
         public UnityEvent onDisable;
         public UnityEvent onDestroy;
 
-        public UnityEvent onActiveSceneChanged;
-
         private void Awake()
         {
-            SceneManager.activeSceneChanged += OnActiveSceneChanged;
-
             onAwake.Invoke();
         }
 
@@ -41,13 +37,6 @@ namespace AdvancedUnityPlugin
         {
             onDestroy.Invoke();
         }
-
-        private void OnActiveSceneChanged(Scene prev, Scene next)
-        {
-            if (next != gameObject.scene)
-                return;
-
-            onActiveSceneChanged.Invoke();
-        }
+       
     }
 }
