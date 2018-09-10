@@ -39,7 +39,7 @@ namespace AdvancedUnityPlugin
             current.OnEnter();
         }
 
-        private void Update()
+        private void FixedUpdate()
         {
             if (!current)
                 return;
