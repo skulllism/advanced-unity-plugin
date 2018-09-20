@@ -3,13 +3,12 @@ using System;
 
 namespace AdvancedUnityPlugin
 {
-    [CreateAssetMenu(menuName = "AdvancedUnityPlugin/DataType/Float")]
+    [CreateAssetMenu(menuName = "AdvancedUnityPlugin/Data/Float")]
     public class FloatVariable : ScriptableObject, ISerializationCallbackReceiver
     {
         public float initialValue;
 
-        [NonSerialized]
-        public float runtimeValue;
+        public float runtimeValue { set; get; }
 
         public void OnAfterDeserialize()
         {

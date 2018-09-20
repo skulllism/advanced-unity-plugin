@@ -1,12 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
 
 namespace AdvancedUnityPlugin
 {
-    [CreateAssetMenu(menuName = "AdvancedUnityPlugin/DataType/Int")]
-    public class IntVariable : ScriptableObject
+    [CreateAssetMenu(menuName = "AdvancedUnityPlugin/Data/Int")]
+    public class IntVariable : ScriptableObject, ISerializationCallbackReceiver
     {
-        public int value;
+        public int initialValue;
+
+        public int runtimeValue { set; get; }
+
+        public void OnAfterDeserialize()
+        {
+            runtimeValue = initialValue;
+        }
+
+        public void OnBeforeSerialize() { }
     }
 }

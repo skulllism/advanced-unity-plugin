@@ -4,10 +4,10 @@ using AdvancedUnityPlugin;
 public class FloatBinder : MonoBehaviour
 {
     public GetFloat callback;
-    public FloatUnityEvent coroutineEvent;
+    public FloatUnityEvent Event;
 
     public void Invoke()
     {
-        coroutineEvent.Invoke(callback.Invoke());
+        Event.Invoke(callback.Invoke());
     }
 }
