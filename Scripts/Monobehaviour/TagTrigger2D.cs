@@ -18,7 +18,7 @@ namespace AdvancedUnityPlugin
 
         public TagEvent[] tagEvents;
 
-        public void OnEnter(Trigger2DEventBroadcaster.Data data)
+        public void OnEnter(Trigger2DEventBroadcaster.TriggerData data)
         {
             for (int i = 0; i < tagEvents.Length; i++)
             {
@@ -27,7 +27,7 @@ namespace AdvancedUnityPlugin
             }
         }
 
-        public void OnStay(Trigger2DEventBroadcaster.Data data)
+        public void OnStay(Trigger2DEventBroadcaster.TriggerData data)
         {
             for (int i = 0; i < tagEvents.Length; i++)
             {
@@ -36,7 +36,7 @@ namespace AdvancedUnityPlugin
             }
         }
 
-        public void OnExit(Trigger2DEventBroadcaster.Data data)
+        public void OnExit(Trigger2DEventBroadcaster.TriggerData data)
         {
             for (int i = 0; i < tagEvents.Length; i++)
             {
@@ -45,7 +45,7 @@ namespace AdvancedUnityPlugin
             }
         }
 
-        private bool IsInTags(Trigger2DEventBroadcaster.Data data, TagEvent tagEvent)
+        private bool IsInTags(Trigger2DEventBroadcaster.TriggerData data, TagEvent tagEvent)
         {
             if (tagEvent.tags.Length != 0)
                 for (int i = 0; i < tagEvent.tags.Length; i++)

@@ -8,14 +8,14 @@ namespace AdvancedUnityPlugin
     public class Trigger2DEventBroadcaster : MonoBehaviour
     {
         [Serializable]
-        public class Trigger2DBroadcastEvent : UnityEvent<Data> { }
+        public class Trigger2DBroadcastEvent : UnityEvent<TriggerData> { }
 
-        public struct Data
+        public struct TriggerData
         {
             public Collider2D self;
             public Collider2D other;
 
-            public Data(Collider2D self, Collider2D other)
+            public TriggerData(Collider2D self, Collider2D other)
             {
                 this.self = self;
                 this.other = other;
@@ -41,17 +41,17 @@ namespace AdvancedUnityPlugin
             return null;
         }
 
-        public void OnEnter(Data data)
+        public void OnEnter(TriggerData data)
         {
             onEnter.Invoke(data);
         }
 
-        public void OnStay(Data data)
+        public void OnStay(TriggerData data)
         {
             onStay.Invoke(data);
         }
 
-        public void OnExit(Data data)
+        public void OnExit(TriggerData data)
         {
             onExit.Invoke(data);
         }

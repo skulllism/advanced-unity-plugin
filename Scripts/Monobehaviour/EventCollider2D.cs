@@ -48,19 +48,19 @@ namespace AdvancedUnityPlugin
         private void OnTriggerEnter2D(Collider2D collision)
         {
             onTriggerEnter.Invoke(collision);
-            onTriggerEnterBroadcast.Invoke(new Trigger2DEventBroadcaster.Data(self, collision));
+            onTriggerEnterBroadcast.Invoke(new Trigger2DEventBroadcaster.TriggerData(self, collision));
         }
 
         private void OnTriggerStay2D(Collider2D collision)
         {
             onTriggerStay.Invoke(collision);
-            onTriggerStayBroadcast.Invoke(new Trigger2DEventBroadcaster.Data(self, collision));
+            onTriggerStayBroadcast.Invoke(new Trigger2DEventBroadcaster.TriggerData(self, collision));
         }
 
         private void OnTriggerExit2D(Collider2D collision)
         {
             onTriggerExit.Invoke(collision);
-            onTriggerExitBroadcast.Invoke(new Trigger2DEventBroadcaster.Data(self, collision));
+            onTriggerExitBroadcast.Invoke(new Trigger2DEventBroadcaster.TriggerData(self, collision));
         }
     }
 }
