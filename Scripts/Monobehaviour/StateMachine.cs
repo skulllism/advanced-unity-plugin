@@ -37,7 +37,7 @@ namespace AdvancedUnityPlugin
             current = GetState(id);
 
             current.OnEnter();
-            Debug.Log(id);
+            //Debug.Log(id);
         }
 
         private void FixedUpdate()
