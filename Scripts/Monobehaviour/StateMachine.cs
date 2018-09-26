@@ -21,7 +21,7 @@ namespace AdvancedUnityPlugin
 
         public bool IsState(string stateName)
         {
-            return current.name == stateName;
+            return current.id == stateName;
         }
 
         private void Start()
