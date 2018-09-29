@@ -4,7 +4,7 @@ using UnityEngine.Events;
 
 namespace AdvancedUnityPlugin
 {
-    public class SceneEventHandler : MonoBehaviour
+    public class GameObjectEventBroadcaster : MonoBehaviour
     {
         public UnityEvent onAwake;
         public UnityEvent onEnable;
