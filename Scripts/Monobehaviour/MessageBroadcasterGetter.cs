@@ -9,7 +9,7 @@ namespace AdvancedUnityPlugin
     public class MessageBroadcasterGetter : MonoBehaviour
     {
         [Serializable]
-        public class GetBroadcastEvent : UnityEvent<DynamicMessageBroadcaster> { }
+        public class GetBroadcastEvent : UnityEvent<DynamicMessageBroadcaster,Trigger2DEventBroadcaster.TriggerData> { }
 
         public GetBroadcastEvent onGet;
 
@@ -20,7 +20,7 @@ namespace AdvancedUnityPlugin
             if (dynamicMessageBroadcaster == null)
                 return;
 
-            onGet.Invoke(dynamicMessageBroadcaster);
+            onGet.Invoke(dynamicMessageBroadcaster,data);
         }
     }
 

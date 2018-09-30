@@ -11,10 +11,10 @@ namespace AdvancedUnityPlugin
         [Serializable]
         public struct StringPair
         {
-            public string key;
+            public StringVariable key;
             public string value;
 
-            public StringPair(string key, string value)
+            public StringPair(StringVariable key, string value)
             {
                 this.key = key;
                 this.value = value;
@@ -24,10 +24,10 @@ namespace AdvancedUnityPlugin
         [Serializable]
         public struct IntPair
         {
-            public string key;
+            public StringVariable key;
             public int value;
 
-            public IntPair(string key, int value)
+            public IntPair(StringVariable key, int value)
             {
                 this.key = key;
                 this.value = value;
@@ -37,10 +37,10 @@ namespace AdvancedUnityPlugin
         [Serializable]
         public struct FloatPair
         {
-            public string key;
+            public StringVariable key;
             public float value;
 
-            public FloatPair(string key, float value)
+            public FloatPair(StringVariable key, float value)
             {
                 this.key = key;
                 this.value = value;
@@ -50,10 +50,10 @@ namespace AdvancedUnityPlugin
         [Serializable]
         public struct BoolPair
         {
-            public string key;
+            public StringVariable key;
             public bool value;
 
-            public BoolPair(string key, bool value)
+            public BoolPair(StringVariable key, bool value)
             {
                 this.key = key;
                 this.value = value;
@@ -63,15 +63,17 @@ namespace AdvancedUnityPlugin
         [Serializable]
         public struct Vector2Pair
         {
-            public string key;
+            public StringVariable key;
             public Vector2 value;
 
-            public Vector2Pair(string key, Vector2 value)
+            public Vector2Pair(StringVariable key, Vector2 value)
             {
                 this.key = key;
                 this.value = value;
             }
         }
+
+        public StringVariable key;
 
         public StringPair[] stringPairs;
         public IntPair[] intPairs;
