@@ -81,8 +81,9 @@ namespace AdvancedUnityPlugin
         public BoolPair[] boolPairs;
         public Vector2Pair[] vector2Pairs;
 
-        public KeyValuePairs(StringPair[] stringPairs = null, IntPair[] intPairs = null, FloatPair[] floatPairs = null, BoolPair[] boolPairs = null, Vector2Pair[] vector2Pairs = null)
+        public KeyValuePairs(StringVariable key,StringPair[] stringPairs = null, IntPair[] intPairs = null, FloatPair[] floatPairs = null, BoolPair[] boolPairs = null, Vector2Pair[] vector2Pairs = null)
         {
+            this.key = key;
             this.stringPairs = stringPairs;
             this.intPairs = intPairs;
             this.floatPairs = floatPairs;
