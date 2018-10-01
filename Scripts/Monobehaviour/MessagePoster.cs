@@ -7,13 +7,12 @@ namespace AdvancedUnityPlugin
 {
     public class MessagePoster : MonoBehaviour
     {
-        public void Send(DynamicMessageBroadcaster dynamicMessageBroadcaster,string[] messages)
+        public void Send(DynamicMessageBroadcaster dynamicMessageBroadcaster,string message)
         {
             if (!dynamicMessageBroadcaster)
                 return;
 
-            for (int i = 0; i < messages.Length; i++)
-                dynamicMessageBroadcaster.Post(messages[i]);
+                dynamicMessageBroadcaster.Post(message);
         }
     }
 }
