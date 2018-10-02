@@ -64,16 +64,24 @@ namespace AdvancedUnityPlugin
                 if (prevLoaded == gameObject.scene.name)
                     continue;
 
-                foreach (var requirement in requirements)
-                {
-                    if (requirement == prevLoaded)
-                        continue;
-                }
+                if (IsRequirement(prevLoaded))
+                    continue;
 
-                unloadRoutines.Enqueue(controller.Unload(looper.monoBehaviour , prevLoaded));
+                unloadRoutines.Enqueue(controller.Unload(looper.monoBehaviour, prevLoaded));
             }
 
             looper.monoBehaviour.worker.StartWork("multi_scene_unload" , unloadRoutines);
+        }
+
+        private bool IsRequirement(string prevLoaded)
+        {
+            foreach (var requirement in requirements)
+            {
+                if (requirement == prevLoaded)
+                    return true;
+            }
+
+            return false;
         }
     }
 }
