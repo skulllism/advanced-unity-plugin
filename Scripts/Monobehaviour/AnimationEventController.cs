@@ -1,11 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+using System;
 
 namespace AdvancedUnityPlugin
 {
     public class AnimationEventController : MonoBehaviour
     {
+        [Serializable]
+        public class AnimationEvent 
+        {
+            public AnimationClip clip;
+            public KeyframeEvent[] keyframeEvents;
+            public TermEvent[] termEvents;
+            public UnityEvent onStart;
+            public UnityEvent onEvent;
+            public UnityEvent onFinish;
+
+            public virtual void OnStart()
+            {
+                onStart.Invoke();
+            }
+
+            public virtual void OnEvent()
+            {
+                onEvent.Invoke();
+            }
+
+            public virtual void OnFinish()
+            {
+                onFinish.Invoke();
+            }
+        }
+
         public bool animationPlaying;
         public Animator animator;
 
@@ -66,20 +93,27 @@ namespace AdvancedUnityPlugin
 
         private void AnimationClipUpdate()
         {
-            AnimatorClipInfo[] info = animator.GetCurrentAnimatorClipInfo(0);
-            if (info.Length <= 0)
-                return;
-            AnimationClip nowClip = info[0].clip;
-            if (currentClip != nowClip)
-                StartAnimationEvent(nowClip);
+            for (int i = 0; i < animator.layerCount; i++)
+            {
+                AnimatorClipInfo[] info = animator.GetCurrentAnimatorClipInfo(i);
+                if (info.Length <= 0)
+                    continue;
+
+                for (int j = 0; j < animator.GetCurrentAnimatorClipInfoCount(i); j++)
+                {
+                    AnimationClip nowClip = info[j].clip;
+                    if (currentClip != nowClip)
+                        StartAnimationEvent(nowClip);
+                }
+            }
         }
 
-        private List<AnimationEvent> GetAnimationEvents(string animationName)
+        private List<AnimationEvent> GetAnimationEvents(AnimationClip clip)
         {
             List<AnimationEvent> list = new List<AnimationEvent>();
             for (int i = 0; i < animationEvents.Length; i++)
             {
-                if (animationEvents[i].animationName == animationName)
+                if (animationEvents[i].clip == clip)
                     list.Add(animationEvents[i]);
             }
 
@@ -92,12 +126,7 @@ namespace AdvancedUnityPlugin
             interval = 1.0f / currentClip.frameRate;
             loopCount = 0;
 
-            foreach (var currentEvent in currentEvents)
-            {
-                currentEvent.OnReset();
-            }
-
-            currentEvents = GetAnimationEvents(currentClip.name);
+            currentEvents = GetAnimationEvents(currentClip);
             SetFrame(0);
 
             //Debug.Log("[INFO] Anim Start : " + newestClip.name);

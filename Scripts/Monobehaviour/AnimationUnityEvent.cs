@@ -3,7 +3,7 @@ using UnityEngine.Events;
 
 namespace AdvancedUnityPlugin
 {
-    public class AnimationUnityEvent : AnimationEvent
+    public class AnimationUnityEvent : AnimationEventOld
     {
         public UnityEvent onStart;
         public UnityEvent onEvent;

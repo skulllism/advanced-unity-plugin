@@ -1,6 +1,7 @@
-﻿using System.Collections;
+﻿using UnityEngine;
+using UnityEngine.Events;
+using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace AdvancedUnityPlugin
 {
@@ -13,46 +14,79 @@ namespace AdvancedUnityPlugin
    * */
     public class StateMachine : MonoBehaviour
     {
-        public string initStateName;
+        public abstract class State
+        {
+            public string ID;
 
-        public State[] states;
+            public abstract bool IsTransition(out string ID);
+
+            public abstract void OnEnter();
+
+            public abstract void OnFixedUpdate();
+
+            public abstract void OnUpdate();
+
+            public abstract void OnLateUpdate();
+
+            public abstract void OnExit();
+        }
+
+        public readonly List<State> states = new List<State>();
 
         public State current { private set; get; }
 
-        public bool IsState(string stateName)
+        public bool IsState(string ID)
         {
-            return current.id == stateName;
+            return current.ID == ID;
         }
 
-        private void Start()
+        public void TransitionToState(string ID)
         {
-            TransitionToState(initStateName);
-        }
-
-        public void TransitionToState(string id)
-        {
-            if (current)
+            if (current != null)
                 current.OnExit();
 
-            current = GetState(id);
+            current = GetState(ID);
 
             current.OnEnter();
             //Debug.Log(id);
         }
 
-        private void FixedUpdate()
+        private void Update()
         {
-            if (!current)
+            if (current == null)
                 return;
+
+            string transition = null;
+            if (current.IsTransition(out transition))
+            {
+                TransitionToState(transition);
+                return;
+            }
 
             current.OnUpdate();
         }
 
-        private State GetState(string id)
+        private void LateUpdate()
         {
-            for (int i = 0; i < states.Length; i++)
+            if (current == null)
+                return;
+
+            current.OnLateUpdate();
+        }
+
+        private void FixedUpdate()
+        {
+            if (current == null)
+                return;
+
+            current.OnFixedUpdate();
+        }
+
+        private State GetState(string ID)
+        {
+            for (int i = 0; i < states.Count; i++)
             {
-                if (states[i].id == id)
+                if (states[i].ID == ID)
                     return states[i];
             }
 

@@ -2,7 +2,7 @@
 
 namespace AdvancedUnityPlugin
 {
-    public class UnityEventState : State
+    public class UnityEventState : StateOld
     {
         public UnityEvent onEnter;
         public UnityEvent onExit;

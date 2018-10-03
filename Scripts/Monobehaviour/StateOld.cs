@@ -2,7 +2,7 @@
 
 namespace AdvancedUnityPlugin
 {
-    public abstract class State : MonoBehaviour
+    public abstract class StateOld : MonoBehaviour
     {
         public string id;
 
