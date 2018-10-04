@@ -48,6 +48,11 @@ namespace AdvancedUnityPlugin
         private float interval;
         private int loopCount;
 
+        public void AnimationEventStart(string key)
+        {
+
+        }
+
         private void Update()
         {
             if (!animator)
