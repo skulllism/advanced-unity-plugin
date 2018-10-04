@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace AdvancedUnityPlugin
 {
-    public class AnimationEvent : MonoBehaviour
+    public class AnimationEventOld : MonoBehaviour
     {
         public string animationName;
         public KeyframeEvent[] keyframeEvents;
