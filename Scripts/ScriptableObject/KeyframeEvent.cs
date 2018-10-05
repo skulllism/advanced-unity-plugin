@@ -5,11 +5,17 @@ using UnityEngine.Events;
 
 namespace AdvancedUnityPlugin
 {
-    public abstract class KeyframeEvent : MonoBehaviour
+    [Serializable]
+    public class KeyframeEvent 
     {
+        public string ID;
         [Header("Event Keyframe")]
         public int eventKeyframe;
+        public UnityEvent onKeyframeEvent;
 
-        public abstract void OnKeyframeEvent();
+        public void OnKeyframeEvent()
+        {
+            onKeyframeEvent.Invoke();
+        }
     }
 }

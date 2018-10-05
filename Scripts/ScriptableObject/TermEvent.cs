@@ -5,15 +5,31 @@ using UnityEngine.Events;
 
 namespace AdvancedUnityPlugin
 {
-    public abstract class TermEvent : MonoBehaviour
+    [Serializable]
+    public class TermEvent
     {
+        public string ID;
         [Header("Start Keyframe")]
         public float startFrame;
         [Header("End Keyframe")]
         public float endFrame;
 
-        public abstract void OnTermStart();
-        public abstract void OnTermEvent();
-        public abstract void OnTermEnd();
+        [Header("Event")]
+        public UnityEvent onTermStart;
+        public UnityEvent onTermEvent;
+        public UnityEvent onTermEnd;
+
+        public void OnTermStart()
+        {
+            onTermStart.Invoke();
+        }
+        public void OnTermEvent()
+        {
+            onTermEvent.Invoke();
+        }
+        public void OnTermEnd()
+        {
+            onTermEnd.Invoke();
+        }
     }
 }

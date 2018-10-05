@@ -10,12 +10,14 @@ namespace AdvancedUnityPlugin
         [Serializable]
         public class AnimationEvent 
         {
+            public string ID;
             public AnimationClip clip;
-            public KeyframeEvent[] keyframeEvents;
-            public TermEvent[] termEvents;
             public UnityEvent onStart;
             public UnityEvent onEvent;
             public UnityEvent onFinish;
+            public KeyframeEvent[] keyframeEvents;
+            public TermEvent[] termEvents;
+    
 
             public virtual void OnStart()
             {
@@ -111,6 +113,18 @@ namespace AdvancedUnityPlugin
                         StartAnimationEvent(nowClip);
                 }
             }
+        }
+
+        private List<AnimationEvent> GetAnimationEvents(string ID)
+        {
+            List<AnimationEvent> list = new List<AnimationEvent>();
+            for (int i = 0; i < animationEvents.Length; i++)
+            {
+                if (animationEvents[i].ID == ID)
+                    list.Add(animationEvents[i]);
+            }
+
+            return list;
         }
 
         private List<AnimationEvent> GetAnimationEvents(AnimationClip clip)
