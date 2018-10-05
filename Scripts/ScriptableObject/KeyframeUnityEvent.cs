@@ -9,9 +9,9 @@ namespace AdvancedUnityPlugin
     {
         public UnityEvent onKeyframeUnityEvent;
 
-        public override void OnKeyframeEvent()
-        {
-            onKeyframeUnityEvent.Invoke();
-        }
+        //public override void OnKeyframeEvent()
+        //{
+        //    onKeyframeUnityEvent.Invoke();
+        //}
     }
 }
