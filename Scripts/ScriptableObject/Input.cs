@@ -72,6 +72,21 @@ namespace AdvancedUnityPlugin
             }
         }
 
+        public bool GetKey(Key key)
+        {
+            return keyPressed[key.name];
+        }
+
+        public bool GetKeyDown(Key key)
+        {
+            return dicKeys[key.name].GetKeyDown();
+        }
+
+        public bool GetKeyUp(Key key)
+        {
+            return dicKeys[key.name].GetKeyUp();
+        }
+
         public bool GetKey(string keyName)
         {
             return keyPressed[keyName];

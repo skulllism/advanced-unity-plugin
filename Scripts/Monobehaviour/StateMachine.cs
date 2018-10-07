@@ -40,7 +40,7 @@ namespace AdvancedUnityPlugin
             return current.ID == ID;
         }
 
-        public void TransitionToState(string ID)
+        protected void TransitionToState(string ID)
         {
             if (current != null)
                 current.OnExit();
@@ -48,7 +48,6 @@ namespace AdvancedUnityPlugin
             current = GetState(ID);
 
             current.OnEnter();
-            //Debug.Log(id);
         }
 
         private void Update()
@@ -90,6 +89,7 @@ namespace AdvancedUnityPlugin
                     return states[i];
             }
 
+            Debug.Log("Not found ID : " + ID);
             return null;
         }
     }

@@ -6,6 +6,6 @@ public class SampleChanger : MonoBehaviour
     public StateMachine sm;
 	// Use this for initialization
 	void Start () {
-        sm.TransitionToState("1");
+        //sm.TransitionToState("1");
     }
 }
