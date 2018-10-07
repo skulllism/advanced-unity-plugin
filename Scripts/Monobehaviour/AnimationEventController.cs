@@ -8,215 +8,102 @@ namespace AdvancedUnityPlugin
     public class AnimationEventController : MonoBehaviour
     {
         [Serializable]
-        public class AnimationEvent 
+        public class AdvancedAnimationEvent
         {
             public string ID;
             public AnimationClip clip;
-            public UnityEvent onStart;
-            public UnityEvent onEvent;
-            public UnityEvent onFinish;
-            public KeyframeEvent[] keyframeEvents;
-            public TermEvent[] termEvents;
-    
+            public UnityEvent onStartFrame;
+            public UnityEvent onLastFrame;
+            public UnityKeyframeEvent[] keyframeEvents;
+        }
 
-            public virtual void OnStart()
+        [Serializable]
+        public class UnityKeyframeEvent : KeyframeEvent
+        {
+            public UnityEvent onKeyframe;
+
+            public UnityKeyframeEvent(string ID, int eventKeyframe, UnityEvent onKeyframe) : base(ID, eventKeyframe)
             {
-                onStart.Invoke();
+                this.onKeyframe = onKeyframe;
             }
 
-            public virtual void OnEvent()
+            public override void OnKeyframeEvent()
             {
-                onEvent.Invoke();
-            }
-
-            public virtual void OnFinish()
-            {
-                onFinish.Invoke();
+                onKeyframe.Invoke();
             }
         }
 
-        public bool animationPlaying;
         public Animator animator;
 
         [Header("Events")]
-        public AnimationEvent[] animationEvents;
+        public AdvancedAnimationEvent[] animationEvents;
 
-        private AnimationClip currentClip;
+        private List<KeyframeEvent> keyframeEvents = new List<KeyframeEvent>();
 
-        private int currentFrame = 0;
-
-        private List<AnimationEvent> currentEvents = new List<AnimationEvent>();
-
-        private float interval;
-        private int loopCount;
-
-        public void AnimationEventStart(string key)
+        private void Awake()
         {
-
-        }
-
-        private void Update()
-        {
-            if (!animator)
-                return;
-
-            AnimationClipUpdate();
-
-            if (!animationPlaying)
-                return;
-
-            for (int i = 0; i < currentEvents.Count; i++)
+            foreach (var animationEvent in animationEvents)
             {
-                currentEvents[i].OnEvent();
-            }
-
-            TermEventHandle(currentFrame);
-
-            FrameUpdate();
-        }
-
-        private void TermEventHandle(int currentFrame)
-        {
-            for (int i = 0; i < currentEvents.Count; i++)
-            {
-                for (int j = 0; j < currentEvents[i].termEvents.Length; j++)
-                {
-                    if (currentEvents[i].termEvents[j].startFrame >= currentFrame
-                        && currentEvents[i].termEvents[j].endFrame <= currentFrame)
-                    {
-                        currentEvents[i].termEvents[j].OnTermEvent();
-                    }
-                }
+                SetAnimationEvent(animationEvent);
             }
         }
 
-        private void KeyframeEventHandle(KeyframeEvent keyframeEvent , int currentFrame)
+        private void SetAnimationEvent(AdvancedAnimationEvent advancedAnimationEvent)
         {
-            if (keyframeEvent.eventKeyframe == currentFrame)
+            float interval = 1.0f / advancedAnimationEvent.clip.frameRate;
+            AddKeyframeEvent(advancedAnimationEvent.clip, new UnityKeyframeEvent(advancedAnimationEvent.ID + "_onStart", 0, advancedAnimationEvent.onStartFrame));
+            AddKeyframeEvent(advancedAnimationEvent.clip,new UnityKeyframeEvent(advancedAnimationEvent.ID + "_onLast", (int)(advancedAnimationEvent.clip.length / interval), advancedAnimationEvent.onLastFrame));
+
+            foreach (var keyframeEvent in advancedAnimationEvent.keyframeEvents)
             {
-                keyframeEvent.OnKeyframeEvent();
+                AddKeyframeEvent(advancedAnimationEvent.clip, keyframeEvent);
             }
         }
 
-        private void AnimationClipUpdate()
+        private void AddKeyframeEvent(AnimationClip clip, KeyframeEvent keyframeEvent)
         {
-            for (int i = 0; i < animator.layerCount; i++)
-            {
-                AnimatorClipInfo[] info = animator.GetCurrentAnimatorClipInfo(i);
-                if (info.Length <= 0)
-                    continue;
+            AnimationClip runtimeClip = GetUnityAnimationEvent(clip);
 
-                for (int j = 0; j < animator.GetCurrentAnimatorClipInfoCount(i); j++)
-                {
-                    AnimationClip nowClip = info[j].clip;
-                    if (currentClip != nowClip)
-                        StartAnimationEvent(nowClip);
-                }
-            }
+            float interval = 1.0f / runtimeClip.frameRate;
+
+            AnimationEvent newEvent = new AnimationEvent();
+            newEvent.functionName = "StartAnimationKeyframeEvent";
+            newEvent.stringParameter = keyframeEvent.ID;
+            newEvent.time = keyframeEvent.eventKeyframe * interval;
+
+            runtimeClip.AddEvent(newEvent);
+
+            keyframeEvents.Add(keyframeEvent);
         }
 
-        private List<AnimationEvent> GetAnimationEvents(string ID)
+        private AnimationClip GetUnityAnimationEvent(AnimationClip clip)
         {
-            List<AnimationEvent> list = new List<AnimationEvent>();
-            for (int i = 0; i < animationEvents.Length; i++)
+            foreach (var animationClip in animator.runtimeAnimatorController.animationClips)
             {
-                if (animationEvents[i].ID == ID)
-                    list.Add(animationEvents[i]);
+                if (animationClip == clip)
+                    return animationClip;
             }
 
-            return list;
+            return null;
         }
 
-        private List<AnimationEvent> GetAnimationEvents(AnimationClip clip)
+        private KeyframeEvent GetKeyframeEvent(string ID)
         {
-            List<AnimationEvent> list = new List<AnimationEvent>();
-            for (int i = 0; i < animationEvents.Length; i++)
+            for (int i = 0; i < keyframeEvents.Count; i++)
             {
-                if (animationEvents[i].clip == clip)
-                    list.Add(animationEvents[i]);
+                if (keyframeEvents[i].ID == ID)
+                    return keyframeEvents[i];
             }
 
-            return list;
+            return null;
         }
 
-        private void StartAnimationEvent(AnimationClip newestClip)
+        public void StartAnimationKeyframeEvent(string ID)
         {
-            currentClip = newestClip;
-            interval = 1.0f / currentClip.frameRate;
-            loopCount = 0;
+            KeyframeEvent keyframeEvent = GetKeyframeEvent(ID);
+            Debug.Assert(keyframeEvent != null);
 
-            currentEvents = GetAnimationEvents(currentClip);
-            SetFrame(0);
-
-            //Debug.Log("[INFO] Anim Start : " + newestClip.name);
-            animationPlaying = true;
-        }
-
-        private void FrameUpdate()
-        {
-            int rawFrame = (int)(animator.GetCurrentAnimatorStateInfo(0).normalizedTime * (currentClip.length / interval));
-            int frame = rawFrame;
-
-            if (currentClip.isLooping)
-                frame -= (loopCount * (int)(currentClip.length / interval));
-
-            if (currentFrame != frame)
-            {
-                SetFrame(frame);
-            }
-        }
-
-        private void SetFrame(int frame)
-        {
-            //Debug.Log(frame + " / " + (int)(currentClip.length / interval));
-            if (frame >= (int)(currentClip.length / interval))
-            {
-                for (int i = 0; i < currentEvents.Count; i++)
-                {
-                    currentEvents[i].OnFinish();
-                }
-
-                if (currentClip.isLooping)
-                {
-                    currentFrame = 0;
-                    loopCount++;
-                    return;
-                }
-
-                animationPlaying = false;
-                return;
-            }
-
-            currentFrame = frame;
-
-            if(currentFrame == 0)
-            {
-                for (int i = 0; i < currentEvents.Count; i++)
-                {
-                    currentEvents[i].OnStart();
-                }
-            }
-        
-
-            for (int i = 0; i < currentEvents.Count; i++)
-            {
-                for (int j = 0; j < currentEvents[i].keyframeEvents.Length; j++)
-                {
-                    KeyframeEventHandle(currentEvents[i].keyframeEvents[j] , currentFrame);
-                }
-            }
-
-            for (int i = 0; i < currentEvents.Count; i++)
-            {
-                for (int j = 0; j < currentEvents[i].termEvents.Length; j++)
-                {
-                    if (currentFrame == currentEvents[i].termEvents[j].startFrame)
-                        currentEvents[i].termEvents[j].OnTermStart();
-
-                    if (currentFrame == currentEvents[i].termEvents[j].endFrame)
-                        currentEvents[i].termEvents[j].OnTermEnd();
-                }
-            }
+            keyframeEvent.OnKeyframeEvent();
         }
     }
 }
