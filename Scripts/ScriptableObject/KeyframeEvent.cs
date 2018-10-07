@@ -5,17 +5,19 @@ using UnityEngine.Events;
 
 namespace AdvancedUnityPlugin
 {
-    [Serializable]
-    public class KeyframeEvent 
+    public abstract class KeyframeEvent 
     {
         public string ID;
+
         [Header("Event Keyframe")]
         public int eventKeyframe;
-        public UnityEvent onKeyframeEvent;
 
-        public void OnKeyframeEvent()
+        public KeyframeEvent(string ID, int eventKeyframe)
         {
-            onKeyframeEvent.Invoke();
+            this.ID = ID;
+            this.eventKeyframe = eventKeyframe;
         }
+
+        public abstract void OnKeyframeEvent();
     }
 }
