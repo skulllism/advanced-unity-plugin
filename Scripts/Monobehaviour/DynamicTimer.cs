@@ -16,6 +16,14 @@ namespace AdvancedUnityPlugin
             timers.Add(id, 0.0f);
         }
 
+        public float Peek(string id)
+        {
+            if (!timers.ContainsKey(id))
+                return -1f;
+
+            return timers[id];
+        }
+
         public float Get(string id)
         {
             if (!timers.ContainsKey(id))
