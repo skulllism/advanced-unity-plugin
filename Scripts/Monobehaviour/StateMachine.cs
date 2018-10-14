@@ -47,6 +47,8 @@ namespace AdvancedUnityPlugin
 
             current = GetState(ID);
 
+            Debug.Assert(current != null, ID);
+            Debug.Log(current.ID);
             current.OnEnter();
         }
 

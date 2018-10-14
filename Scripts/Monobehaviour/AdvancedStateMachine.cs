@@ -56,7 +56,8 @@ namespace AdvancedUnityPlugin
                 {
                     AdvancedTransition transition = advancedStateMachine.GetTransition(transitions[i]);
 
-                    Debug.Assert(transition != null);
+                    Debug.Assert(transition != null , transitions[i].runtimeValue);
+
                     if (transition.IsTransition())
                     {
                         ID = transition.stateID.runtimeValue;

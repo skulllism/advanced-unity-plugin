@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 using System;
+using System.Collections;
 
 namespace AdvancedUnityPlugin
 {
@@ -27,6 +28,11 @@ namespace AdvancedUnityPlugin
                 this.onKeyframe = onKeyframe;
             }
 
+            public override bool HasEvent()
+            {
+                return onKeyframe.GetPersistentEventCount() > 0;
+            }
+
             public override void OnKeyframeEvent()
             {
                 onKeyframe.Invoke();
@@ -39,6 +45,39 @@ namespace AdvancedUnityPlugin
         public AdvancedAnimationEvent[] animationEvents;
 
         private List<KeyframeEvent> keyframeEvents = new List<KeyframeEvent>();
+
+        public bool IsPlaying(AnimationClip clip , int layer)
+        {
+            foreach (var clipInfo in animator.GetCurrentAnimatorClipInfo(layer))
+            {
+                if (clipInfo.clip == clip)
+                    return true;
+            }
+
+            return false;
+        }
+
+        public bool IsPlaying(StringVariable clipName, int layer)
+        {
+            foreach (var clipInfo in animator.GetCurrentAnimatorClipInfo(layer))
+            {
+                if (clipInfo.clip.name == clipName.runtimeValue)
+                    return true;
+            }
+
+            return false;
+        }
+
+        public bool IsPlaying(string clipName, int layer)
+        {
+            foreach (var clipInfo in animator.GetCurrentAnimatorClipInfo(layer))
+            {
+                if (clipInfo.clip.name == clipName)
+                    return true;
+            }
+
+            return false;
+        }
 
         private void Awake()
         {
@@ -103,7 +142,15 @@ namespace AdvancedUnityPlugin
             KeyframeEvent keyframeEvent = GetKeyframeEvent(ID);
             Debug.Assert(keyframeEvent != null);
 
-            keyframeEvent.OnKeyframeEvent();
+            if (keyframeEvent.HasEvent())
+                StartCoroutine(StartAnimationKeyframeEvent(keyframeEvent));
+        }
+
+        private IEnumerator StartAnimationKeyframeEvent(KeyframeEvent Event)
+        {
+            yield return new WaitForEndOfFrame();
+
+            Event.OnKeyframeEvent();
         }
     }
 }

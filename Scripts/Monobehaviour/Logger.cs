@@ -8,4 +8,9 @@ public class Logger : MonoBehaviour
     {
         Debug.Log(log);
     }
+
+    public void Break()
+    {
+        Debug.Break();
+    }
 }

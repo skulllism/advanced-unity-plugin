@@ -18,6 +18,8 @@ namespace AdvancedUnityPlugin
             this.eventKeyframe = eventKeyframe;
         }
 
+        public abstract bool HasEvent();
+
         public abstract void OnKeyframeEvent();
     }
 }
