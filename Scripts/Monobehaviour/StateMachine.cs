@@ -40,7 +40,7 @@ namespace AdvancedUnityPlugin
             return current.ID == ID;
         }
 
-        protected void TransitionToState(string ID)
+        public void TransitionToState(string ID)
         {
             if (current != null)
                 current.OnExit();

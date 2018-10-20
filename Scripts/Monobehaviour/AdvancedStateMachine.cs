@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -18,12 +19,12 @@ namespace AdvancedUnityPlugin
         {
             public string ID;
 
-            public StringVariable stateID;
-            public AdvancedDecision[] decisions;
+            public AdvancedState state;
+            public List<AdvancedDecision> decisions = new List<AdvancedDecision>();
 
             public virtual bool IsTransition()
             {
-                for (int i = 0; i < decisions.Length; i++)
+                for (int i = 0; i < decisions.Count; i++)
                 {
                     if (decisions[i].condition.Invoke() != decisions[i].isTrue)
                         return false;
@@ -35,8 +36,8 @@ namespace AdvancedUnityPlugin
         [Serializable]
         public class AdvancedState : State
         {
-            public StringVariable[] transitions;
-
+            public List<AdvancedTransition> transitions = new List<AdvancedTransition>();
+     
             public UnityEvent onEnter;
             public UnityEvent onUpdate;
             public UnityEvent onFixedUpdate;
@@ -52,14 +53,14 @@ namespace AdvancedUnityPlugin
 
             public override bool IsTransition(out string ID)
             {
-                for (int i = 0; i < transitions.Length; i++)
+                for (int i = 0; i < transitions.Count; i++)
                 {
-                    AdvancedTransition transition = advancedStateMachine.GetTransition(transitions[i]);
+                    AdvancedTransition transition = advancedStateMachine.GetTransition(transitions[i].ID);
 
                     Debug.Assert(transition != null);
                     if (transition.IsTransition())
                     {
-                        ID = transition.stateID.runtimeValue;
+                        ID = transition.state.ID;
                         return true;
                     }
                 }
@@ -94,9 +95,9 @@ namespace AdvancedUnityPlugin
             }
         }
 
-        public StringVariable initialStateID;
-        public AdvancedState[] advancedStates;
-        public AdvancedTransition[] advancedTransitions;
+        public string initialStateID;
+        public List<AdvancedState> advancedStates = new List<AdvancedState>();
+        public List<AdvancedTransition> advancedTransitions = new List<AdvancedTransition>();
 
         private void Awake()
         {
@@ -122,11 +123,11 @@ namespace AdvancedUnityPlugin
             TransitionToState(ID.runtimeValue);
         }
 
-        public AdvancedTransition GetTransition(StringVariable ID)
+        public AdvancedTransition GetTransition(string ID)
         {
             foreach (var transition in advancedTransitions)
             {
-                if (transition.ID == ID.runtimeValue)
+                if (transition.ID == ID)
                     return transition;
             }
 
