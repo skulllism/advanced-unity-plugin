@@ -49,7 +49,11 @@ namespace AdvancedUnityPlugin.Editor
             transitionProperty = data;
             transition = node.myData.transition;
 
-            popupIndex = FindTransitionIndex();
+            popupList = AdvancedStateMachineEditorWindow.Instance.stateNames;
+          //  AllocatePopupList();
+
+            if(popupIndex == 0)
+                popupIndex = FindTransitionIndex();
         }
 
         private int FindTransitionIndex()
@@ -72,15 +76,13 @@ namespace AdvancedUnityPlugin.Editor
         {
             if (transitionProperty == null)
                 return;
-
-            transitionProperty.serializedObject.Update();
-
+            
             GUILayout.BeginVertical("box");
             {
                 GUILayout.BeginHorizontal();
                 {
                     GUILayout.Label("Transition ID : ");
-                    node.myData.transition.ID = GUILayout.TextField(transitionProperty.FindPropertyRelative("ID").stringValue);
+                    node.myData.transition.ID = GUILayout.TextField(node.myData.transition.ID);
                     node.title = node.myData.transition.ID;
 
                     AdvancedStateMachineEditorWindow.Instance.InitializePropertyData();
@@ -95,8 +97,6 @@ namespace AdvancedUnityPlugin.Editor
                 GUILayout.EndHorizontal();
             }
             GUILayout.EndVertical();                
-
-            transitionProperty.serializedObject.ApplyModifiedProperties();
         }
 
         private bool AllocatePopupList()
@@ -128,12 +128,9 @@ namespace AdvancedUnityPlugin.Editor
         }
 
         private int popupIndex = 0;
-        private string[] popupList;
+        private string[] popupList = new string[50];
         private void DrawTransitionList()
         {
-            if (!AllocatePopupList())
-                return;
-            
             EditorGUI.BeginChangeCheck();
             {
                 popupIndex = EditorGUILayout.Popup(popupIndex, popupList);    

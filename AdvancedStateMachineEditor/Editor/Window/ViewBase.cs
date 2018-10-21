@@ -49,11 +49,11 @@ namespace AdvancedUnityPlugin.Editor
 
         public virtual void GUIView(Event e)
         {
-            if (viewSkin == null)
-            {
-                GetEditorSkin();
-                return;
-            }
+            //if (viewSkin == null)
+            //{
+            //    GetEditorSkin();
+            //    return;
+            //}
         }
 
         public virtual void ProcessEvents(Event e) 
