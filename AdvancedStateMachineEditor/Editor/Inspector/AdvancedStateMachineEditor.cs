@@ -11,7 +11,8 @@ namespace AdvancedUnityPlugin.Editor
         enum MainToolbar { STATE, TRANSITION }
 
         private AdvancedStateMachine origin;
-
+        private SerializedObject serializedObject;
+        private SerializedProperty initState;
         //======================
         //## Editor Data
         //======================
@@ -23,17 +24,28 @@ namespace AdvancedUnityPlugin.Editor
         private int stateTapIndex;
         private string[] stateTapNames = { "Information" };
 
-        private int selectInitalState;
+        private int selectInitalState = 0;
 
 
         public void OnEnable()
         {
             origin = (AdvancedStateMachine)target;
+            serializedObject = new SerializedObject(origin);
+            initState = serializedObject.FindProperty("initialStateID");
+
+            selectInitalState = FindStateIndex();
         }
 
-        private void RefreshData()
+        private int FindStateIndex()
         {
-
+            for (int i = 0; i < origin.advancedStates.Count; i++)
+            {
+                if(origin.initialStateID == origin.advancedStates[i].ID)
+                {
+                    return i;
+                }
+            }
+            return 0;
         }
 
         public override void OnInspectorGUI()
@@ -72,8 +84,7 @@ namespace AdvancedUnityPlugin.Editor
             Space(10.0f);
 #endregion
 
-
-            //base.OnInspectorGUI();
+            base.OnInspectorGUI();
         }
 
         private void DrawStatePanel()
@@ -118,7 +129,7 @@ namespace AdvancedUnityPlugin.Editor
             {
                 GUILayout.Label("Inital State : ");
 
-                if(currentStates.Length - 1 <= origin.advancedStates.Count)
+                if (currentStates.Length - 1 <= origin.advancedStates.Count)
                 {
                     currentStates = new string[origin.advancedStates.Count];
                 }
@@ -137,19 +148,23 @@ namespace AdvancedUnityPlugin.Editor
                 {
                     selectInitalState = EditorGUILayout.Popup(selectInitalState, currentStates);
                 }
-                if(EditorGUI.EndChangeCheck())
+                if (EditorGUI.EndChangeCheck())
                 {
-                      
-                }
 
+                }
                 if (selectInitalState >= origin.advancedStates.Count)
                 {
                     selectInitalState = 0;
-                    if(origin.advancedStates.Count <= 0)
-                        origin.initialStateID = string.Empty;
+                    if (origin.advancedStates.Count <= 0)
+                    {
+                        initState.stringValue = origin.initialStateID = string.Empty;
+                    }
                 }
                 else
-                    origin.initialStateID = currentStates[selectInitalState];    
+                {
+                    //EditorGUILayout.PropertyField(initState, new GUIContent("ID"));
+                    initState.stringValue = origin.initialStateID = currentStates[selectInitalState];
+                }
             }
             GUILayout.EndHorizontal();
         }
