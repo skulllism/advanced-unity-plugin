@@ -13,6 +13,7 @@ namespace AdvancedUnityPlugin.Editor
         private float   zoomScale = 1.0f;
         private Vector2 zoomCoordsOrigin = Vector2.zero;
         private Vector2 originMousePos = Vector2.zero;
+        private Vector2 zoomMousePos = Vector2.zero;
 
         private bool isConnectionStart;
         private Connection tempConnect;
@@ -42,6 +43,86 @@ namespace AdvancedUnityPlugin.Editor
             }
         }
 
+        public override void ProcessEvents(Event e)
+        {
+            ProcessContextMenu(e);
+            originMousePos = e.mousePosition;
+
+            EditorZoomArea.Begin(zoomScale, viewRect);
+            {
+                zoomMousePos = e.mousePosition;
+
+                base.ProcessEvents(e);
+                if(e.type == EventType.MouseDown || e.type == EventType.MouseUp || e.type == EventType.MouseDrag)
+                    ProcessNodeEvents(e);
+
+                switch (e.type)
+                {
+                    case EventType.MouseDown:
+                        {
+                            if (e.button == 0)
+                            {
+                                if (isConnectionStart)
+                                    ClearConnectionSelection();
+                            }
+
+                            if (e.button == 0 && e.alt)
+                            {
+                                isDragStart = true;
+
+                                if (isConnectionStart)
+                                    ClearConnectionSelection();
+                            }
+                            else if (e.button == 1 && !e.alt)
+                            {
+                                if (isConnectionStart)
+                                    ClearConnectionSelection();
+                            }
+
+                            GUI.changed = true;
+                        }
+                        break;
+                    case EventType.MouseUp:
+                        {
+                            isDragStart = false;
+                            drag = Vector2.zero;
+                            GUI.changed = true;
+                        }
+                        break;
+                    case EventType.MouseDrag:
+                        float lim = 0.1f;
+                        if (isDragStart && e.button == 0 && e.alt)
+                        {
+                            Vector2 delta = Event.current.delta;
+                            delta /= zoomScale;
+                            zoomCoordsOrigin -= delta;
+
+                            drag = delta;
+
+                            GUI.changed = true;
+                        }
+                        break;
+                    case EventType.ScrollWheel:
+                        {
+                            Vector2 screenCoordsMousePos = Event.current.mousePosition;
+                            Vector2 delta = Event.current.delta;
+                            Vector2 zoomCoordsMousePos = ConvertScreenCoordsToZoomCoords(screenCoordsMousePos);
+                            float zoomDelta = -delta.y / 150.0f;
+                            float oldZoom = zoomScale;
+                            zoomScale += zoomDelta;
+                            zoomScale = Mathf.Clamp(zoomScale, minZoomScale, maxZoomScale);
+                            zoomCoordsOrigin += (zoomCoordsMousePos - zoomCoordsOrigin) - (oldZoom / zoomScale) * (zoomCoordsMousePos - zoomCoordsOrigin);
+
+                            Event.current.Use();
+                            GUI.changed = true;
+                        }
+                        break;
+
+                }
+            }
+            EditorZoomArea.End();
+        }
+
         public override void UpdateView(Rect editorRect, Rect percentageRect)
         {
             base.UpdateView(editorRect, percentageRect);
@@ -50,25 +131,20 @@ namespace AdvancedUnityPlugin.Editor
         public override void GUIView(Event e)
         {
             base.GUIView(e);
-            originMousePos = e.mousePosition;
-
-            ProcessContextMenu(e);
-
+                          
             EditorZoomArea.Begin(zoomScale, viewRect);
             {    
-                ProcessEvents(e);
+                //DrawGrid(20.0f , 0.5f, Color.gray);
+                //DrawGrid(100.0f , 0.2f, Color.black);
 
-                DrawGrid(20.0f , 0.5f, Color.gray);
-                DrawGrid(100.0f , 0.2f, Color.black);
-     
+                if (tempConnect != null)
+                {
+                    tempConnect.DrawByMouse(zoomCoordsOrigin, AdvancedStateMachineEditorWindow.Instance.selectNode.rect.center, zoomMousePos);
+                    GUI.changed = true;
+                }
+
                 if (AdvancedStateMachineEditorWindow.EditorNodes != null)
                 {
-                    if (tempConnect != null)
-                    {
-                        tempConnect.DrawByMouse(zoomCoordsOrigin,  AdvancedStateMachineEditorWindow.Instance.selectNode.rect.center, e.mousePosition);
-                        GUI.changed = true;
-                    }
-
                     for (int i = 0; i < AdvancedStateMachineEditorWindow.EditorNodes.Count; i++)
                     {
                         if(AdvancedStateMachineEditorWindow.EditorNodes[i].myData.type == AdvancedStateMachineEditorWindow.NodeType.STATE)
@@ -78,10 +154,8 @@ namespace AdvancedUnityPlugin.Editor
                     }
 
                     for (int i = 0; i < AdvancedStateMachineEditorWindow.EditorNodes.Count  ; i++)
-                    {
-       
+                    {    
                         AdvancedStateMachineEditorWindow.EditorNodes[i].Draw(zoomCoordsOrigin);
-                        
 
                         if (AdvancedStateMachineEditorWindow.EditorNodes[i].myData.type == AdvancedStateMachineEditorWindow.NodeType.TRANSITION)
                         {
@@ -96,79 +170,6 @@ namespace AdvancedUnityPlugin.Editor
                 }
             }
             EditorZoomArea.End();
-        }
-
-        public override void ProcessEvents(Event e)
-        {
-            base.ProcessEvents(e);
-            ProcessNodeEvents(e);
-
-            switch (e.type)
-            {
-                case EventType.MouseDown:
-                    {
-                        if(e.button == 0)
-                        {
-                            if (isConnectionStart)
-                                ClearConnectionSelection();
-                        }
-
-                        if (e.button == 0 && e.alt)
-                        {
-                            isDragStart = true;
-
-                            if (isConnectionStart)
-                                ClearConnectionSelection();
-                        }
-                        else if (e.button == 1 && !e.alt )
-                        {
-                            if (isConnectionStart)
-                                ClearConnectionSelection();
-                        }
-
-                        GUI.changed = true;
-                    }
-                    break;
-                case EventType.MouseUp :
-                    {
-                        isDragStart = false;
-                        drag = Vector2.zero;
-                        GUI.changed = true;
-                    }
-                    break;
-                case EventType.MouseDrag:
-                    float lim = 0.8f;
-                    if (isDragStart && e.button == 0 && e.alt)
-                    {
-                        if (e.delta.x > lim || e.delta.x < -lim ||
-                            e.delta.y > lim || e.delta.y < -lim)
-                        {
-                            Vector2 delta = Event.current.delta;
-                            delta /= zoomScale;
-                            zoomCoordsOrigin -= delta;
-
-                            drag = delta;
-
-                            GUI.changed = true;
-                        }
-                    }
-                    break;
-                case EventType.ScrollWheel:
-                    {
-                        Vector2 screenCoordsMousePos = Event.current.mousePosition;
-                        Vector2 delta = Event.current.delta;
-                        Vector2 zoomCoordsMousePos = ConvertScreenCoordsToZoomCoords(screenCoordsMousePos);
-                        float zoomDelta = -delta.y / 150.0f;
-                        float oldZoom = zoomScale;
-                        zoomScale += zoomDelta;
-                        zoomScale = Mathf.Clamp(zoomScale, minZoomScale, maxZoomScale);
-                        zoomCoordsOrigin += (zoomCoordsMousePos - zoomCoordsOrigin) - (oldZoom / zoomScale) * (zoomCoordsMousePos - zoomCoordsOrigin);
-
-                        Event.current.Use();
-                    }
-                    break;
-
-            }
         }
 
         private Vector2 ConvertScreenCoordsToZoomCoords(Vector2 screenCoords)
@@ -257,7 +258,10 @@ namespace AdvancedUnityPlugin.Editor
                 if(AdvancedStateMachineEditorWindow.Instance.selectNode != null)
                 {
                     if (!AdvancedStateMachineEditorWindow.Instance.selectNode.isSelected)
-                        AdvancedStateMachineEditorWindow.Instance.selectNode = null;
+                    {
+                        AdvancedStateMachineEditorWindow.Instance.SelectNode(null);
+                        //AdvancedStateMachineEditorWindow.Instance.selectNode = null;
+                    }
                 }
             }
         }

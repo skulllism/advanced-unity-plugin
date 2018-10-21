@@ -42,6 +42,8 @@ namespace AdvancedUnityPlugin.Editor
 
         public EditorNode<NodeData> selectNode;
 
+        public string[] stateNames = new string[50];
+
         public static void OpenWindow(AdvancedStateMachine data)
         {
             Instance = GetWindow<AdvancedStateMachineEditorWindow>();
@@ -55,14 +57,13 @@ namespace AdvancedUnityPlugin.Editor
                 Instance.InitializePropertyData();
                 Instance.InitializeNode();
                 Instance.InitializeConnection();
+                Instance.InitializeStateNames();
             }
             else
                 Debug.LogError("[Editor]]Not Found Advanced State Machine");
 
             Instance.Show();
         }
-
-  
 
         private void InitializeView()
         {
@@ -82,6 +83,8 @@ namespace AdvancedUnityPlugin.Editor
             }
 
             workView.Initialize();
+
+            isModifyViewOpen = false;
         }
 
         public void InitializePropertyData()
@@ -163,7 +166,7 @@ namespace AdvancedUnityPlugin.Editor
                 propertiesView.UpdateView(new Rect(position.width, position.height, position.width, position.height)
                                         , new Rect(0.0f, 0.0f, 0.3f, 1.0f));
             }
-            
+
             workView.UpdateView(  new Rect(position.width, position.height, position.width, position.height)
                                 , new Rect(0.3f, 0.0f, 0.7f, 1.0f));
         }
@@ -198,14 +201,16 @@ namespace AdvancedUnityPlugin.Editor
                 {
                     propertiesView.GUIView(Event.current);    
                 }
-
+                workView.ProcessEvents(Event.current);
                 workView.GUIView(Event.current);
             }
             GUILayout.EndHorizontal();
 
-
+            //## Draw
             if (GUI.changed)
+            {
                 Repaint();
+            }
         }
 
         //TODO : 동일한 ID 입력에 대한 예외처리 해주
@@ -216,6 +221,8 @@ namespace AdvancedUnityPlugin.Editor
             Target.advancedStates.Add(state);
 
             InitializePropertyData();
+
+            InitializeStateNames();
 
             EditorNode<NodeData> node = CreateStateNode(state, position, state.ID);
             SelectNode(node);
@@ -291,7 +298,7 @@ namespace AdvancedUnityPlugin.Editor
 
         private EditorNode<NodeData> CreateTransitionNode(AdvancedStateMachine.AdvancedTransition transition, Vector2 position, string title)
         {
-            EditorNode<NodeData> node = new EditorNode<NodeData>(new NodeData(NodeType.TRANSITION, null, transition), new Rect(position.x, position.y, NODE_WIDTH, NODE_HEIGHT), title, (GUIStyle)"flow node 2", (GUIStyle)"flow node 2 on", OnTransitionNodeGenericMenu);
+            EditorNode<NodeData> node = new EditorNode<NodeData>(new NodeData(NodeType.TRANSITION, null, transition), new Rect(position.x, position.y, NODE_WIDTH, NODE_HEIGHT), title, (GUIStyle)"flow node hex 0", (GUIStyle)"flow node hex 0 on", OnTransitionNodeGenericMenu);
             editorNodes.Add(node);
 
             return node;
@@ -387,24 +394,38 @@ namespace AdvancedUnityPlugin.Editor
             }
         }
 
+        private bool isModifyViewOpen = false;
         public void SelectNode(EditorNode<NodeData> node)
         {
-            if (selectNode != null)
+            if (selectNode != null) 
             {
                 selectNode.isSelected = false;
+
+                if(selectNode != node)
+                {
+                    isModifyViewOpen = false; 
+                }
             }
 
             selectNode = node;
-            if(selectNode != null)
+            if (selectNode != null)
             {
-                selectNode.isSelected = true;    
+                selectNode.isSelected = true;
 
-                switch (selectNode.myData.type)
+                if(!isModifyViewOpen)
                 {
-                    case NodeType.STATE: SetDataInStateModifyView(selectNode); break;
-                    case NodeType.TRANSITION: SetDataInTransitionModifyView(selectNode); break;
+                    switch (selectNode.myData.type)
+                    {
+                        case NodeType.STATE: SetDataInStateModifyView(selectNode); break;
+                        case NodeType.TRANSITION: SetDataInTransitionModifyView(selectNode); break;
+                    }
+                    isModifyViewOpen = true;
                 }
             }
+            else
+                isModifyViewOpen = false; 
+
+
         }
 
         private void SetDataInStateModifyView(EditorNode<NodeData> node)
@@ -412,8 +433,7 @@ namespace AdvancedUnityPlugin.Editor
             if (node == null)
                 return;
             
-            stateModifyView.Initialize(propertyStates.GetArrayElementAtIndex(FindStateIndexByNode(node))
-                                        , node);
+            stateModifyView.Initialize(propertyStates.GetArrayElementAtIndex(FindStateIndexByNode(node)), node);
         }
 
         private void SetDataInTransitionModifyView(EditorNode<NodeData> node)
@@ -421,8 +441,33 @@ namespace AdvancedUnityPlugin.Editor
             if (node == null)
                 return;
             
-            transitionModifyView.Initialize(propertyTransitions.GetArrayElementAtIndex(FindTransitionIndexByNode(node))
-                                             , node);
+            transitionModifyView.Initialize(propertyTransitions.GetArrayElementAtIndex(FindTransitionIndexByNode(node)), node);
+        }
+
+        private void InitializeStateNames()
+        {
+            int size = selected.advancedStates.Count + 1;
+
+            if (stateNames == null)
+            {
+                stateNames = new string[size];
+            }
+            else
+            {
+                if (size > stateNames.Length)
+                {
+                    stateNames = new string[size];
+                }
+            }
+
+            for (int i = 0; i < stateNames.Length; i++)
+                stateNames[i] = string.Empty;
+
+            stateNames[0] = "None";
+            for (int i = 1; i <= selected.advancedStates.Count; i++)
+            {
+                stateNames[i] = selected.advancedStates[i - 1].ID;
+            }
         }
     }
 }

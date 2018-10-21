@@ -61,7 +61,7 @@ namespace AdvancedUnityPlugin.Editor
                 {
                     GUILayout.Label("State ID : ");
 
-                    node.myData.state.ID = GUILayout.TextField(stateProperty.FindPropertyRelative("ID").stringValue);
+                    node.myData.state.ID = GUILayout.TextField(node.myData.state.ID);
                     node.title = node.myData.state.ID;
 
                     AdvancedStateMachineEditorWindow.Instance.InitializePropertyData();
@@ -76,7 +76,7 @@ namespace AdvancedUnityPlugin.Editor
                     GUILayout.BeginHorizontal();
                     {
                         GUILayout.Label("Count : ");
-                        GUILayout.Label(stateProperty.FindPropertyRelative("transitions").arraySize.ToString());
+                        GUILayout.Label(node.myData.state.transitions.Count.ToString());
                     }
                     GUILayout.EndHorizontal();
 
