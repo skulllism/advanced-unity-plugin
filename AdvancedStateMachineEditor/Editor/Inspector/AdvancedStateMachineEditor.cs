@@ -73,7 +73,7 @@ namespace AdvancedUnityPlugin.Editor
 #endregion
 
 
-            //base.OnInspectorGUI();
+            base.OnInspectorGUI();
         }
 
         private void DrawStatePanel()
