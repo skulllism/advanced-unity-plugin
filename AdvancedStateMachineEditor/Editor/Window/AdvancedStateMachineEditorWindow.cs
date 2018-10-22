@@ -55,9 +55,12 @@ namespace AdvancedUnityPlugin.Editor
 
                 Instance.selected = data;
                 Instance.InitializePropertyData();
-                Instance.InitializeNode();
-                Instance.InitializeConnection();
-                Instance.InitializeStateNames();
+                {
+                    Instance.InitializeNode();
+                    Instance.InitializeConnection();
+                    Instance.InitializeStateNames();
+                }
+                Instance.InitializePropertyData();
 
                 Instance.LoadData();
             }
@@ -65,16 +68,6 @@ namespace AdvancedUnityPlugin.Editor
                 Debug.LogError("[Editor]]Not Found Advanced State Machine");
 
             Instance.Show();
-        }
-
-        private void OnProjectChange()
-        {
-            SaveData();
-        }
-
-        private void OnDisable()
-        {
-            SaveData();
         }
 
         private void InitializeView()

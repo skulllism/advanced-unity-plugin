@@ -65,7 +65,6 @@ namespace AdvancedUnityPlugin.Editor
                     {
                         node.myData.state.ID = GUILayout.TextField(node.myData.state.ID);
                         node.title = node.myData.state.ID;    
-
                     }
                     if(EditorGUI.EndChangeCheck())
                     {
