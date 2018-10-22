@@ -8,24 +8,11 @@ namespace AdvancedUnityPlugin.Editor
     [CustomEditor(typeof(AdvancedStateMachine))]
     public class AdvancedStateMachineEditor : EditorBase
     {
-        enum MainToolbar { STATE, TRANSITION }
-
         private AdvancedStateMachine origin;
-        private SerializedObject serializedObject;
+        private new SerializedObject serializedObject;
         private SerializedProperty initState;
-        //======================
-        //## Editor Data
-        //======================
-        //## [Main Toolbar]
-        private int mainTapIndex;
-        private string[] mainTapNames = { "State", "State Transition" };
-
-        //## [State Panel]
-        private int stateTapIndex;
-        private string[] stateTapNames = { "Information" };
-
+ 
         private int selectInitalState = 0;
-
 
         public void OnEnable()
         {
@@ -52,82 +39,35 @@ namespace AdvancedUnityPlugin.Editor
         {
             Space(10.0f);
 
-#region 1_MainToolbar
-
-    #region 2_MainBox
             GUILayout.BeginVertical("box");
             {
-                if(GUILayout.Button("Open Editor"))
+                if (GUILayout.Button("Open Editor"))
                 {
                     AdvancedStateMachineEditorWindow.OpenWindow(origin);
                 }
 
-                switch ((MainToolbar)mainTapIndex)
-                {
-                    //## State
-                    case MainToolbar.STATE:
-                        {
-                       
-                            DrawStatePanel();
-                        }
-                        break;
-                    //## State Transition
-                    case MainToolbar.TRANSITION:
-                        {
-              
-                        }
-                        break;
-                }
+                DrawStatePanel();
             }
             GUILayout.EndVertical();
-    #endregion
-            Space(10.0f);
-#endregion
 
-            base.OnInspectorGUI();
+            Space(10.0f);
+
+            //base.OnInspectorGUI();
         }
 
         private void DrawStatePanel()
         {
             Space(10.0f);
 
-            DrawInitalState();
-
-            //Space(10.0f);
-
-            //stateTapIndex = GUILayout.Toolbar(stateTapIndex, stateTapNames, (GUIStyle)"dragtabdropwindow");
-
-            //GUILayout.BeginHorizontal("box");
-            //{
-            //    GUILayout.BeginVertical((GUIStyle)"ColorPickerSliderBackground");
-            //    {
-            //        stateTapIndex = GUILayout.Toolbar(stateTapIndex, stateTapNames, (GUIStyle)"MiniToolbarButton");
-            //        Space(10.0f);
-            //        Space(10.0f);
-            //        Space(10.0f);
-            //        Space(10.0f);
-            //    }
-            //    GUILayout.EndVertical();
-
-            //    GUILayout.BeginVertical((GUIStyle)"ColorPickerSliderBackground");
-            //    {
-            //        stateTapIndex = GUILayout.Toolbar(stateTapIndex, stateTapNames, (GUIStyle)"MiniToolbarButton");
-            //        Space(10.0f);
-            //        Space(10.0f);
-            //        Space(10.0f);
-            //        Space(10.0f);
-            //    }
-            //    GUILayout.EndVertical();
-            //}
-            //GUILayout.EndHorizontal();
+            DrawInitialState();
         }
 
         private string[] currentStates = new string[10];
-        private void DrawInitalState()
+        private void DrawInitialState()
         {
             GUILayout.BeginHorizontal();
             {
-                GUILayout.Label("Inital State : ");
+                GUILayout.Label("Initial State : ");
 
                 if (currentStates.Length - 1 <= origin.advancedStates.Count)
                 {
@@ -162,7 +102,6 @@ namespace AdvancedUnityPlugin.Editor
                 }
                 else
                 {
-                    //EditorGUILayout.PropertyField(initState, new GUIContent("ID"));
                     initState.stringValue = origin.initialStateID = currentStates[selectInitalState];
                 }
             }

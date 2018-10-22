@@ -9,5 +9,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 194f7082f0f924e46984d74acc521845, type: 3}
-  m_Name: States
+  m_Name: new_asme_choi_player-3132
   m_EditorClassIdentifier: 
+  datas: []

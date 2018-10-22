@@ -117,8 +117,32 @@ namespace AdvancedUnityPlugin.Editor
                             GUI.changed = true;
                         }
                         break;
-
-                }
+                        //======================================================
+                    //## TODO
+                    //======================================================
+                    case EventType.KeyDown:
+                        {
+                            if (e.control && e.keyCode == KeyCode.S)
+                            {
+                                AdvancedStateMachineEditorWindow.Instance.SaveData();
+                                e.Use();
+                            }
+                            else if (e.control && e.keyCode == KeyCode.D)
+                            {
+                                //Copy
+                                AdvancedStateMachineEditorWindow.Instance.CopyNode();
+                            }
+                            else if (e.keyCode == KeyCode.Delete)
+                            {
+                                if (AdvancedStateMachineEditorWindow.Instance.selectNode != null)
+                                {
+                                    AdvancedStateMachineEditorWindow.Instance.DeleteNode(AdvancedStateMachineEditorWindow.Instance.selectNode);
+                                    e.Use();
+                                }
+                            }
+                        }
+                        break;
+                }//end switch
             }
             EditorZoomArea.End();
         }

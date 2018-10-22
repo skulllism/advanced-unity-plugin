@@ -6,9 +6,10 @@ namespace AdvancedUnityPlugin.Editor
 {
     public class NodeAsset : ScriptableObject
     {
+        [System.Serializable]
         public class AssetData
         {
-            public AdvancedStateMachineEditorWindow.NodeType type;
+            public string name;
             public Rect rect;
         }
 
@@ -17,15 +18,67 @@ namespace AdvancedUnityPlugin.Editor
 
         public void Save(List<EditorNode<AdvancedStateMachineEditorWindow.NodeData>> nodes)
         {
-            datas.Clear();
-
             for (int i = 0; i < nodes.Count; i++)
             {
-                AssetData data = new AssetData();
-                data.type = nodes[i].myData.type;
-                data.rect = nodes[i].rect;
+                if(datas.Count - 1 < i)
+                {
+                    AssetData data = new AssetData();
 
-                datas.Add(data);
+                    if(nodes[i].myData.type == AdvancedStateMachineEditorWindow.NodeType.STATE)
+                    {
+                        data.name = "S_" + nodes[i].myData.state.ID;    
+                    }
+                    else if(nodes[i].myData.type == AdvancedStateMachineEditorWindow.NodeType.TRANSITION)
+                    {
+                        data.name = "T_" + nodes[i].myData.transition.ID;
+                    }
+
+                    data.rect = nodes[i].rect;
+
+                    datas.Add(data);
+                }
+                else
+                {
+                    if (nodes[i].myData.type == AdvancedStateMachineEditorWindow.NodeType.STATE)
+                    {
+                        datas[i].name = "S_" + nodes[i].myData.state.ID;
+                    }
+                    else if (nodes[i].myData.type == AdvancedStateMachineEditorWindow.NodeType.TRANSITION)
+                    {
+                        datas[i].name = "T_" + nodes[i].myData.transition.ID;
+                    }
+
+                    datas[i].rect = nodes[i].rect;
+                }
+            }
+        }
+
+        public void Load(List<EditorNode<AdvancedStateMachineEditorWindow.NodeData>> nodes)
+        {
+            if (datas == null || datas.Count <= 0)
+                return;
+
+            int nodeCount = nodes.Count - 1;
+            string name = string.Empty;
+            for (int i = 0; i < datas.Count; i++)
+            {
+                for (int j = 0; j < nodes.Count; j++)
+                {
+                    if (nodes[j].myData.type == AdvancedStateMachineEditorWindow.NodeType.STATE)
+                    {
+                        name = "S_" + nodes[j].myData.state.ID;
+                    }
+                    else if (nodes[j].myData.type == AdvancedStateMachineEditorWindow.NodeType.TRANSITION)
+                    {
+                        name = "T_" + nodes[j].myData.transition.ID;
+                    }
+
+                    if(datas[i].name == name)
+                    {
+                        nodes[j].rect = datas[i].rect;
+                        break;
+                    }
+                }
             }
         }
     }    

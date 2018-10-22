@@ -52,8 +52,7 @@ namespace AdvancedUnityPlugin.Editor
             popupList = AdvancedStateMachineEditorWindow.Instance.stateNames;
           //  AllocatePopupList();
 
-            if(popupIndex == 0)
-                popupIndex = FindTransitionIndex();
+            popupIndex = FindTransitionIndex();
         }
 
         private int FindTransitionIndex()
@@ -82,10 +81,20 @@ namespace AdvancedUnityPlugin.Editor
                 GUILayout.BeginHorizontal();
                 {
                     GUILayout.Label("Transition ID : ");
-                    node.myData.transition.ID = GUILayout.TextField(node.myData.transition.ID);
-                    node.title = node.myData.transition.ID;
+   
+                    EditorGUI.BeginChangeCheck();
+                    {
+                        transitionProperty.serializedObject.Update();
 
-                    AdvancedStateMachineEditorWindow.Instance.InitializePropertyData();
+                        node.myData.transition.ID = GUILayout.TextField(node.myData.transition.ID);
+                        node.title = node.myData.transition.ID;
+
+                        transitionProperty.serializedObject.ApplyModifiedProperties();
+                    }
+                    if(EditorGUI.EndChangeCheck())
+                    {
+                        AdvancedStateMachineEditorWindow.Instance.InitializePropertyData();    
+                    }
                 }
                 GUILayout.EndHorizontal();
 
@@ -128,9 +137,11 @@ namespace AdvancedUnityPlugin.Editor
         }
 
         private int popupIndex = 0;
-        private string[] popupList = new string[50];
+        private string[] popupList = new string[15];
         private void DrawTransitionList()
         {
+            transitionProperty.serializedObject.Update();
+
             EditorGUI.BeginChangeCheck();
             {
                 popupIndex = EditorGUILayout.Popup(popupIndex, popupList);    
@@ -155,6 +166,8 @@ namespace AdvancedUnityPlugin.Editor
                                                                                                    
                 AdvancedStateMachineEditorWindow.Instance.InitializePropertyData();
             }
+
+            transitionProperty.serializedObject.ApplyModifiedProperties();
         }
 
         private bool isCreate;

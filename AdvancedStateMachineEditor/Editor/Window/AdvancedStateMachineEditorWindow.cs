@@ -58,11 +58,23 @@ namespace AdvancedUnityPlugin.Editor
                 Instance.InitializeNode();
                 Instance.InitializeConnection();
                 Instance.InitializeStateNames();
+
+                Instance.LoadData();
             }
             else
                 Debug.LogError("[Editor]]Not Found Advanced State Machine");
 
             Instance.Show();
+        }
+
+        private void OnProjectChange()
+        {
+            SaveData();
+        }
+
+        private void OnDisable()
+        {
+            SaveData();
         }
 
         private void InitializeView()
@@ -90,7 +102,7 @@ namespace AdvancedUnityPlugin.Editor
         public void InitializePropertyData()
         {
             serializedObject = new SerializedObject(selected);
-            propertyStates = serializedObject.FindProperty("advancedStates");
+            propertyStates      = serializedObject.FindProperty("advancedStates");
             propertyTransitions = serializedObject.FindProperty("advancedTransitions");
         }
 
@@ -135,6 +147,32 @@ namespace AdvancedUnityPlugin.Editor
                 {
                     AttachChildNodeInParentNode(FindNodeByState(editorNodes[i].myData.transition.state), editorNodes[i]);
                 }
+            }
+        }
+
+        private void InitializeStateNames()
+        {
+            int size = selected.advancedStates.Count + 1;
+
+            if (stateNames == null)
+            {
+                stateNames = new string[size];
+            }
+            else
+            {
+                if (size > stateNames.Length)
+                {
+                    stateNames = new string[size];
+                }
+            }
+
+            for (int i = 0; i < stateNames.Length; i++)
+                stateNames[i] = string.Empty;
+
+            stateNames[0] = "None";
+            for (int i = 1; i <= selected.advancedStates.Count; i++)
+            {
+                stateNames[i] = selected.advancedStates[i - 1].ID;
             }
         }
 
@@ -242,7 +280,7 @@ namespace AdvancedUnityPlugin.Editor
             SelectNode(node);
         }
 
-        private void DeleteNode(EditorNode<AdvancedStateMachineEditorWindow.NodeData> node)
+        public void DeleteNode(EditorNode<AdvancedStateMachineEditorWindow.NodeData> node)
         {
             if (node == null)
                 return;
@@ -290,7 +328,9 @@ namespace AdvancedUnityPlugin.Editor
 
         private EditorNode<NodeData> CreateStateNode(AdvancedStateMachine.AdvancedState state, Vector2 position, string title)
         {
-            EditorNode<NodeData> node = new EditorNode<NodeData>(new NodeData(NodeType.STATE, state, null), new Rect(position.x, position.y, NODE_WIDTH, NODE_HEIGHT), title ,(GUIStyle)"flow node hex 4", (GUIStyle)"flow node hex 4 on", OnStateNodeGenericMenu);          
+            EditorNode<NodeData> node = new EditorNode<NodeData>(new NodeData(NodeType.STATE, state, null)
+                                                                 ,editorNodes.Count
+                                                                 ,new Rect(position.x, position.y, NODE_WIDTH, NODE_HEIGHT), title ,(GUIStyle)"flow node hex 4", (GUIStyle)"flow node hex 4 on", OnStateNodeGenericMenu);          
             editorNodes.Add(node);
 
             return node;
@@ -298,7 +338,9 @@ namespace AdvancedUnityPlugin.Editor
 
         private EditorNode<NodeData> CreateTransitionNode(AdvancedStateMachine.AdvancedTransition transition, Vector2 position, string title)
         {
-            EditorNode<NodeData> node = new EditorNode<NodeData>(new NodeData(NodeType.TRANSITION, null, transition), new Rect(position.x, position.y, NODE_WIDTH, NODE_HEIGHT), title, (GUIStyle)"flow node hex 0", (GUIStyle)"flow node hex 0 on", OnTransitionNodeGenericMenu);
+            EditorNode<NodeData> node = new EditorNode<NodeData>(new NodeData(NodeType.TRANSITION, null, transition)
+                                                                 ,editorNodes.Count 
+                                                                 ,new Rect(position.x, position.y, NODE_WIDTH, NODE_HEIGHT), title, (GUIStyle)"flow node hex 0", (GUIStyle)"flow node hex 0 on", OnTransitionNodeGenericMenu);
             editorNodes.Add(node);
 
             return node;
@@ -414,6 +456,8 @@ namespace AdvancedUnityPlugin.Editor
 
                 if(!isModifyViewOpen)
                 {
+                    InitializeStateNames();
+
                     switch (selectNode.myData.type)
                     {
                         case NodeType.STATE: SetDataInStateModifyView(selectNode); break;
@@ -444,30 +488,41 @@ namespace AdvancedUnityPlugin.Editor
             transitionModifyView.Initialize(propertyTransitions.GetArrayElementAtIndex(FindTransitionIndexByNode(node)), node);
         }
 
-        private void InitializeStateNames()
+        //======================================================
+        //## TODO
+        //======================================================
+        public void CopyNode()
         {
-            int size = selected.advancedStates.Count + 1;
+            if (selectNode == null)
+                return;
 
-            if (stateNames == null)
+            if(selectNode.myData.type == NodeType.STATE)
             {
-                stateNames = new string[size];
+                AdvancedStateMachine.AdvancedState state = new AdvancedStateMachine.AdvancedState();
+                state.ID = "copy_" + selectNode.myData.state.ID;
+
+       
+                Target.advancedStates.Add(state);
+
+                InitializePropertyData();
+
+                InitializeStateNames();
+
+                //serializedObject.Update();
+                //serializedObject.Co
+                //SerializedProperty test2 = propertyStates.GetEndProperty();
+                //test2 = propertyStates.GetArrayElementAtIndex(FindStateIndexByNode(selectNode)).Copy();
+
+                serializedObject.ApplyModifiedProperties();
+
+                EditorNode<NodeData> node = CreateStateNode(state, new Vector2(selectNode.rect.position.x + 15, selectNode.rect.position.y + 15), state.ID);
+                SelectNode(node);
             }
-            else
+            else if(selectNode.myData.type == NodeType.TRANSITION)
             {
-                if (size > stateNames.Length)
-                {
-                    stateNames = new string[size];
-                }
-            }
-
-            for (int i = 0; i < stateNames.Length; i++)
-                stateNames[i] = string.Empty;
-
-            stateNames[0] = "None";
-            for (int i = 1; i <= selected.advancedStates.Count; i++)
-            {
-                stateNames[i] = selected.advancedStates[i - 1].ID;
+                
             }
         }
-    }
+
+    }//end class
 }

@@ -10,6 +10,7 @@ namespace AdvancedUnityPlugin.Editor
         public T myData { private set; get; }
 
         public bool isEnable;
+        public int index;
         public string title;
         public Rect rect;
         public List<EditorNode<T>> childNodes { private set; get; }
@@ -25,9 +26,10 @@ namespace AdvancedUnityPlugin.Editor
 
         private List<Connection> connections;
 
-        public EditorNode(T myData, Rect rect, string title, GUIStyle normalStyle, GUIStyle selectStyle, Action<EditorNode<T>> onGenericMenu)
+        public EditorNode(T myData, int index, Rect rect, string title, GUIStyle normalStyle, GUIStyle selectStyle, Action<EditorNode<T>> onGenericMenu)
         {
             this.isEnable = true;
+            this.index = index;
             this.myData = myData;
             this.rect = rect;
 
