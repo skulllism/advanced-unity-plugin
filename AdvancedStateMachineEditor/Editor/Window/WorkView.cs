@@ -86,6 +86,8 @@ namespace AdvancedUnityPlugin.Editor
                         {
                             isDragStart = false;
                             drag = Vector2.zero;
+
+                            AdvancedStateMachineEditorWindow.Instance.SaveData();
                             GUI.changed = true;
                         }
                         break;

@@ -13,7 +13,7 @@ namespace AdvancedUnityPlugin.Editor
             public Rect rect;
         }
 
-        [HideInInspector]
+        //[HideInInspector]
         public List<AssetData> datas = new List<AssetData>();
 
         public void Save(List<EditorNode<AdvancedStateMachineEditorWindow.NodeData>> nodes)

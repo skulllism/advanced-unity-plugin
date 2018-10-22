@@ -53,7 +53,7 @@ namespace AdvancedUnityPlugin.Editor
             if (stateProperty == null)
                 return;
 
-
+            stateProperty.serializedObject.Update();
 
             GUILayout.BeginVertical("box");
             {
@@ -63,16 +63,13 @@ namespace AdvancedUnityPlugin.Editor
 
                     EditorGUI.BeginChangeCheck();
                     {
-                        stateProperty.serializedObject.Update();
-
                         node.myData.state.ID = GUILayout.TextField(node.myData.state.ID);
                         node.title = node.myData.state.ID;    
 
-                        stateProperty.serializedObject.ApplyModifiedProperties();
                     }
                     if(EditorGUI.EndChangeCheck())
                     {
-                        AdvancedStateMachineEditorWindow.Instance.InitializePropertyData();    
+                        AdvancedStateMachineEditorWindow.Instance.InitializePropertyData();
                     }
                 }
                 GUILayout.EndHorizontal();
@@ -94,6 +91,8 @@ namespace AdvancedUnityPlugin.Editor
                 GUILayout.EndVertical();
             }
             GUILayout.EndVertical();
+
+            stateProperty.serializedObject.ApplyModifiedProperties();
         }
 
         private List<ListItem<AdvancedStateMachine.AdvancedTransition>> transitions;

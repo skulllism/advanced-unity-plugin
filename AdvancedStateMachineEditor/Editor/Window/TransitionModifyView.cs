@@ -50,7 +50,6 @@ namespace AdvancedUnityPlugin.Editor
             transition = node.myData.transition;
 
             popupList = AdvancedStateMachineEditorWindow.Instance.stateNames;
-          //  AllocatePopupList();
 
             popupIndex = FindTransitionIndex();
         }
@@ -75,7 +74,9 @@ namespace AdvancedUnityPlugin.Editor
         {
             if (transitionProperty == null)
                 return;
-            
+
+            transitionProperty.serializedObject.Update();
+
             GUILayout.BeginVertical("box");
             {
                 GUILayout.BeginHorizontal();
@@ -84,12 +85,9 @@ namespace AdvancedUnityPlugin.Editor
    
                     EditorGUI.BeginChangeCheck();
                     {
-                        transitionProperty.serializedObject.Update();
-
-                        node.myData.transition.ID = GUILayout.TextField(node.myData.transition.ID);
+                        node.myData.transition.ID  = GUILayout.TextField(node.myData.transition.ID);
                         node.title = node.myData.transition.ID;
 
-                        transitionProperty.serializedObject.ApplyModifiedProperties();
                     }
                     if(EditorGUI.EndChangeCheck())
                     {
@@ -105,35 +103,9 @@ namespace AdvancedUnityPlugin.Editor
                 }
                 GUILayout.EndHorizontal();
             }
-            GUILayout.EndVertical();                
-        }
+            GUILayout.EndVertical();  
 
-        private bool AllocatePopupList()
-        {
-            int size = AdvancedStateMachineEditorWindow.Target.advancedStates.Count + 1;
-
-            if (popupList == null)
-            {
-                popupList = new string[size];
-            }
-            else
-            {
-                if(size > popupList.Length)
-                {
-                    popupList = new string[size];
-                }
-            }
-
-            for (int i = 0; i < popupList.Length; i++)
-                popupList[i] = string.Empty;
-
-            popupList[0] = "None";
-            for (int i = 1; i <= AdvancedStateMachineEditorWindow.Target.advancedStates.Count; i++)
-            {
-                popupList[i] = AdvancedStateMachineEditorWindow.Target.advancedStates[i - 1].ID;
-            }
-
-            return true;
+            transitionProperty.serializedObject.ApplyModifiedProperties();
         }
 
         private int popupIndex = 0;

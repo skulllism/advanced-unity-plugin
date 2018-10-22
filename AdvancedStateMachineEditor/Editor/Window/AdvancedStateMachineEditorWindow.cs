@@ -121,12 +121,33 @@ namespace AdvancedUnityPlugin.Editor
             {
                 AdvancedStateMachine.AdvancedState state = selected.advancedStates[i];
 
+                for (int k = 0; k < state.transitions.Count; k++)
+                {
+                    for (int j = 0; j < selected.advancedTransitions.Count; j++)
+                    {
+                        if (state.transitions[k].ID == selected.advancedTransitions[j].ID)
+                        {
+                            state.transitions[k] = selected.advancedTransitions[j];
+                            break;
+                        }
+                    }
+                }
+
                 CreateStateNode(state, new Vector2(30.0f + (i * 10.0f), 30.0f + (i * 10.0f)), state.ID);
             }
 
             for (int i = 0; i < selected.advancedTransitions.Count; i++)
             {
                 AdvancedStateMachine.AdvancedTransition transition = selected.advancedTransitions[i];
+
+                for (int j = 0; j < selected.advancedStates.Count; j++)
+                {
+                    if(transition.state.ID == selected.advancedStates[j].ID)
+                    {
+                        transition.state = selected.advancedStates[j];
+                        break;
+                    }
+                }
 
                 CreateTransitionNode(transition, new Vector2(60.0f + (i * 10.0f), 30.0f + (i * 10.0f)), transition.ID);
             }
