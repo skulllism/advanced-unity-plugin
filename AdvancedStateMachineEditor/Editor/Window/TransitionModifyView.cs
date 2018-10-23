@@ -170,13 +170,13 @@ namespace AdvancedUnityPlugin.Editor
         {
             if (transitionProperty == null)
                 return;
-
-            transitionProperty.serializedObject.Update();
-
+            
             GUILayout.BeginHorizontal((GUIStyle)"AnimationKeyframeBackground");
             {
                 propertyScroll = GUILayout.BeginScrollView(propertyScroll, false, false);
                 {
+                    transitionProperty.serializedObject.Update();
+
                     if (EditorGUILayout.PropertyField(transitionProperty.FindPropertyRelative("decisions")))
                     {
                         for (int i = 0; i < transitionProperty.FindPropertyRelative("decisions").arraySize; i++)
@@ -189,12 +189,12 @@ namespace AdvancedUnityPlugin.Editor
                             GUILayout.EndVertical();
                         }
                     }
+
+                    transitionProperty.serializedObject.ApplyModifiedProperties();
                 }
                 GUILayout.EndScrollView();
             }
             GUILayout.EndHorizontal();
-
-            transitionProperty.serializedObject.ApplyModifiedProperties();
         }
     }
 }

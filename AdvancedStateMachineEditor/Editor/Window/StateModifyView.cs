@@ -290,31 +290,33 @@ namespace AdvancedUnityPlugin.Editor
             if (stateProperty == null)
                 return;
             
-            stateProperty.serializedObject.Update();
-  
             GUILayout.BeginHorizontal((GUIStyle)"AnimationKeyframeBackground");
             {
                 propertyScroll = GUILayout.BeginScrollView(propertyScroll, false, false);
                 {
                     GUILayout.BeginVertical("box");
                     {
+                        
+
                         isEventFold = EditorGUILayout.Foldout(isEventFold, new GUIContent("Events"));
                         if(isEventFold)
                         {
+                            stateProperty.serializedObject.Update();
                             EditorGUILayout.PropertyField(stateProperty.FindPropertyRelative("onEnter"), new GUIContent("onEnter"));
                             EditorGUILayout.PropertyField(stateProperty.FindPropertyRelative("onUpdate"), new GUIContent("onUpdate"));
                             EditorGUILayout.PropertyField(stateProperty.FindPropertyRelative("onFixedUpdate"), new GUIContent("onFixedUpdate"));
                             EditorGUILayout.PropertyField(stateProperty.FindPropertyRelative("onLateUpdate"), new GUIContent("onLateUpdate"));
                             EditorGUILayout.PropertyField(stateProperty.FindPropertyRelative("onExit"), new GUIContent("onExit"));    
+                            stateProperty.serializedObject.ApplyModifiedProperties();
                         }
+
+
                     }
                     GUILayout.EndVertical();
                 }
                 GUILayout.EndScrollView();
             }
-            GUILayout.EndHorizontal();
-
-            stateProperty.serializedObject.ApplyModifiedProperties();
+            GUILayout.EndHorizontal();               
         }
     }
 }

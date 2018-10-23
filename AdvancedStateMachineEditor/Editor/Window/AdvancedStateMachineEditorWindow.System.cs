@@ -25,11 +25,11 @@ namespace AdvancedUnityPlugin.Editor
                 info.Create();
             }
 
-            NodeAsset asset = AssetDatabase.LoadAssetAtPath<NodeAsset>(PATH + Target.transform.root.name + Target.transform.root.GetInstanceID() + ".asset");
+            NodeAsset asset = AssetDatabase.LoadAssetAtPath<NodeAsset>(PATH + Target.transform.root.name  + ".asset");
             if(asset == null)
             {
                 asset = ScriptableObject.CreateInstance<NodeAsset>();
-                AssetDatabase.CreateAsset(asset, PATH + Target.transform.root.name + Target.transform.root.GetInstanceID() + ".asset");
+                AssetDatabase.CreateAsset(asset, PATH + Target.transform.root.name + ".asset");
             }
              
             asset.Save(editorNodes);
@@ -39,7 +39,7 @@ namespace AdvancedUnityPlugin.Editor
 
         private void LoadData()
         {
-            NodeAsset asset = AssetDatabase.LoadAssetAtPath<NodeAsset>(PATH + Target.transform.root.name + Target.transform.root.GetInstanceID() + ".asset");
+            NodeAsset asset = AssetDatabase.LoadAssetAtPath<NodeAsset>(PATH + Target.transform.root.name + ".asset");
             if (asset == null)
                 return;
 

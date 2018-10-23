@@ -92,7 +92,6 @@ namespace AdvancedUnityPlugin.Editor
                         }
                         break;
                     case EventType.MouseDrag:
-                        float lim = 0.1f;
                         if (isDragStart && e.button == 0 && e.alt)
                         {
                             Vector2 delta = Event.current.delta;
@@ -115,7 +114,6 @@ namespace AdvancedUnityPlugin.Editor
                             zoomScale = Mathf.Clamp(zoomScale, minZoomScale, maxZoomScale);
                             zoomCoordsOrigin += (zoomCoordsMousePos - zoomCoordsOrigin) - (oldZoom / zoomScale) * (zoomCoordsMousePos - zoomCoordsOrigin);
 
-                            Event.current.Use();
                             GUI.changed = true;
                         }
                         break;
@@ -286,7 +284,6 @@ namespace AdvancedUnityPlugin.Editor
                     if (!AdvancedStateMachineEditorWindow.Instance.selectNode.isSelected)
                     {
                         AdvancedStateMachineEditorWindow.Instance.SelectNode(null);
-                        //AdvancedStateMachineEditorWindow.Instance.selectNode = null;
                     }
                 }
             }
