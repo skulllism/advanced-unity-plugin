@@ -6,9 +6,6 @@ namespace AdvancedUnityPlugin.Editor
 {
     public class Connection
     {
-        private Vector2 startPos;
-        private Vector2 endNode;
-
         public void Draw(Vector2 startPos, Vector2 endPos)
         {
             Handles.DrawBezier(startPos, endPos,
@@ -30,27 +27,21 @@ namespace AdvancedUnityPlugin.Editor
 
 
 
-            //Handles.color = Color.red;
-           // Vector2 center = (startNode.rect.center +endPos.center) * 0.5f;
+           // Handles.color = Color.red;
+          //  Vector2 center = (new Vector2(startPos.x - zoomScale.x, startPos.y - zoomScale.y) + new Vector2(endPos.x - zoomScale.x ,endPos.y - zoomScale.y)) * 0.5f;
 
-            //.Draw
-
-            //float angle =  GetAngle(stateNode.rect.center, transitionNode.rect.center);
-            //Debug.Log(angle);
+          //  float angle =  GetAngle(endPos, startPos);
+           // Debug.Log(angle);
+           // Handles.DrawLine(center, new Vector2(center.x, center.y + 50.0f * Mathf.Sin(angle)));
             //Handles.DrawPolyLine(new Vector3[]
             //{
             //    center,
-            //    new Vector2(center.x + 30.0f * Mathf.Cos(45 ) + 30.0f * Mathf.Cos(180 - angle) 
-            //                , center.y + 30.0f * Mathf.Sin(45 )+ 30.0f * Mathf.Sin(180 - angle)),
-            //    new Vector2(center.x + 30.0f * Mathf.Cos(45 ) + 30.0f * Mathf.Cos(180 - angle)
-            //                , center.y + 30.0f * Mathf.Sin(45 )+ 30.0f * Mathf.Sin(180 - angle)),
+            //    new Vector2( center.x  + 30.0f * Mathf.Cos(45 )  + 30.0f 
+            //                ,center.y  + 30.0f * Mathf.Sin(45 ) + 30.0f) ,
+            //    new Vector2( center.x  + 75.0f * Mathf.Cos(180 - 45 ) + 30.0f 
+            //                ,center.y  + 30.0f * Mathf.Sin(45 ) + 30.0f) ,
             //    center
             //});
-            //Handles.ArrowHandleCap(0, (stateNode.rect.center + transitionNode.rect.center) * 0.5f, Quaternion.identity, 3.0f,EventType.ContextClick);
-            //Handles.DrawSolidRectangleWithOutline(new Rect((stateNode.rect.center.x + transitionNode.rect.center.x) * 0.5f, (stateNode.rect.center.y + transitionNode.rect.center.y) * 0.5f, 30, 30), Color.black, Color.cyan);
-            //Handles.DrawLine((stateNode.rect.center + transitionNode.rect.center) * 0.5f, (stateNode.rect.center + transitionNode.rect.center) * Mathf.Sin(45.0f) * 0.5f);
-            //Handles.DrawLine((stateNode.rect.center + transitionNode.rect.center) * 0.5f, (new Vector2(-stateNode.rect.center.x,stateNode.rect.center.y) + new Vector2(-transitionNode.rect.center.x,transitionNode.rect.center.y)) * Mathf.Sin(45.0f) * 0.5f);
-            //Handles.DrawLine((stateNode.rect.center + transitionNode.rect.center) * 0.5f, -(stateNode.rect.center + transitionNode.rect.center) * Mathf.Cos(45.0f));
         }
 
         public void DrawByMouse(Vector2 zoomScale, Vector2 startPos, Vector2 endPos)

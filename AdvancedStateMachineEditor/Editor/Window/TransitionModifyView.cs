@@ -56,12 +56,12 @@ namespace AdvancedUnityPlugin.Editor
 
         private int FindTransitionIndex()
         {
-            if (transition.state == null)
+            if (transition.stateID == string.Empty)
                 return 0;
             
             for (int i = 0; i < AdvancedStateMachineEditorWindow.Target.advancedStates.Count; i++)
             {
-                if(AdvancedStateMachineEditorWindow.Target.advancedStates[i].ID == transition.state.ID)
+                if(AdvancedStateMachineEditorWindow.Target.advancedStates[i].ID == transition.stateID)
                 {
                     return i + 1;
                 }
@@ -120,20 +120,21 @@ namespace AdvancedUnityPlugin.Editor
             }
             if(EditorGUI.EndChangeCheck())
             {
-                if(AdvancedStateMachineEditorWindow.Instance.FindNodeByState(transition.state) != null)
-                    AdvancedStateMachineEditorWindow.Instance.FindNodeByState(transition.state).RemoveParentNode(node);
+                EditorNode<AdvancedStateMachineEditorWindow.NodeData> stateNode = AdvancedStateMachineEditorWindow.Instance.FindNodeByStateID(transition.stateID);
+                if(stateNode != null)
+                    stateNode.RemoveParentNode(node);
                 
-                node.RemoveChildNode(AdvancedStateMachineEditorWindow.Instance.FindNodeByState(transition.state));
+                node.RemoveChildNode(stateNode);
                        
                 if (popupIndex > 0)
                 {
-                    node.myData.transition.state = AdvancedStateMachineEditorWindow.Target.advancedStates[popupIndex - 1];
+                    node.myData.transition.stateID = AdvancedStateMachineEditorWindow.Target.advancedStates[popupIndex - 1].ID;
 
-                    AdvancedStateMachineEditorWindow.Instance.AttachChildNodeInParentNode(AdvancedStateMachineEditorWindow.Instance.FindNodeByState(transition.state), node);
+                    AdvancedStateMachineEditorWindow.Instance.AttachChildNodeInParentNode(AdvancedStateMachineEditorWindow.Instance.FindNodeByStateID(transition.stateID), node);
                 }
                 else
                 {
-                    node.myData.transition.state = null;
+                    node.myData.transition.stateID = string.Empty;
                 }
                                                                                                    
                 AdvancedStateMachineEditorWindow.Instance.InitializePropertyData();

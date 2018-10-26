@@ -21,12 +21,21 @@ namespace AdvancedUnityPlugin.Editor
         private string strSearchText = "";
         private bool isSearchCancel;
 
+        private GUIStyle scrollListStyle;
+
+        public bool isHightLight = false;
+
+        public void Initialize()
+        {
+            scrollListStyle = new GUIStyle("Button");
+            scrollListStyle.alignment = TextAnchor.MiddleLeft;
+        }
 
         public override void UpdateView(Rect editorRect, Rect percentageRect)
         {
             base.UpdateView(editorRect, percentageRect);
         }
-
+           
         public override void GUIView(Event e)
         {
             base.GUIView(e);
@@ -46,20 +55,6 @@ namespace AdvancedUnityPlugin.Editor
                     GUI.FocusControl(null);
                 }
 
-                switch((MainToolbar)mainToolbarIndex)
-                {
-                    case MainToolbar.STATE:
-                        {
-                            
-                        }
-                        break;
-                    case MainToolbar.TRANSITION:
-                        {
-                            
-                        }
-                        break;
-                }
-
     #region 2.Information Box
                 GUILayout.BeginVertical("box");
                 {
@@ -67,8 +62,20 @@ namespace AdvancedUnityPlugin.Editor
                     GUILayout.Space(20.0f);
 
                     GUILayout.Box("Information", (GUIStyle)"dragtabdropwindow");
-
-                    DrawStateMachineInformation();
+                                 
+                    switch ((MainToolbar)mainToolbarIndex)
+                    {
+                        case MainToolbar.STATE:
+                            {   
+                                DrawStateInformation();
+                            }
+                            break;
+                        case MainToolbar.TRANSITION:
+                            {
+                                DrawTransitionInformation();
+                            }
+                            break;
+                    }
                     GUILayout.Space(5.0f);
 
                     #region 3-1. State Scroll Box
@@ -78,12 +85,12 @@ namespace AdvancedUnityPlugin.Editor
                         {
                             case MainToolbar.STATE:
                                 {
-                                    DrawStateList();
+                                    DrawStateList(e);
                                 }
                                 break;
                             case MainToolbar.TRANSITION:
                                 {
-                                    DrawStateTransitionList();
+                                    DrawStateTransitionList(e);
                                 }
                                 break;
                         }
@@ -147,80 +154,85 @@ namespace AdvancedUnityPlugin.Editor
                 return false;
         }
 
+     
         private Vector2 stateScrollView = Vector2.zero;
-        private void DrawStateList()
+        private void DrawStateList(Event e)
         {
             if (!AdvancedStateMachineEditorWindow.Target)
                 return;
-
-            GUIStyle scrollListStyle = new GUIStyle("Button");
-            scrollListStyle.alignment = TextAnchor.MiddleLeft;
 
             GUILayout.BeginHorizontal((GUIStyle)"AnimationKeyframeBackground");
             {
                 stateScrollView = GUILayout.BeginScrollView(stateScrollView, false, false);
                 {
-                    List<AdvancedStateMachine.AdvancedState> advancedStates = AdvancedStateMachineEditorWindow.Target.advancedStates;
-                    for (int i = 0; i < advancedStates.Count; i++)
+                    if(!e.alt)
                     {
-                        if(SearchString(advancedStates[i].ID, strSearchText))
+                        List<AdvancedStateMachine.AdvancedState> advancedStates = AdvancedStateMachineEditorWindow.Target.advancedStates;
+                        for (int i = 0; i < advancedStates.Count; i++)
                         {
-                            GUILayout.BeginHorizontal();
+                            if (SearchString(advancedStates[i].ID, strSearchText))
                             {
-                                if(GUILayout.Button(i.ToString() + ". " + advancedStates[i].ID, scrollListStyle))
+                                GUILayout.BeginHorizontal();
                                 {
-                                    AdvancedStateMachineEditorWindow.Instance.SelectNodeByState(advancedStates[i]);
-                                }
+                                    if (GUILayout.Button(i.ToString() + ". " + advancedStates[i].ID, scrollListStyle))
+                                    {
+                                        AdvancedStateMachineEditorWindow.Instance.SelectNodeByState(advancedStates[i]);
+                                    }
 
-                                //Error Icon Test
-                                GUILayout.Label("",(GUIStyle)"CN EntryWarnIconSmall");   //TEST 
+                                    //Error Icon Test
+                                    GUILayout.Label("", (GUIStyle)"CN EntryWarnIconSmall");   //TEST 
+                                }
+                                GUILayout.EndHorizontal();
                             }
-                            GUILayout.EndHorizontal();
-                        }
+                        }   
                     }
                 }
                 GUILayout.EndScrollView();
             }
-            GUILayout.EndVertical();     
+            GUILayout.EndVertical();
+
+            GUI.changed = true;
         }
 
         private Vector2 transitionScrollView = Vector2.zero;
-        private void DrawStateTransitionList()
+        private void DrawStateTransitionList(Event e)
         {
             if (!AdvancedStateMachineEditorWindow.Target)
                 return;
-
-            GUIStyle scrollListStyle = new GUIStyle("Button");
-            scrollListStyle.alignment = TextAnchor.MiddleLeft;
 
             GUILayout.BeginHorizontal((GUIStyle)"AnimationKeyframeBackground");
             {
                 transitionScrollView = GUILayout.BeginScrollView(transitionScrollView, false, true);
                 {
-                    List<AdvancedStateMachine.AdvancedTransition> advancedTransitions = AdvancedStateMachineEditorWindow.Target.advancedTransitions;
-                    for (int i = 0; i < advancedTransitions.Count; i++)
+                    if(!e.alt)
                     {
-                        if (SearchString(advancedTransitions[i].ID, strSearchText))
+                        List<AdvancedStateMachine.AdvancedTransition> advancedTransitions = AdvancedStateMachineEditorWindow.Target.advancedTransitions;
+                        for (int i = 0; i < advancedTransitions.Count; i++)
                         {
-                            GUILayout.BeginHorizontal();
+                            if (SearchString(advancedTransitions[i].ID, strSearchText))
                             {
-                                if (GUILayout.Button(i.ToString() + ". " + advancedTransitions[i].ID, scrollListStyle))
+                                GUILayout.BeginHorizontal();
                                 {
-                                    AdvancedStateMachineEditorWindow.Instance.SelectNodeByTransition(advancedTransitions[i]);
-                                }
+                                    if (GUILayout.Button(i.ToString() + ". " + advancedTransitions[i].ID, scrollListStyle))
+                                    {
+                                        AdvancedStateMachineEditorWindow.Instance.SelectNodeByTransition(advancedTransitions[i]);
+                                    }
 
-                                //Error Icon Test
-                                GUILayout.Label("", (GUIStyle)"CN EntryWarnIconSmall");   //TEST 
+                                    //Error Icon Test
+                                    GUILayout.Label("", (GUIStyle)"CN EntryWarnIconSmall");   //TEST 
+                                }
+                                GUILayout.EndHorizontal();
                             }
-                            GUILayout.EndHorizontal();
-                        }
+                        }   
                     }
                 }
                 GUILayout.EndScrollView();
             }
+
+            GUI.changed = true;
         }
 
-        private void DrawStateMachineInformation()
+        private void DrawStateInformation()
         {
             GUILayout.BeginVertical("box");
             {
@@ -231,20 +243,25 @@ namespace AdvancedUnityPlugin.Editor
                         GUILayout.Label(AdvancedStateMachineEditorWindow.Target.advancedStates.Count.ToString());
                 }
                 GUILayout.EndHorizontal();
+
+                GUILayout.BeginHorizontal();
+                {
+                    isHightLight = GUILayout.Toggle(isHightLight,new GUIContent("Hightlight"));;    
+                }
+                GUILayout.EndHorizontal();
             }
             GUILayout.EndVertical();
         }
 
-        //응 안써 지금은
-        private void DrawNewStatePanel()
+        private void DrawTransitionInformation()
         {
             GUILayout.BeginVertical("box");
             {
                 GUILayout.BeginHorizontal();
                 {
-                    GUILayout.Label("State ID : ");
-                    GUILayout.TextField("");
-                    GUILayout.Button("",(GUIStyle)"TL tab plus right");
+                    GUILayout.Label("Transition Count : ");
+                    if (AdvancedStateMachineEditorWindow.Target != null)
+                        GUILayout.Label(AdvancedStateMachineEditorWindow.Target.advancedTransitions.Count.ToString());
                 }
                 GUILayout.EndHorizontal();
             }

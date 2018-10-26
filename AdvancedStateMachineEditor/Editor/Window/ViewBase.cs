@@ -58,8 +58,6 @@ namespace AdvancedUnityPlugin.Editor
 
         public virtual void ProcessEvents(Event e) 
         {  
-            if (!viewRect.Contains(e.mousePosition))
-                return;
         }
     }
 }

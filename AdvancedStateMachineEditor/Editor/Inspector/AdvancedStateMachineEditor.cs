@@ -52,6 +52,9 @@ namespace AdvancedUnityPlugin.Editor
 
             Space(10.0f);
 
+            //===================================
+            //## Show Unity Default InspectorGUI
+            //===================================
             //base.OnInspectorGUI();
         }
 
@@ -90,7 +93,7 @@ namespace AdvancedUnityPlugin.Editor
                 }
                 if (EditorGUI.EndChangeCheck())
                 {
-
+                    EditorUtility.SetDirty(origin);
                 }
                 if (selectInitalState >= origin.advancedStates.Count)
                 {

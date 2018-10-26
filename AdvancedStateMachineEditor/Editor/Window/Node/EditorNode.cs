@@ -139,7 +139,7 @@ namespace AdvancedUnityPlugin.Editor
                 connections.RemoveAt(connections.Count - 1);
         }
 
-        public void Drag(Vector2 delta)
+        private void Drag(Vector2 delta)
         {
             rect.position += delta;
         }
@@ -155,16 +155,16 @@ namespace AdvancedUnityPlugin.Editor
         {
             GUI.Box(new Rect(rect.x - zoomScale.x, rect.y - zoomScale.y, rect.width, rect.height), "", isSelected ? selectStyle : normalStyle);
 
-            GUI.Label(new Rect(rect.x - zoomScale.x + rect.width * 0.5f - (title.Length * 2.5f), rect.y - zoomScale.y + 15, 100, 20), title);
+            GUI.Label(new Rect(rect.x - zoomScale.x + rect.width * 0.5f - (title.Length * 2.5f), rect.y - zoomScale.y + 15, 150, 20), title);
 
-            //GUI.Label(new Rect(rect.x - zoomRect.x + rect.width * 0.5f - (title.Length * 2.5f), rect.y - zoomRect.y + 15, 100, 20), rect.ToString());
+            //GUI.Label(new Rect(rect.x - zoomScale.x + rect.width * 0.5f - (title.Length * 2.5f), rect.y - zoomScale.y + 15, 150, 20), rect.ToString());
         }
 
-        public void Draw(string text, float gridScale = 0.0f)
+        public void Draw(string text,Vector2 zoomScale)
         {
-            GUI.Box(rect, "", isSelected ? selectStyle : normalStyle);
+            GUI.Box(new Rect(rect.x - zoomScale.x, rect.y - zoomScale.y, rect.width, rect.height), "", isSelected ? selectStyle : normalStyle);
 
-            GUI.Label(new Rect(rect.x + rect.width * 0.5f - (text.Length * 3.5f), rect.y + 15, 100, 20), text);
+            GUI.Label(new Rect(rect.x + rect.width * 0.5f - (text.Length * 3.5f), rect.y + 15, rect.width, 20), text);
         }
 
         public void DrawConnection(Vector2 zoomScale)
@@ -178,69 +178,105 @@ namespace AdvancedUnityPlugin.Editor
                 {
                     if (connections.Count <= i)
                         continue;
-                    
-                    connections[i].Draw(new Vector2(this.rect.center.x - zoomScale.x, this.rect.center.y - zoomScale.y)
-                                        , new Vector2(childNodes[i].rect.center.x - zoomScale.x, childNodes[i].rect.center.y - zoomScale.y)
-                     );
+
+                    connections[i].Draw(zoomScale, rect.center, childNodes[i].rect.center);
                 }
             }
         }
 
-        public bool ProcessEvents(Vector2 zoomScale, Event e)
+        public bool ProcessEventByEventType(Vector2 zoomScale, Event e, EventType eventType)
         {
-            switch (e.type)
+            if (!isSelected && !(new Rect(rect.x - zoomScale.x, rect.y - zoomScale.y, rect.width, rect.height).Contains(e.mousePosition)))
+                return false;
+
+            switch(eventType)
             {
                 case EventType.MouseDown:
                     {
-                        //left down
-                        if (e.button == 0)
-                        {
-                            if (new Rect(rect.x - zoomScale.x,rect.y - zoomScale.y,rect.width,rect.height).Contains(e.mousePosition) && e.alt == false)
-                            {
-                                isToggle = isSelected;
-                                return isSelected = true;
-                            }
-                            else
-                            {
-                                isSelected = false;
-                                isToggle = !isSelected;
-                            }
-                        }
-                        //right down
-                        else if (e.button == 1 && isSelected && new Rect(rect.x - zoomScale.x, rect.y - zoomScale.y, rect.width, rect.height).Contains(e.mousePosition))
-                        {
-                            if (onGenericMenu != null)
-                                onGenericMenu(this);
+                        if (ProcessMouseLeftDown(zoomScale, e))
+                            return true;
 
-                            e.Use();
-                        }
+                        if (ProcessMouseRightDown(zoomScale, e))
+                            return true;
+
                     }
                     break;
-
                 case EventType.MouseUp:
                     {
-                        if (new Rect(rect.x - zoomScale.x, rect.y - zoomScale.y, rect.width, rect.height).Contains(e.mousePosition) && (isToggle == isSelected) && !isDragged)
-                            isSelected = false;
-
-                        if (isToggle != isSelected)
-                            isToggle = isSelected;
-                        
-                        isDragged = false;
+                        if (ProcessMouseUp(zoomScale, e))
+                            return true;
                     }
                     break;
-
                 case EventType.MouseDrag:
                     {
-                        if (isSelected)
-                        {
-                            Drag(e.delta);
-                            GUI.changed = true;
-                            return isDragged = true;
-                        }
+                        if (e.button == 1)
+                            return false;
+                        
+                        if (ProcessMouseDrag(zoomScale, e))
+                            return true;
                     }
                     break;
             }
+
             return false;
-        }//end switch
+        }
+
+        private bool ProcessMouseLeftDown(Vector2 zoomScale, Event e)
+        {
+            if (e.button == 0)
+            {
+                if (new Rect(rect.x - zoomScale.x, rect.y - zoomScale.y, rect.width, rect.height).Contains(e.mousePosition) && e.alt == false)
+                {
+                    isToggle = isSelected;
+                    return isSelected = true;
+                }
+                else
+                {
+                    isSelected = false;
+                    isToggle = !isSelected;
+                }
+            }
+
+            return false;
+        }
+
+        private bool ProcessMouseRightDown(Vector2 zoomScale,Event e)
+        {
+            if (e.button == 1 && isSelected && new Rect(rect.x - zoomScale.x, rect.y - zoomScale.y, rect.width, rect.height).Contains(e.mousePosition))
+            {
+                if (onGenericMenu != null)
+                    onGenericMenu(this);
+                
+                return true;
+            }
+            return false;
+        }
+
+        private bool ProcessMouseUp(Vector2 zoomScale, Event e)
+        {
+            if (new Rect(rect.x - zoomScale.x, rect.y - zoomScale.y, rect.width, rect.height).Contains(e.mousePosition) && (isToggle == isSelected) && !isDragged)
+            {
+                isSelected = false;
+                return true;
+            }
+
+            if (isToggle != isSelected)
+                isToggle = isSelected;
+
+            isDragged = false;
+
+            return false;
+        }
+
+        private bool ProcessMouseDrag(Vector2 zoomScale, Event e)
+        {
+            if (isSelected)
+            {
+                Drag(e.delta);
+                return isDragged = true;
+            }
+
+            return false;
+        }
     }
 }

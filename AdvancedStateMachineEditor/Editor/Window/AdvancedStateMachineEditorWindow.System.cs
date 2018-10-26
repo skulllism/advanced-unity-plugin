@@ -18,6 +18,8 @@ namespace AdvancedUnityPlugin.Editor
             if (editorNodes == null || editorNodes.Count <= 0)
                 return;
 
+            serializedObject.Update();
+
 
             DirectoryInfo info = new DirectoryInfo(PATH);
             if(!info.Exists)
@@ -25,25 +27,38 @@ namespace AdvancedUnityPlugin.Editor
                 info.Create();
             }
 
-            NodeAsset asset = AssetDatabase.LoadAssetAtPath<NodeAsset>(PATH + Target.transform.root.name  + ".asset");
+            AdvancedStateMachineEditorData asset = AssetDatabase.LoadAssetAtPath<AdvancedStateMachineEditorData>(PATH + Target.transform.root.name  + ".asset");
             if(asset == null)
             {
-                asset = ScriptableObject.CreateInstance<NodeAsset>();
+                asset = ScriptableObject.CreateInstance<AdvancedStateMachineEditorData>();
                 AssetDatabase.CreateAsset(asset, PATH + Target.transform.root.name + ".asset");
             }
              
             asset.Save(editorNodes);
+            asset.zoomscale        = workView.zoomScale;
+            asset.zoomCoordsOrigin = workView.zoomCoordsOrigin;
 
+            serializedObject.ApplyModifiedProperties();
+
+            EditorUtility.SetDirty(asset);
+    
+            AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
         }
 
         private void LoadData()
         {
-            NodeAsset asset = AssetDatabase.LoadAssetAtPath<NodeAsset>(PATH + Target.transform.root.name + ".asset");
+            AdvancedStateMachineEditorData asset = AssetDatabase.LoadAssetAtPath<AdvancedStateMachineEditorData>(PATH + Target.transform.root.name + ".asset");
             if (asset == null)
                 return;
 
+            serializedObject.Update();
+
             asset.Load(editorNodes);
+            workView.zoomScale = asset.zoomscale;
+            workView.zoomCoordsOrigin = asset.zoomCoordsOrigin;
+
+            serializedObject.ApplyModifiedProperties();
         }
     }
 }

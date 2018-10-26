@@ -88,6 +88,23 @@ namespace AdvancedUnityPlugin.Editor
 
             return null;
         }
+
+        public EditorNode<NodeData> FindNodeByStateID(string stateID)
+        {
+            if (stateID == string.Empty)
+                return null;
+
+            for (int i = 0; i < editorNodes.Count; i++)
+            {
+                if (editorNodes[i].myData.type != NodeType.STATE)
+                    continue;
+
+                if (editorNodes[i].myData.state.ID == stateID)
+                    return editorNodes[i];
+            }
+
+            return null;
+        }
     }
 }
 
