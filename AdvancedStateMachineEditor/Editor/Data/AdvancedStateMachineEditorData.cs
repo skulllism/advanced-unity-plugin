@@ -1,34 +1,40 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 namespace AdvancedUnityPlugin.Editor
 {
-    public class NodeAsset : ScriptableObject
+    public class AdvancedStateMachineEditorData : ScriptableObject
     {
         [System.Serializable]
-        public class AssetData
+        public class NodeData
         {
             public string name;
             public Rect rect;
         }
 
-        //[HideInInspector]
-        public List<AssetData> datas = new List<AssetData>();
+        [HideInInspector]
+        public List<NodeData> datas = new List<NodeData>();
+        [HideInInspector]
+        public float zoomscale = 0.0f;
+        [HideInInspector]
+        public Vector2 zoomCoordsOrigin = Vector2.zero;
 
         public void Save(List<EditorNode<AdvancedStateMachineEditorWindow.NodeData>> nodes)
         {
+            int saveCount = 0;
             for (int i = 0; i < nodes.Count; i++)
             {
-                if(datas.Count - 1 < i)
+                if (datas.Count - 1 < i)
                 {
-                    AssetData data = new AssetData();
+                    NodeData data = new NodeData();
 
-                    if(nodes[i].myData.type == AdvancedStateMachineEditorWindow.NodeType.STATE)
+                    if (nodes[i].myData.type == AdvancedStateMachineEditorWindow.NodeType.STATE)
                     {
-                        data.name = "S_" + nodes[i].myData.state.ID;    
+                        data.name = "S_" + nodes[i].myData.state.ID;
                     }
-                    else if(nodes[i].myData.type == AdvancedStateMachineEditorWindow.NodeType.TRANSITION)
+                    else if (nodes[i].myData.type == AdvancedStateMachineEditorWindow.NodeType.TRANSITION)
                     {
                         data.name = "T_" + nodes[i].myData.transition.ID;
                     }
@@ -50,7 +56,17 @@ namespace AdvancedUnityPlugin.Editor
 
                     datas[i].rect = nodes[i].rect;
                 }
+
+                saveCount = i;
             }
+
+            for (int i = saveCount + 1; i < datas.Count; i++)
+            {
+                datas.RemoveAt(i);
+            }
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
         }
 
         public void Load(List<EditorNode<AdvancedStateMachineEditorWindow.NodeData>> nodes)
@@ -73,7 +89,7 @@ namespace AdvancedUnityPlugin.Editor
                         name = "T_" + nodes[j].myData.transition.ID;
                     }
 
-                    if(datas[i].name == name)
+                    if (datas[i].name == name)
                     {
                         nodes[j].rect = datas[i].rect;
                         break;
@@ -81,5 +97,5 @@ namespace AdvancedUnityPlugin.Editor
                 }
             }
         }
-    }    
+    }
 }

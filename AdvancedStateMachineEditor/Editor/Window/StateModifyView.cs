@@ -60,7 +60,9 @@ namespace AdvancedUnityPlugin.Editor
                 GUILayout.BeginHorizontal();
                 {
                     GUILayout.Label("State ID : ");
-
+                    //================================================
+                    //  ## 아이디 바뀔떄마다 자신을 가르키고 있는 트랜지션의 ID도 바꿔준.
+                    //================================================
                     EditorGUI.BeginChangeCheck();
                     {
                         node.myData.state.ID = GUILayout.TextField(node.myData.state.ID);
@@ -69,6 +71,17 @@ namespace AdvancedUnityPlugin.Editor
                     if(EditorGUI.EndChangeCheck())
                     {
                         AdvancedStateMachineEditorWindow.Instance.InitializePropertyData();
+
+                        if(node.parentNodes != null && node.parentNodes.Count >= 0)
+                        {
+                            for (int i = 0; i < node.parentNodes.Count; i++)
+                            {
+                                if (node.parentNodes[i].myData.type == AdvancedStateMachineEditorWindow.NodeType.TRANSITION)
+                                {
+                                    node.parentNodes[i].myData.transition.stateID = node.myData.state.ID;
+                                }
+                            }   
+                        }
                     }
                 }
                 GUILayout.EndHorizontal();
@@ -224,6 +237,8 @@ namespace AdvancedUnityPlugin.Editor
             }
 
             RefreshListItemIndex();
+
+            EditorUtility.SetDirty(AdvancedStateMachineEditorWindow.Target);
         }
 
         private void ClickListItemMoveDown()
@@ -260,6 +275,8 @@ namespace AdvancedUnityPlugin.Editor
             }
 
             RefreshListItemIndex();
+
+            EditorUtility.SetDirty(AdvancedStateMachineEditorWindow.Target);
         }
 
         private void ClickRemoveItem()

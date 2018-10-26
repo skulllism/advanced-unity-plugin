@@ -70,6 +70,21 @@ namespace AdvancedUnityPlugin.Editor
             Instance.Show();
         }
 
+        private void OnLostFocus()
+        {
+            SaveData();
+        }
+
+        private void OnEnable()
+        {
+            SaveData();
+        }
+
+        private void OnDestroy()
+        {
+            SaveData();
+        }
+
         private void InitializeView()
         {
             if (Instance != null)
@@ -88,6 +103,7 @@ namespace AdvancedUnityPlugin.Editor
             }
 
             workView.Initialize();
+            propertiesView.Initialize();
 
             isModifyViewOpen = false;
         }
@@ -104,9 +120,8 @@ namespace AdvancedUnityPlugin.Editor
             if (editorNodes == null)
                 editorNodes = new List<EditorNode<NodeData>>();
 
-            //================================================
-            editorNodes.Clear(); // 노드 데이터 로드해서 사용 할 예정 
-            //================================================
+            editorNodes.Clear();
+
             if (selected == null)
                 return;
 
@@ -135,9 +150,9 @@ namespace AdvancedUnityPlugin.Editor
 
                 for (int j = 0; j < selected.advancedStates.Count; j++)
                 {
-                    if(transition.state.ID == selected.advancedStates[j].ID)
+                    if(transition.stateID == selected.advancedStates[j].ID)
                     {
-                        transition.state = selected.advancedStates[j];
+                        transition.stateID = selected.advancedStates[j].ID;
                         break;
                     }
                 }
@@ -159,7 +174,7 @@ namespace AdvancedUnityPlugin.Editor
                 }
                 else if (editorNodes[i].myData.type == NodeType.TRANSITION)
                 {
-                    AttachChildNodeInParentNode(FindNodeByState(editorNodes[i].myData.transition.state), editorNodes[i]);
+                    AttachChildNodeInParentNode(FindNodeByStateID(editorNodes[i].myData.transition.stateID), editorNodes[i]);
                 }
             }
         }
@@ -251,9 +266,11 @@ namespace AdvancedUnityPlugin.Editor
                 }
                 else
                 {
-                    propertiesView.GUIView(Event.current);    
+                    propertiesView.GUIView(Event.current);   
                 }
+                     
                 workView.ProcessEvents(Event.current);
+
                 workView.GUIView(Event.current);
             }
             GUILayout.EndHorizontal();
@@ -278,6 +295,8 @@ namespace AdvancedUnityPlugin.Editor
 
             EditorNode<NodeData> node = CreateStateNode(state, position, state.ID);
             SelectNode(node);
+
+            SaveData();
         }
 
         //TODO : 동일한 ID 입력에 대한 예외처리 해주
@@ -285,13 +304,15 @@ namespace AdvancedUnityPlugin.Editor
         {
             AdvancedStateMachine.AdvancedTransition transition = new AdvancedStateMachine.AdvancedTransition();
             transition.ID = "New Transition" + Target.advancedTransitions.Count;
-            transition.state = null;
+            transition.stateID = string.Empty;
             Target.advancedTransitions.Add(transition);
 
             InitializePropertyData();
 
             EditorNode<NodeData> node = CreateTransitionNode(transition, position, transition.ID);
             SelectNode(node);
+
+            SaveData();
         }
 
         public void DeleteNode(EditorNode<AdvancedStateMachineEditorWindow.NodeData> node)
@@ -305,7 +326,7 @@ namespace AdvancedUnityPlugin.Editor
                 {
                     for (int i = 0; i < node.parentNodes.Count; i++)
                     {
-                        node.parentNodes[i].myData.transition.state = null;
+                        node.parentNodes[i].myData.transition.stateID = string.Empty;
                     }    
                 }
 
@@ -338,13 +359,18 @@ namespace AdvancedUnityPlugin.Editor
             SelectNode(null);
 
             InitializePropertyData();
+
+            SaveData();
         }
 
         private EditorNode<NodeData> CreateStateNode(AdvancedStateMachine.AdvancedState state, Vector2 position, string title)
         {
             EditorNode<NodeData> node = new EditorNode<NodeData>(new NodeData(NodeType.STATE, state, null)
                                                                  ,editorNodes.Count
-                                                                 ,new Rect(position.x, position.y, NODE_WIDTH, NODE_HEIGHT), title ,(GUIStyle)"flow node hex 4", (GUIStyle)"flow node hex 4 on", OnStateNodeGenericMenu);          
+                                                                 ,new Rect(position.x - (NODE_WIDTH * 0.5f), position.y - (NODE_HEIGHT * 0.5f), NODE_WIDTH, NODE_HEIGHT)
+                                                                 , title 
+                                                                 ,(GUIStyle)"flow node hex 4", (GUIStyle)"flow node hex 4 on"
+                                                                 , OnStateNodeGenericMenu);          
             editorNodes.Add(node);
 
             return node;
@@ -354,7 +380,10 @@ namespace AdvancedUnityPlugin.Editor
         {
             EditorNode<NodeData> node = new EditorNode<NodeData>(new NodeData(NodeType.TRANSITION, null, transition)
                                                                  ,editorNodes.Count 
-                                                                 ,new Rect(position.x, position.y, NODE_WIDTH, NODE_HEIGHT), title, (GUIStyle)"flow node hex 0", (GUIStyle)"flow node hex 0 on", OnTransitionNodeGenericMenu);
+                                                                 ,new Rect(position.x - (NODE_WIDTH * 0.5f), position.y - (NODE_HEIGHT * 0.5f), NODE_WIDTH, NODE_HEIGHT)
+                                                                 , title
+                                                                 , (GUIStyle)"flow node hex 0", (GUIStyle)"flow node hex 0 on"
+                                                                 , OnTransitionNodeGenericMenu);
             editorNodes.Add(node);
 
             return node;
@@ -368,7 +397,7 @@ namespace AdvancedUnityPlugin.Editor
             genericMenu.AddItem(new GUIContent("Delete"), false, () => DeleteNode(node));
 
             genericMenu.ShowAsContext();
-
+               
             Event.current.Use();
         }
 
@@ -409,6 +438,8 @@ namespace AdvancedUnityPlugin.Editor
 
         private bool AttachTransitionInState(EditorNode<NodeData> stateNode, EditorNode<NodeData> transitionNode)
         {
+            serializedObject.Update();
+
             for (int i = 0; i < stateNode.myData.state.transitions.Count; i++)
             {
                 if (stateNode.myData.state.transitions[i] == transitionNode.myData.transition)
@@ -416,6 +447,9 @@ namespace AdvancedUnityPlugin.Editor
             }
 
             stateNode.myData.state.transitions.Add(transitionNode.myData.transition);
+
+            EditorUtility.SetDirty(Target);
+            serializedObject.ApplyModifiedProperties();
 
             return true;
         }
@@ -482,8 +516,6 @@ namespace AdvancedUnityPlugin.Editor
             }
             else
                 isModifyViewOpen = false; 
-
-
         }
 
         private void SetDataInStateModifyView(EditorNode<NodeData> node)

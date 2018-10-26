@@ -8,14 +8,15 @@ namespace AdvancedUnityPlugin.Editor
     {
         public WorkView() : base("WorkView"){}
 
-        private const float minZoomScale = 0.5f;
+        private const float minZoomScale = 0.4f;
         private const float maxZoomScale = 1.5f;
-        private float   zoomScale = 1.0f;
-        private Vector2 zoomCoordsOrigin = Vector2.zero;
+        public float   zoomScale = 1.0f;
+        public Vector2 zoomCoordsOrigin = Vector2.zero;
         private Vector2 originMousePos = Vector2.zero;
         private Vector2 zoomMousePos = Vector2.zero;
 
         private bool isConnectionStart;
+        private bool isConnectionEnd;
         private Connection tempConnect;
        
         public void Initialize()
@@ -45,25 +46,54 @@ namespace AdvancedUnityPlugin.Editor
 
         public override void ProcessEvents(Event e)
         {
-            ProcessContextMenu(e);
+            if (e.type == EventType.Layout)
+                return;
+
             originMousePos = e.mousePosition;
 
+            if (!viewRect.Contains(e.mousePosition))
+                return;
+            
+            if (ProcessContextMenu(e))
+                return;
+            
             EditorZoomArea.Begin(zoomScale, viewRect);
             {
                 zoomMousePos = e.mousePosition;
 
-                base.ProcessEvents(e);
                 if(e.type == EventType.MouseDown || e.type == EventType.MouseUp || e.type == EventType.MouseDrag)
-                    ProcessNodeEvents(e);
+                {
+                    if (!e.alt && ProcessNodeEvents(e))
+                    {
+                        //## 최적화를 위해서 따로 뺴야한디
+                        if (AdvancedStateMachineEditorWindow.Instance.selectNode != null)
+                        {
+                            if (!AdvancedStateMachineEditorWindow.Instance.selectNode.isSelected)
+                            {
+                                AdvancedStateMachineEditorWindow.Instance.SelectNode(null);
+                            }
+                        }
+                        return;
+                    }
+                }
 
                 switch (e.type)
                 {
                     case EventType.MouseDown:
                         {
-                            if (e.button == 0)
+                            if (e.button == 0&& !e.alt)
                             {
                                 if (isConnectionStart)
                                     ClearConnectionSelection();
+
+                                //## 최적화를 위해서 따로 뺴야한디
+                                if (AdvancedStateMachineEditorWindow.Instance.selectNode != null)
+                                {
+                                    if (!AdvancedStateMachineEditorWindow.Instance.selectNode.isSelected)
+                                    {
+                                        AdvancedStateMachineEditorWindow.Instance.SelectNode(null);
+                                    }
+                                }
                             }
 
                             if (e.button == 0 && e.alt)
@@ -79,7 +109,9 @@ namespace AdvancedUnityPlugin.Editor
                                     ClearConnectionSelection();
                             }
 
+
                             GUI.changed = true;
+                            e.Use();
                         }
                         break;
                     case EventType.MouseUp:
@@ -87,19 +119,20 @@ namespace AdvancedUnityPlugin.Editor
                             isDragStart = false;
                             drag = Vector2.zero;
 
-                            AdvancedStateMachineEditorWindow.Instance.SaveData();
                             GUI.changed = true;
+                            e.Use();
                         }
                         break;
                     case EventType.MouseDrag:
                         if (isDragStart && e.button == 0 && e.alt)
                         {
                             Vector2 delta = Event.current.delta;
-                            delta /= zoomScale;
+                            delta /= 1.0f;
                             zoomCoordsOrigin -= delta;
 
                             drag = delta;
 
+                            e.Use();
                             GUI.changed = true;
                         }
                         break;
@@ -114,6 +147,7 @@ namespace AdvancedUnityPlugin.Editor
                             zoomScale = Mathf.Clamp(zoomScale, minZoomScale, maxZoomScale);
                             zoomCoordsOrigin += (zoomCoordsMousePos - zoomCoordsOrigin) - (oldZoom / zoomScale) * (zoomCoordsMousePos - zoomCoordsOrigin);
 
+                            e.Use();
                             GUI.changed = true;
                         }
                         break;
@@ -155,9 +189,9 @@ namespace AdvancedUnityPlugin.Editor
         public override void GUIView(Event e)
         {
             base.GUIView(e);
-                          
+                   
             EditorZoomArea.Begin(zoomScale, viewRect);
-            {    
+            {
                 //DrawGrid(20.0f , 0.5f, Color.gray);
                 //DrawGrid(100.0f , 0.2f, Color.black);
 
@@ -167,33 +201,105 @@ namespace AdvancedUnityPlugin.Editor
                     GUI.changed = true;
                 }
 
-                if (AdvancedStateMachineEditorWindow.EditorNodes != null)
+                if(!AdvancedStateMachineEditorWindow.Instance.propertiesView.isHightLight)
                 {
-                    for (int i = 0; i < AdvancedStateMachineEditorWindow.EditorNodes.Count; i++)
+                    DrawNormalNode();
+                }
+                else
+                {
+                    DrawHightlightNode();
+                }
+
+            }
+            EditorZoomArea.End();
+
+            //GUI.Label(new Rect(245, 0, 300, 50), "viewRect" + viewRect.ToString());
+            //GUI.Label(new Rect(245, 50, 300, 50), "zoom mousePos" + zoomMousePos.ToString());
+            //GUI.Label(new Rect(245, 100, 300, 50), "origin mousePos" + originMousePos.ToString());
+            //GUI.Label(new Rect(245, 150, 300, 50), "coord" + zoomCoordsOrigin.ToString());
+            //GUI.Label(new Rect(245, 200, 300, 50), new Rect(originMousePos.x - viewRect.x - zoomCoordsOrigin.x, originMousePos.y - viewRect.y - zoomCoordsOrigin.y, viewRect.width, viewRect.height).ToString());
+            //GUI.Label(new Rect(245, 250, 300, 50), "zoomScale" + zoomScale.ToString());
+        }
+
+        private void DrawNormalNode()
+        {
+            for (int i = 0; i < AdvancedStateMachineEditorWindow.EditorNodes.Count; i++)
+            {
+                if (AdvancedStateMachineEditorWindow.EditorNodes[i].myData.type == AdvancedStateMachineEditorWindow.NodeType.STATE)
+                {
+                    AdvancedStateMachineEditorWindow.EditorNodes[i].DrawConnection(zoomCoordsOrigin);
+                }
+            }
+
+            for (int i = 0; i < AdvancedStateMachineEditorWindow.EditorNodes.Count; i++)
+            {
+                AdvancedStateMachineEditorWindow.EditorNodes[i].Draw(zoomCoordsOrigin);
+
+                if (AdvancedStateMachineEditorWindow.EditorNodes[i].myData.type == AdvancedStateMachineEditorWindow.NodeType.TRANSITION)
+                {
+                    if (AdvancedStateMachineEditorWindow.EditorNodes[i].myData.transition.stateID != string.Empty)
                     {
-                        if(AdvancedStateMachineEditorWindow.EditorNodes[i].myData.type == AdvancedStateMachineEditorWindow.NodeType.STATE)
-                        {
-                            AdvancedStateMachineEditorWindow.EditorNodes[i].DrawConnection(zoomCoordsOrigin);
-                        }
-                    }
-
-                    for (int i = 0; i < AdvancedStateMachineEditorWindow.EditorNodes.Count  ; i++)
-                    {    
-                        AdvancedStateMachineEditorWindow.EditorNodes[i].Draw(zoomCoordsOrigin);
-
-                        if (AdvancedStateMachineEditorWindow.EditorNodes[i].myData.type == AdvancedStateMachineEditorWindow.NodeType.TRANSITION)
-                        {
-                            if(AdvancedStateMachineEditorWindow.EditorNodes[i].myData.transition.state != null && AdvancedStateMachineEditorWindow.EditorNodes[i].myData.transition.state.ID != string.Empty)
-                            {
-                                GUI.Box(new Rect(AdvancedStateMachineEditorWindow.EditorNodes[i].rect.x - zoomCoordsOrigin.x, AdvancedStateMachineEditorWindow.EditorNodes[i].rect.y + AdvancedStateMachineEditorWindow.EditorNodes[i].rect.height - zoomCoordsOrigin.y
-                                             , AdvancedStateMachineEditorWindow.EditorNodes[i].rect.width, AdvancedStateMachineEditorWindow.EditorNodes[i].rect.height)
-                                    , new GUIContent(AdvancedStateMachineEditorWindow.EditorNodes[i].myData.transition.state.ID));    
-                            }
-                        }
+                        GUI.Box(new Rect(AdvancedStateMachineEditorWindow.EditorNodes[i].rect.x - zoomCoordsOrigin.x, AdvancedStateMachineEditorWindow.EditorNodes[i].rect.y + AdvancedStateMachineEditorWindow.EditorNodes[i].rect.height - zoomCoordsOrigin.y
+                                     , AdvancedStateMachineEditorWindow.EditorNodes[i].rect.width, AdvancedStateMachineEditorWindow.EditorNodes[i].rect.height)
+                            , new GUIContent(AdvancedStateMachineEditorWindow.EditorNodes[i].myData.transition.stateID));
                     }
                 }
             }
-            EditorZoomArea.End();
+        }
+
+        private void DrawHightlightNode()
+        {
+            if (AdvancedStateMachineEditorWindow.Instance.selectNode == null || AdvancedStateMachineEditorWindow.Instance.selectNode.myData.type == AdvancedStateMachineEditorWindow.NodeType.TRANSITION)
+            {
+                DrawNormalNode();
+            }
+            else
+            {
+                EditorNode<AdvancedStateMachineEditorWindow.NodeData> node = AdvancedStateMachineEditorWindow.Instance.selectNode;
+
+                //Connection
+                node.DrawConnection(zoomCoordsOrigin);
+                if (node.childNodes != null)
+                {
+                    for (int i = 0; i < node.childNodes.Count; i++)
+                    {
+                        node.childNodes[i].DrawConnection(zoomCoordsOrigin);
+                    }
+                }
+
+
+                //Node
+                node.Draw(zoomCoordsOrigin);
+                if (node.childNodes != null)
+                {
+                    for (int i = 0; i < node.childNodes.Count; i++)
+                    {
+                        node.childNodes[i].Draw(zoomCoordsOrigin);
+                        if (node.childNodes[i].myData.transition.stateID != string.Empty)
+                        {
+                            GUI.Box(new Rect(node.childNodes[i].rect.x - zoomCoordsOrigin.x, node.childNodes[i].rect.y + node.childNodes[i].rect.height - zoomCoordsOrigin.y
+                                             , node.childNodes[i].rect.width, node.childNodes[i].rect.height)
+                                    , new GUIContent(node.childNodes[i].myData.transition.stateID));
+                        }
+
+                        if (node.childNodes[i].childNodes == null)
+                            continue;
+
+                        for (int j = 0; j < node.childNodes[i].childNodes.Count; j++)
+                        {
+                            node.childNodes[i].childNodes[j].Draw(zoomCoordsOrigin);
+                        }
+                    }
+                }
+
+                if (node.parentNodes != null)
+                {
+                    for (int i = 0; i < node.parentNodes.Count; i++)
+                    {
+                        node.parentNodes[i].Draw(zoomCoordsOrigin);
+                    }
+                }
+            }
         }
 
         private Vector2 ConvertScreenCoordsToZoomCoords(Vector2 screenCoords)
@@ -216,7 +322,7 @@ namespace AdvancedUnityPlugin.Editor
             Handles.BeginGUI();
             Handles.color = new Color(gridColor.r, gridColor.g, gridColor.b, gridOpacity);
 
-            offset += (drag / 15.0f);
+            offset += (drag / 10.0f);
             Vector3 newOffset = new Vector3(offset.x % gridSpacing, offset.y % gridSpacing, 0);    
 
             for (int i = 0; i < widthDivs; i++)
@@ -233,103 +339,112 @@ namespace AdvancedUnityPlugin.Editor
             Handles.EndGUI();
         }
 
-        private void ProcessNodeEvents(Event e)
+        private bool ProcessNodeEvents(Event e)
         {
-            GUI.Label(new Rect(0, 0, 300, 50), "viewRect" + viewRect.ToString());
-            GUI.Label(new Rect(0, 50, 300, 50), "mousePos" + e.mousePosition.ToString());
-            GUI.Label(new Rect(0, 100, 300, 50), "origin mousePos" + originMousePos.ToString());
-            GUI.Label(new Rect(0, 150, 300, 50), "coord" + zoomCoordsOrigin.ToString());
-            GUI.Label(new Rect(0, 200, 300, 50), new Rect(originMousePos.x - viewRect.x - zoomCoordsOrigin.x, originMousePos.y - viewRect.y - zoomCoordsOrigin.y, viewRect.width, viewRect.height).ToString());
-
-            if(!viewRect.Contains(originMousePos))
-                return;
-
             if (AdvancedStateMachineEditorWindow.EditorNodes != null)
             {
                 for (int i = AdvancedStateMachineEditorWindow.EditorNodes.Count - 1; i >= 0; i--)
                 {
-                    if (AdvancedStateMachineEditorWindow.EditorNodes[i].ProcessEvents(zoomCoordsOrigin, e))
+                    switch(e.type)
                     {
-                        if(!isConnectionStart)
-                        {
-                             EditorNode<AdvancedStateMachineEditorWindow.NodeData> temp = AdvancedStateMachineEditorWindow.EditorNodes[i];
-                            AdvancedStateMachineEditorWindow.EditorNodes.Remove(AdvancedStateMachineEditorWindow.EditorNodes[i]);
-
-                            AdvancedStateMachineEditorWindow.EditorNodes.Add(temp);
-
-                            AdvancedStateMachineEditorWindow.Instance.SelectNode(temp);
-                        }
-                        else
-                        {
-                            AdvancedStateMachineEditorWindow.EditorNodes[i].isSelected = false;
-                            AdvancedStateMachineEditorWindow.Instance.selectNode.isSelected = true;
-
-                            if (AdvancedStateMachineEditorWindow.EditorNodes[i].myData.type == AdvancedStateMachineEditorWindow.NodeType.TRANSITION)
+                        case EventType.MouseDown:
                             {
-                                AdvancedStateMachineEditorWindow.Instance.CreateConnection(AdvancedStateMachineEditorWindow.Instance.selectNode, AdvancedStateMachineEditorWindow.EditorNodes[i]);
-
-                                ClearConnectionSelection();
+                                if (ProcessMouseDownEventByNode(AdvancedStateMachineEditorWindow.EditorNodes[i], e))
+                                {
+                                    e.Use();
+                                    return GUI.changed = true;
+                                }
                             }
-                            else
+                            break;
+                        case EventType.MouseUp:
                             {
-                                ClearConnectionSelection();
+                                if (AdvancedStateMachineEditorWindow.EditorNodes[i].ProcessEventByEventType(zoomCoordsOrigin, e, EventType.MouseUp))
+                                {
+                                    AdvancedStateMachineEditorWindow.Instance.SelectNode(null);
+                                    e.Use();
+                                    return GUI.changed = true;
+                                }
                             }
-                        }
-                        break;
-                    }
-                }
-
-                if(AdvancedStateMachineEditorWindow.Instance.selectNode != null)
-                {
-                    if (!AdvancedStateMachineEditorWindow.Instance.selectNode.isSelected)
-                    {
-                        AdvancedStateMachineEditorWindow.Instance.SelectNode(null);
+                            break;
+                        case EventType.MouseDrag:
+                            {
+                                if (AdvancedStateMachineEditorWindow.EditorNodes[i].ProcessEventByEventType(zoomCoordsOrigin, e, EventType.MouseDrag))
+                                {
+                                    e.Use();
+                                    return GUI.changed = true;
+                                }
+                            }
+                            break;
                     }
                 }
             }
+            return false;
         }
 
-        private void ProcessContextMenu(Event e)
+        private bool ProcessMouseDownEventByNode(EditorNode<AdvancedStateMachineEditorWindow.NodeData> node, Event e)
+        {
+            if (node.ProcessEventByEventType(zoomCoordsOrigin, e, EventType.MouseDown))
+            {
+                if (!isConnectionStart)
+                {
+                    EditorNode<AdvancedStateMachineEditorWindow.NodeData> temp = node;
+                    AdvancedStateMachineEditorWindow.EditorNodes.Remove(node);
+
+                    AdvancedStateMachineEditorWindow.EditorNodes.Add(temp);
+
+                    AdvancedStateMachineEditorWindow.Instance.SelectNode(temp);
+                }
+                else
+                {
+                    node.isSelected = false;
+                    AdvancedStateMachineEditorWindow.Instance.selectNode.isSelected = true;
+
+                    if (node.myData.type == AdvancedStateMachineEditorWindow.NodeType.TRANSITION)
+                    {
+                        AdvancedStateMachineEditorWindow.Instance.CreateConnection(AdvancedStateMachineEditorWindow.Instance.selectNode, node);
+
+                        ClearConnectionSelection();
+                    }
+                    else
+                    {
+                        ClearConnectionSelection();
+                    }
+                }
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool ProcessContextMenu(Event e)
         {
             if (e.button == 1 && !e.alt)
             {
-                if (!IsSelectedNode())
+                if (AdvancedStateMachineEditorWindow.Instance.selectNode == null)
                 {
                     GenericMenu genericMenu = new GenericMenu();
-                    genericMenu.AddItem(new GUIContent("Create/State"), false, () => OnClickCreateState(e.mousePosition));
-                    genericMenu.AddItem(new GUIContent("Create/Transition"), false, () => OnClickCreateTransition(e.mousePosition));
+                    genericMenu.AddItem(new GUIContent("Create/State")     , false, () => OnClickCreateState());
+                    genericMenu.AddItem(new GUIContent("Create/Transition"), false, () => OnClickCreateTransition());
                     genericMenu.ShowAsContext();
 
                     e.Use();
                     GUI.changed = true;
-                }
-            }
-        }
 
-        private void OnClickCreateState(Vector2 mousePosition)
-        {
-            AdvancedStateMachineEditorWindow.Instance.CreateState(new Vector2(mousePosition.x - viewRect.x, mousePosition.y - viewRect.y));
-        }
-
-        private void OnClickCreateTransition(Vector2 mousePosition)
-        {
-            AdvancedStateMachineEditorWindow.Instance.CreateTransition(new Vector2(mousePosition.x - viewRect.x, mousePosition.y - viewRect.y));
-        }
-
-        private bool IsSelectedNode()
-        {
-            if (AdvancedStateMachineEditorWindow.EditorNodes != null)
-            {
-                for (int i = 0; i < AdvancedStateMachineEditorWindow.EditorNodes.Count; i++)
-                {
-                    if (AdvancedStateMachineEditorWindow.EditorNodes[i].isSelected)
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
 
             return false;
+        }
+
+        private void OnClickCreateState()
+        {
+            AdvancedStateMachineEditorWindow.Instance.CreateState(new Vector2(zoomMousePos.x + zoomCoordsOrigin.x, zoomMousePos.y + zoomCoordsOrigin.y));
+        }
+
+        private void OnClickCreateTransition()
+        {
+            AdvancedStateMachineEditorWindow.Instance.CreateTransition(new Vector2(zoomMousePos.x + zoomCoordsOrigin.x, zoomMousePos.y + zoomCoordsOrigin.y));
         }
 
         public void MakeTransition(EditorNode<AdvancedStateMachineEditorWindow.NodeData> node)

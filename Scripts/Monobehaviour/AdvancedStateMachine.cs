@@ -19,7 +19,7 @@ namespace AdvancedUnityPlugin
         {
             public string ID;
 
-            public AdvancedState state;
+            public string stateID;
             public List<AdvancedDecision> decisions = new List<AdvancedDecision>();
 
             public virtual bool IsTransition()
@@ -61,7 +61,7 @@ namespace AdvancedUnityPlugin
 
                     if (transition.IsTransition())
                     {
-                        ID = transition.state.ID;
+                        ID = transition.stateID;
                         return true;
                     }
                 }
