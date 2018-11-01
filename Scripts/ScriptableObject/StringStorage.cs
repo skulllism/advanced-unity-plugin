@@ -7,14 +7,7 @@ namespace AdvancedUnityPlugin
     [CreateAssetMenu(menuName = "AdvancedUnityPlugin/StringStorage")]
     public class StringStorage : ScriptableObject
     {
-        public bool isDynamic;
         public List<string> strings;
-
-        private void OnEnable()
-        {
-            if (isDynamic)
-                strings.Clear();
-        }
 
         public string Get(int index)
         {

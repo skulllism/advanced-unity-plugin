@@ -22,19 +22,15 @@ namespace AdvancedUnityPlugin
         private Dictionary<string, AsyncOperation> loadingOperations = new Dictionary<string, AsyncOperation>();
         private Dictionary<string, AsyncOperation> unloadingOperations = new Dictionary<string, AsyncOperation>();
 
-        private void OnEnable()
-        {
-            SceneManager.sceneLoaded += OnSceneLoaded;
-            SceneManager.sceneUnloaded += OnSceneUnloaded;
-        }
-
-        private void OnDisable()
+        public void Init()
         {
             SceneManager.sceneLoaded -= OnSceneLoaded;
             SceneManager.sceneUnloaded -= OnSceneUnloaded;
             loadingOperations.Clear();
             unloadingOperations.Clear();
             loadedScene.Clear();
+            SceneManager.sceneLoaded += OnSceneLoaded;
+            SceneManager.sceneUnloaded += OnSceneUnloaded;
         }
 
         private void OnSceneUnloaded(Scene arg0)

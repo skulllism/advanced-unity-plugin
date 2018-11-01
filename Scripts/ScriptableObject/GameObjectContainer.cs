@@ -55,6 +55,7 @@ namespace AdvancedUnityPlugin
             {
                 pool.Value.DestroyAll();
             }
+            pools.Clear();
         }
 
         public void DestroyAll(GameObject origin)
