@@ -10,7 +10,7 @@ namespace AdvancedUnityPlugin
         public struct TermData
         {
             public bool  isUse;
-            public float data;
+            public float value;
         }
 
         public TermData lifeTime;
@@ -59,7 +59,7 @@ namespace AdvancedUnityPlugin
                 yield return null;
 
                 time += Time.deltaTime;
-                if (time >= lifeTime.data)
+                if (time >= lifeTime.value)
                 {
                     Pool();
                     break;
@@ -75,7 +75,7 @@ namespace AdvancedUnityPlugin
                 yield return null;
 
                 float distance = Vector3.Distance(transform.position, originDistance);
-                if(Mathf.Abs(distance) >= Mathf.Abs(lifeDistance.data))
+                if(Mathf.Abs(distance) >= Mathf.Abs(lifeDistance.value))
                 {
                     Pool();
                     break;

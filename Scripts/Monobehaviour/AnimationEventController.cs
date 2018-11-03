@@ -11,11 +11,10 @@ namespace AdvancedUnityPlugin
         [Serializable]
         public class AdvancedAnimationEvent
         {
-            public string ID;
             public AnimationClip clip;
             public UnityEvent onStartFrame;
             public UnityEvent onLastFrame;
-            public UnityKeyframeEvent[] keyframeEvents;
+            public List<UnityKeyframeEvent> keyframeEvents;
         }
 
         [Serializable]
@@ -42,7 +41,7 @@ namespace AdvancedUnityPlugin
         public Animator animator;
 
         [Header("Events")]
-        public AdvancedAnimationEvent[] animationEvents;
+        public List<AdvancedAnimationEvent> animationEvents;
 
         private List<KeyframeEvent> keyframeEvents = new List<KeyframeEvent>();
 
@@ -90,8 +89,8 @@ namespace AdvancedUnityPlugin
         private void SetAnimationEvent(AdvancedAnimationEvent advancedAnimationEvent)
         {
             float interval = 1.0f / advancedAnimationEvent.clip.frameRate;
-            AddKeyframeEvent(advancedAnimationEvent.clip, new UnityKeyframeEvent(advancedAnimationEvent.ID + "_onStart", 0, advancedAnimationEvent.onStartFrame));
-            AddKeyframeEvent(advancedAnimationEvent.clip,new UnityKeyframeEvent(advancedAnimationEvent.ID + "_onLast", (int)(advancedAnimationEvent.clip.length / interval), advancedAnimationEvent.onLastFrame));
+            AddKeyframeEvent(advancedAnimationEvent.clip, new UnityKeyframeEvent(advancedAnimationEvent.clip.name + "_onStart", 0, advancedAnimationEvent.onStartFrame));
+            AddKeyframeEvent(advancedAnimationEvent.clip,new UnityKeyframeEvent(advancedAnimationEvent.clip.name + "_onLast", (int)(advancedAnimationEvent.clip.length / interval), advancedAnimationEvent.onLastFrame));
 
             foreach (var keyframeEvent in advancedAnimationEvent.keyframeEvents)
             {
