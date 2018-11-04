@@ -130,6 +130,20 @@ namespace AdvancedUnityPlugin.Editor
                         }
                     }
                     break;
+                case EventType.MouseDrag:
+                    {
+                        if (workTimelineView.viewRect.Contains(new Vector2(e.mousePosition.x - viewRect.x, e.mousePosition.y - viewRect.y)))
+                        {
+                            int index = workTimelineView.GetFrameIndexOfRange(new Vector2(e.mousePosition.x - viewRect.x, e.mousePosition.y - viewRect.y));
+                            if (index != -1)
+                            {
+                                currentFrameIndex = index;
+
+                                e.Use();
+                            }
+                        }
+                    }
+                    break;
             }
         }
 

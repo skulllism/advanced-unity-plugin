@@ -241,7 +241,7 @@ namespace AdvancedUnityPlugin.Editor
         {
             if(selected == null || workView == null)
             {
-                GUILayout.Label("No AdvancedStateMachine Selected");
+                EditorGUILayout.HelpBox("Please select a AdvancedStateMachine", MessageType.Info);
                 return;
             }
 

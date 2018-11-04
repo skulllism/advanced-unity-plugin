@@ -124,7 +124,7 @@ namespace AdvancedUnityPlugin.Editor
                         }
                         break;
                     case EventType.MouseDrag:
-                        if (isDragStart && e.button == 0 && e.alt)
+                        if ((isDragStart && e.button == 0 && e.alt) || (isDragStart && e.button == 3))
                         {
                             Vector2 delta = Event.current.delta;
                             delta /= 1.0f;
