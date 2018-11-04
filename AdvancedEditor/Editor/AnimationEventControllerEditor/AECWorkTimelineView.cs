@@ -7,10 +7,6 @@ namespace AdvancedUnityPlugin.Editor
 {
     public class AECWorkTimelineView : ViewBase
     {
-        class TimelineNode
-        {
-            public Rect rect;
-        }
         private int currentFrameIndex;
 
         private float lineInterval;
@@ -40,7 +36,7 @@ namespace AdvancedUnityPlugin.Editor
         {
             base.GUIView(e);
 
-            GUILayout.BeginArea(viewRect, "", "box");
+            GUILayout.BeginArea(viewRect, "", (GUIStyle)"MeBlendBackground");
             {
                 DrawLine();
  
@@ -70,7 +66,7 @@ namespace AdvancedUnityPlugin.Editor
             else
                 lineInterval = (viewRect.width / frameCount);
             
-            Handles.color = Color.gray;
+            Handles.color = Color.black;
 
             scrollPosition = GUILayout.BeginScrollView(scrollPosition);
             {
@@ -86,7 +82,7 @@ namespace AdvancedUnityPlugin.Editor
                 //해당 클립의 프레임 수 만큼 보여준다 
                 for (int i = 0; i < frameCount; i++)
                 {
-                    Handles.DrawLine(new Vector3(startLine + (lineInterval * i), viewRect.height * 0.15f, 0), new Vector3(startLine + (lineInterval * i), viewRect.height * 0.4f, 0));
+                    Handles.DrawLine(new Vector3(startLine + (lineInterval * i), viewRect.height * 0.2f, 0), new Vector3(startLine + (lineInterval * i), viewRect.height * 0.45f, 0));
 
                     Handles.Label(new Vector3(startLine + (lineInterval * i) + labelStartX, (viewRect.height * 0.15f) + labelStartY, 0), new GUIContent((i).ToString()));
 
@@ -118,7 +114,7 @@ namespace AdvancedUnityPlugin.Editor
                     if(currentFrameIndex == frame)
                         GUI.Button(new Rect(position.x, position.y, 10.0f, 10.0f), new GUIContent(""),(GUIStyle)"TL Playhead");
                     else
-                        GUI.Button(new Rect(position.x, position.y, 10.0f, 10.0f), new GUIContent(""), (GUIStyle)"Icon.Event");
+                        GUI.Button(new Rect(position.x - 2.3f, position.y - 1.8f, 10.0f, 10.0f), new GUIContent(""), (GUIStyle)"Icon.Event");
                 }
             }
         }

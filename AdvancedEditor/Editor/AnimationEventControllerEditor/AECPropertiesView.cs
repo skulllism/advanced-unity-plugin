@@ -96,6 +96,7 @@ namespace AdvancedUnityPlugin.Editor
 
                 AnimationMode.BeginSampling();
                 {
+                    samplingTime = interval * AnimationEventControllerEditorWindow.Instance.currentFrameIndex;
                     AnimationMode.SampleAnimationClip(animationEventController.animator.gameObject, animationEventController.animationEvents[selectedEventAnimationIndex].clip, samplingTime);
                 }
                 AnimationMode.EndSampling();
@@ -261,34 +262,28 @@ namespace AdvancedUnityPlugin.Editor
         {
             GUILayout.BeginVertical("box");
             {
-                GUILayout.Box(new GUIContent("Information"), (GUIStyle)"dragtabdropwindow");
-
-                GUILayout.BeginHorizontal();
-                {
-                    GUILayout.Space(5.0f);
-                    GUILayout.Label("Current Count : ");
-                    GUILayout.Label(animationEventController.animationEvents.Count.ToString());
-                    GUILayout.Space(10.0f);
-                }
-                GUILayout.EndHorizontal();
-
+                GUILayout.Space(10.0f);
                 GUILayout.BeginHorizontal();
                 {
                     EditorGUI.BeginChangeCheck();
                     {
-                        selectedEventAnimationIndex = EditorGUILayout.Popup(selectedEventAnimationIndex, eventAnimationNames);    
+                        selectedEventAnimationIndex = EditorGUILayout.Popup(selectedEventAnimationIndex, eventAnimationNames, (GUIStyle)"PreDropDown");
                     }
-                    if(EditorGUI.EndChangeCheck())
+                    if (EditorGUI.EndChangeCheck())
                     {
                         AnimationEventControllerEditorWindow.Instance.SelectAnimationEvent(selectedEventAnimationIndex);
 
                         InitializeCurrentAnimationData();
                     }
 
-
-
+                    GUILayout.Label("Count : ");
+                    GUILayout.Label(animationEventController.animationEvents.Count.ToString());
                 }
                 GUILayout.EndHorizontal();
+                GUILayout.Space(15.0f);
+
+
+                GUILayout.Box(new GUIContent("Information"), (GUIStyle)"dragtabdropwindow");
 
                 GUILayout.BeginVertical("box");
                 {
@@ -296,6 +291,14 @@ namespace AdvancedUnityPlugin.Editor
                     {
                         GUILayout.Label("FrameRate : ");
                         GUILayout.Label(selectedFrameRate.ToString());
+                    }
+                    GUILayout.EndHorizontal();
+
+                    GUILayout.BeginHorizontal();
+                    {
+                        int frameCount = (int)(AnimationEventControllerEditorWindow.Instance.selected.clip.length / (1.0f / AnimationEventControllerEditorWindow.Instance.selected.clip.frameRate));
+                        GUILayout.Label("FrameCount : ");
+                        GUILayout.Label(frameCount.ToString());
                     }
                     GUILayout.EndHorizontal();
 

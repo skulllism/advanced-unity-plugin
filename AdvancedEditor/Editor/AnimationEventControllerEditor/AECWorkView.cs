@@ -11,6 +11,8 @@ namespace AdvancedUnityPlugin.Editor
         private AECWorkBaseEventModifyView baseEventModifyView;
         private AECWorkKeyFrameEventModifyView keyFrameEventModifyView;
 
+        private bool isDragged;
+
         public void Initialize()
         {
             InitializeSubView();
@@ -79,7 +81,7 @@ namespace AdvancedUnityPlugin.Editor
                                 if (index != -1)
                                 {
                                     AnimationEventControllerEditorWindow.Instance.currentFrameIndex = index;
-
+                                    isDragged = true;
                                     e.Use();
                                 }
                             }           
@@ -117,9 +119,14 @@ namespace AdvancedUnityPlugin.Editor
                         }
                     }
                     break;
+                case EventType.MouseUp:
+                    {
+                        isDragged = false;
+                    }
+                    break;
                 case EventType.MouseDrag:
                     {
-                        if (workTimelineView.IsInView(new Vector2(e.mousePosition.x - viewRect.x, e.mousePosition.y - viewRect.y)))
+                        if (isDragged && workTimelineView.IsInView(new Vector2(e.mousePosition.x - viewRect.x, e.mousePosition.y - viewRect.y)))
                         {
                             int index = workTimelineView.GetFrameIndexOfRange(new Vector2(e.mousePosition.x - viewRect.x, e.mousePosition.y - viewRect.y));
                             if (index != -1)
