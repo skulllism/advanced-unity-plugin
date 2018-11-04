@@ -15,9 +15,9 @@ namespace AdvancedUnityPlugin.Editor
         private bool  isAutoSampling;
         private float interval;
         private float samplingTime;
-        private float currentSamplingIndex;
         private float startSamplingTime;
         private float elapseSamplingTime;
+        private string strCurrentSamplingIndex;
 
         //===========================================
         //  ##  Selected Animation - Popup Control
@@ -74,8 +74,9 @@ namespace AdvancedUnityPlugin.Editor
             interval = 1.0f / animationEventController.animationEvents[selectedEventAnimationIndex].clip.frameRate;
 
             samplingTime = 0.0f;
-            currentSamplingIndex = 0.0f;
             isAutoSampling = false;
+
+            AnimationEventControllerEditorWindow.Instance.currentFrameIndex = 0;
         }
 
         public override void UpdateView(Rect editorRect, Rect percentageRect)
@@ -165,14 +166,16 @@ namespace AdvancedUnityPlugin.Editor
                     MoveFinishSamplingTime();
                 }
 
-                string strCurrentSamplingIndex = currentSamplingIndex.ToString();
+
+                strCurrentSamplingIndex = AnimationEventControllerEditorWindow.Instance.currentFrameIndex.ToString();
                 EditorGUI.BeginChangeCheck();
                 {
                     strCurrentSamplingIndex = GUILayout.TextField(strCurrentSamplingIndex);    
                 }
                 if(EditorGUI.EndChangeCheck())
                 {
-                    float.TryParse(strCurrentSamplingIndex, out currentSamplingIndex);   
+                    
+                    int.TryParse(strCurrentSamplingIndex, out AnimationEventControllerEditorWindow.Instance.currentFrameIndex);   
                 }
             }
             GUILayout.EndHorizontal();
@@ -207,20 +210,22 @@ namespace AdvancedUnityPlugin.Editor
         {
             startSamplingTime = elapseSamplingTime = Time.realtimeSinceStartup;
 
-            currentSamplingIndex++;
+            AnimationEventControllerEditorWindow.Instance.currentFrameIndex++;
 
-            samplingTime = interval * currentSamplingIndex;
+            samplingTime = interval * AnimationEventControllerEditorWindow.Instance.currentFrameIndex;
             if (samplingTime >= animationEventController.animationEvents[selectedEventAnimationIndex].clip.length)
             {
                 MoveStartSamplingTime();
             }
+
+            AnimationEventControllerEditorWindow.Instance.Repaint();
         }
 
         private void MoveNextSamplingTime()
         {
-            currentSamplingIndex++;
+            AnimationEventControllerEditorWindow.Instance.currentFrameIndex++;
 
-            samplingTime = interval * currentSamplingIndex;
+            samplingTime = interval * AnimationEventControllerEditorWindow.Instance.currentFrameIndex;
             if (samplingTime >= animationEventController.animationEvents[selectedEventAnimationIndex].clip.length)
             {
                 MoveFinishSamplingTime();
@@ -229,16 +234,16 @@ namespace AdvancedUnityPlugin.Editor
 
         private void MoveFinishSamplingTime()
         {
-            currentSamplingIndex = (animationEventController.animationEvents[selectedEventAnimationIndex].clip.length / interval) - 1.0f;
+            AnimationEventControllerEditorWindow.Instance.currentFrameIndex = (int)((animationEventController.animationEvents[selectedEventAnimationIndex].clip.length / interval) - 1.0f);
 
-            samplingTime = currentSamplingIndex * interval;
+            samplingTime = AnimationEventControllerEditorWindow.Instance.currentFrameIndex * interval;
         }
 
         private void MovePrevSamplingTime()
         {
-            currentSamplingIndex--;
+            AnimationEventControllerEditorWindow.Instance.currentFrameIndex--;
 
-            samplingTime = interval * currentSamplingIndex;
+            samplingTime = interval * AnimationEventControllerEditorWindow.Instance.currentFrameIndex;
             if (samplingTime < 0.0f)
             {
                 MoveStartSamplingTime();
@@ -247,7 +252,7 @@ namespace AdvancedUnityPlugin.Editor
 
         private void MoveStartSamplingTime()
         {
-            currentSamplingIndex = 0.0f;
+            AnimationEventControllerEditorWindow.Instance.currentFrameIndex = 0;
 
             samplingTime = 0.0f;
         }
@@ -260,6 +265,7 @@ namespace AdvancedUnityPlugin.Editor
 
                 GUILayout.BeginHorizontal();
                 {
+                    GUILayout.Space(5.0f);
                     GUILayout.Label("Current Count : ");
                     GUILayout.Label(animationEventController.animationEvents.Count.ToString());
                     GUILayout.Space(10.0f);
@@ -280,12 +286,29 @@ namespace AdvancedUnityPlugin.Editor
                     }
 
 
-                    GUILayout.Label("samples : ");
-                    GUILayout.Label(selectedFrameRate.ToString());
+
                 }
                 GUILayout.EndHorizontal();
 
-                if(GUILayout.Button(new GUIContent("Remove")))
+                GUILayout.BeginVertical("box");
+                {
+                    GUILayout.BeginHorizontal();
+                    {
+                        GUILayout.Label("FrameRate : ");
+                        GUILayout.Label(selectedFrameRate.ToString());
+                    }
+                    GUILayout.EndHorizontal();
+
+                    GUILayout.BeginHorizontal();
+                    {
+                        GUILayout.Label("KeyframeEvenets : ");
+                        GUILayout.Label(AnimationEventControllerEditorWindow.Instance.selected.keyframeEvents.Count.ToString());
+                    }
+                    GUILayout.EndHorizontal();
+                }
+                GUILayout.EndVertical();
+
+                if (GUILayout.Button(new GUIContent("Remove")))
                 {
                     if (AnimationEventControllerEditorWindow.Instance.RemoveSelectedAnimation())
                     {

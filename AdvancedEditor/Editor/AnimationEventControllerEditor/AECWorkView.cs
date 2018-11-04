@@ -11,13 +11,9 @@ namespace AdvancedUnityPlugin.Editor
         private AECWorkBaseEventModifyView baseEventModifyView;
         private AECWorkKeyFrameEventModifyView keyFrameEventModifyView;
 
-        private int currentFrameIndex;
-
         public void Initialize()
         {
             InitializeSubView();
-
-            currentFrameIndex = 0;
         }
 
         private void InitializeSubView()
@@ -39,14 +35,14 @@ namespace AdvancedUnityPlugin.Editor
             base.UpdateView(editorRect, percentageRect);
 
             workTimelineView.UpdateView(new Rect(viewRect.width, viewRect.height, viewRect.width, viewRect.height)
-                            , new Rect(0.0f, 0.0f, 1.0f, 0.1f));
+                            , new Rect(0.0f, 0.0f, 1.0f, 0.2f));
             
 
             baseEventModifyView.UpdateView(new Rect(viewRect.width, viewRect.height, viewRect.width, viewRect.height)
-                            , new Rect(0.0f, 0.1f, 0.5f, 0.9f));
+                            , new Rect(0.0f, 0.2f, 0.5f, 0.9f));
 
             keyFrameEventModifyView.UpdateView(new Rect(viewRect.width, viewRect.height, viewRect.width, viewRect.height)
-                            , new Rect(0.5f, 0.1f, 0.5f, 0.9f));
+                            , new Rect(0.5f, 0.2f, 0.5f, 0.9f));
         }
 
         public override void GUIView(Event e)
@@ -57,21 +53,12 @@ namespace AdvancedUnityPlugin.Editor
 
             GUILayout.BeginArea(viewRect, "", "box");
             {
-                workTimelineView.SetCurrentFrameIdex(currentFrameIndex);
+                workTimelineView.SetCurrentFrameIdex(AnimationEventControllerEditorWindow.Instance.currentFrameIndex);
                 workTimelineView.GUIView(e);
                 baseEventModifyView.GUIView(e);
 
-                keyFrameEventModifyView.SetCurrentFrameIndex(currentFrameIndex);
+                keyFrameEventModifyView.SetCurrentFrameIndex(AnimationEventControllerEditorWindow.Instance.currentFrameIndex);
                 keyFrameEventModifyView.GUIView(e);
-
-                Handles.DrawBezier(  new Vector3(workTimelineView.GetFramePositionX(currentFrameIndex), 0.0f, 0.0f)
-                                   , new Vector3(workTimelineView.GetFramePositionX(currentFrameIndex), viewRect.height * 0.1f, 0.0f)
-                                   , new Vector3(workTimelineView.GetFramePositionX(currentFrameIndex), 0.0f, 0.0f)
-                                   , new Vector3(workTimelineView.GetFramePositionX(currentFrameIndex), viewRect.height * 0.1f, 0.0f)
-                                   , Color.white
-                                   , null
-                                   , 2.0f
-                                  );
             }
             GUILayout.EndArea();
         }
@@ -91,7 +78,7 @@ namespace AdvancedUnityPlugin.Editor
                                 int index = workTimelineView.GetFrameIndexOfRange(new Vector2(e.mousePosition.x - viewRect.x, e.mousePosition.y - viewRect.y));
                                 if (index != -1)
                                 {
-                                    currentFrameIndex = index;
+                                    AnimationEventControllerEditorWindow.Instance.currentFrameIndex = index;
 
                                     e.Use();
                                 }
@@ -104,7 +91,7 @@ namespace AdvancedUnityPlugin.Editor
                                 int index = workTimelineView.GetFrameIndexOfRange(new Vector2(e.mousePosition.x - viewRect.x, e.mousePosition.y - viewRect.y));
                                 if (index != -1)
                                 {
-                                    currentFrameIndex = index;
+                                    AnimationEventControllerEditorWindow.Instance.currentFrameIndex = index;
 
                                     e.Use();
                                 }
@@ -119,12 +106,12 @@ namespace AdvancedUnityPlugin.Editor
                                     {
                                         if(advancedAnimationEvent.keyframeEvents[i].eventKeyframe == index)
                                         {
-                                            KeyframeEventRemoveGenericMenu(e, currentFrameIndex);
+                                            KeyframeEventRemoveGenericMenu(e, AnimationEventControllerEditorWindow.Instance.currentFrameIndex);
                                             return;
                                         }
                                     }
 
-                                    KeyframeEventAddGenericMenu(e, currentFrameIndex);
+                                    KeyframeEventAddGenericMenu(e, AnimationEventControllerEditorWindow.Instance.currentFrameIndex);
                                 }
                             }
                         }
@@ -132,12 +119,12 @@ namespace AdvancedUnityPlugin.Editor
                     break;
                 case EventType.MouseDrag:
                     {
-                        if (workTimelineView.viewRect.Contains(new Vector2(e.mousePosition.x - viewRect.x, e.mousePosition.y - viewRect.y)))
+                        if (workTimelineView.IsInView(new Vector2(e.mousePosition.x - viewRect.x, e.mousePosition.y - viewRect.y)))
                         {
                             int index = workTimelineView.GetFrameIndexOfRange(new Vector2(e.mousePosition.x - viewRect.x, e.mousePosition.y - viewRect.y));
                             if (index != -1)
                             {
-                                currentFrameIndex = index;
+                                AnimationEventControllerEditorWindow.Instance.currentFrameIndex = index;
 
                                 e.Use();
                             }

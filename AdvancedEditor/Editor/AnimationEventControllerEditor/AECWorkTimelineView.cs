@@ -11,7 +11,7 @@ namespace AdvancedUnityPlugin.Editor
         {
             public Rect rect;
         }
-        private int currentIndex;
+        private int currentFrameIndex;
 
         private float lineInterval;
         private float frameInterval;
@@ -56,7 +56,7 @@ namespace AdvancedUnityPlugin.Editor
 
         public void SetCurrentFrameIdex(int index)
         {
-            currentIndex = index;
+            currentFrameIndex = index;
         }
 
         private float startLine = 40.0f;
@@ -74,6 +74,15 @@ namespace AdvancedUnityPlugin.Editor
 
             scrollPosition = GUILayout.BeginScrollView(scrollPosition);
             {
+                GUILayout.BeginHorizontal();
+                {
+                    for (int i = 0; i < frameCount; i++)
+                    {
+                        GUILayout.Space((lineInterval));
+                    }
+                }
+                GUILayout.EndHorizontal();
+
                 //해당 클립의 프레임 수 만큼 보여준다 
                 for (int i = 0; i < frameCount; i++)
                 {
@@ -83,6 +92,15 @@ namespace AdvancedUnityPlugin.Editor
 
                     DrawKeyframeEventIcon(i, new Vector2(startLine + (lineInterval * i), viewRect.height * 0.5f));
                 }
+
+                Handles.DrawBezier(  new Vector3(GetFramePositionX(currentFrameIndex), 0.0f, 0.0f)
+                                   , new Vector3(GetFramePositionX(currentFrameIndex), viewRect.height * 0.84f, 0.0f)
+                                   , new Vector3(GetFramePositionX(currentFrameIndex), 0.0f, 0.0f)
+                                   , new Vector3(GetFramePositionX(currentFrameIndex), viewRect.height * 0.84f, 0.0f)
+                                   , Color.white
+                                   , null
+                                   , 2.0f
+                  );
             }
             GUILayout.EndScrollView();
         }
@@ -97,12 +115,20 @@ namespace AdvancedUnityPlugin.Editor
             {
                 if (advancedAnimationEvent.keyframeEvents[i].eventKeyframe == frame)
                 {
-                    if(currentIndex == frame)
+                    if(currentFrameIndex == frame)
                         GUI.Button(new Rect(position.x, position.y, 10.0f, 10.0f), new GUIContent(""),(GUIStyle)"TL Playhead");
                     else
                         GUI.Button(new Rect(position.x, position.y, 10.0f, 10.0f), new GUIContent(""), (GUIStyle)"Icon.Event");
                 }
             }
+        }
+
+        public bool IsInView(Vector2 mousePosition)
+        {
+            Rect rect = new Rect(viewRect.x, viewRect.y, viewRect.width, viewRect.height * 0.8f);
+            bool result = rect.Contains(mousePosition);
+
+            return result;
         }
 
         public bool IsInTimelineView(Vector2 mousePosition)
@@ -133,9 +159,9 @@ namespace AdvancedUnityPlugin.Editor
                 Rect rect = new Rect( startLine  + (lineInterval * i) - (lineInterval * 0.5f)
                                      , 0.0f
                                      , lineInterval
-                                     , viewRect.height);
+                                     , viewRect.height * 0.84f);
 
-                if(rect.Contains(mousePosition))
+                if(rect.Contains(new Vector2(mousePosition.x + scrollPosition.x, mousePosition.y + scrollPosition.y)))
                 {
                     return i;
                 }
