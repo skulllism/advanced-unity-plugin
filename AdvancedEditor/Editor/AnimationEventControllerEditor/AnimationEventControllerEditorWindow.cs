@@ -89,7 +89,7 @@ namespace AdvancedUnityPlugin.Editor
         {
             if (workView == null || animationEventController == null)
             {
-                GUILayout.Label("No Animation Event Controller Selected");
+                EditorGUILayout.HelpBox("Please select a AnimationEventController", MessageType.Info);
                 return;
             }
 
@@ -135,6 +135,7 @@ namespace AdvancedUnityPlugin.Editor
 
             AnimationEventController.AdvancedAnimationEvent advancedAnimationEvent = new AnimationEventController.AdvancedAnimationEvent();
             advancedAnimationEvent.clip = animationEventController.animator.runtimeAnimatorController.animationClips[index];
+            advancedAnimationEvent.keyframeEvents = new List<AnimationEventController.UnityKeyframeEvent>();
 
             animationEventController.animationEvents.Add(advancedAnimationEvent);
 

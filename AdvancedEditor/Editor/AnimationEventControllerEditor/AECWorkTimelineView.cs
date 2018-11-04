@@ -7,6 +7,10 @@ namespace AdvancedUnityPlugin.Editor
 {
     public class AECWorkTimelineView : ViewBase
     {
+        class TimelineNode
+        {
+            public Rect rect;
+        }
         private int currentIndex;
 
         private float lineInterval;
@@ -124,7 +128,6 @@ namespace AdvancedUnityPlugin.Editor
 
         public int GetFrameIndexOfRange(Vector2 mousePosition)
         {
-            Debug.Log(mousePosition);
             for (int i = 0; i < frameCount; i++)
             {
                 Rect rect = new Rect( startLine  + (lineInterval * i) - (lineInterval * 0.5f)
@@ -132,7 +135,6 @@ namespace AdvancedUnityPlugin.Editor
                                      , lineInterval
                                      , viewRect.height);
 
-                Debug.Log(rect);
                 if(rect.Contains(mousePosition))
                 {
                     return i;
