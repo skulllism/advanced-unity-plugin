@@ -49,7 +49,7 @@ namespace AdvancedUnityPlugin.Editor
             }
             GUILayout.EndVertical();
 
-            base.OnInspectorGUI();
+           // base.OnInspectorGUI();
         }
     }
 }

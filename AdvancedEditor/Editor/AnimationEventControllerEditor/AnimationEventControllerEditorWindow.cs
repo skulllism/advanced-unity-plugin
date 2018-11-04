@@ -12,11 +12,13 @@ namespace AdvancedUnityPlugin.Editor
         //=========================
         //  ## Data
         //=========================
+        public SerializedObject serializedObject;
+
         public AnimationEventController animationEventController;
         public AnimationEventController.AdvancedAnimationEvent selected;
         private int selectedIndex;
 
-        public SerializedObject serializedObject;
+        public int currentFrameIndex;
 
         //=========================
         //  ## View
@@ -50,6 +52,8 @@ namespace AdvancedUnityPlugin.Editor
         private void InitializeSerializedObject()
         {
             serializedObject = new SerializedObject(animationEventController);
+
+            currentFrameIndex = 0;
         }
 
         private void InitializeView()
