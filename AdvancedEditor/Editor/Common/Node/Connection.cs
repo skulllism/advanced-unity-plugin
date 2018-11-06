@@ -26,17 +26,19 @@ namespace AdvancedUnityPlugin.Editor
                                , 5.0f);
 
 
-           // GUISkin viewSkin = EditorGUIUtility.Load("Assets/AdvancedUnityPlugin/AdvancedStateMachineEditor/Editor/GUISkin/ASMAssetEditorWindowSkin.guiskin") as GUISkin;
+            //GUISkin viewSkin = EditorGUIUtility.Load("Assets/AdvancedUnityPlugin/AdvancedEditor/Editor/GUISkin/ASMAssetEditorWindowSkin.guiskin") as GUISkin;
 
-           //// Handles.color = Color.red;
             //Vector2 center = (new Vector2(startPos.x - zoomScale.x, startPos.y - zoomScale.y) + new Vector2(endPos.x - zoomScale.x ,endPos.y - zoomScale.y)) * 0.5f;
             //float angle = Vector2.Angle(startPos *  Vector2.right, endPos);
+            //Debug.Log(angle);
             //if (startPos.y > endPos.y)
-            //    angle *= -1.0f;
+                //angle *= -1.0f;
               
             //GUIUtility.RotateAroundPivot(-angle, center);
-            //GUI.Box(new Rect(center.x, center.y, 15, 15), new GUIContent(""), viewSkin.GetStyle("TransitionArrowNormal"));
-            //GUIUtility.RotateAroundPivot(angle, center);
+            //GUI.Box(new Rect(center.x, center.y, 15, 10), new GUIContent(""), viewSkin.GetStyle("TransitionArrowNormal"));
+            //GUIUtility.RotateAroundPivot(angle , center);
+
+
             //GUILayout.Box()
           //  float angle =  GetAngle(endPos, startPos);
            // Debug.Log(angle);

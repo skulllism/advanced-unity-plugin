@@ -55,8 +55,8 @@ namespace AdvancedUnityPlugin.Editor
             serializedObject.Update();
 
             asset.Load(editorNodes);
-           // workView.zoomScale = asset.zoomscale;
-           // workView.zoomCoordsOrigin = asset.zoomCoordsOrigin;
+            workView.zoomScale = asset.zoomscale;
+            workView.zoomCoordsOrigin = asset.zoomCoordsOrigin;
 
             serializedObject.ApplyModifiedProperties();
         }

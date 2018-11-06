@@ -34,7 +34,8 @@ namespace AdvancedUnityPlugin.Editor
                     {
                         if(origin.animator.runtimeAnimatorController != null)
                         {
-                            AnimationEventControllerEditorWindow.OpenWindow(origin);        
+                            if(origin.animator.runtimeAnimatorController.animationClips.Length > 0)
+                                AnimationEventControllerEditorWindow.OpenWindow(origin);        
                         }
                         else
                         {
