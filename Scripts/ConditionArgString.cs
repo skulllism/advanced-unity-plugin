@@ -1,4 +1,7 @@
 ﻿using System;
 
-[Serializable]
-public class ConditionArgString : SerializableCallback<string, bool> { }
+namespace AdvancedUnityPlugin
+{
+    [Serializable]
+    public class ConditionArgString : SerializableCallback<string, bool> { }
+}

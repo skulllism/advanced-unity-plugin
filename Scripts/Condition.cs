@@ -1,4 +1,7 @@
 ﻿using System;
 
-[Serializable]
-public class Condition : SerializableCallback<bool> { }
+namespace AdvancedUnityPlugin
+{
+    [Serializable]
+    public class Condition : SerializableCallback<bool> { }
+}

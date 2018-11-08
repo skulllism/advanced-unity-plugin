@@ -5,34 +5,37 @@ using AdvancedUnityPlugin;
 using UnityEngine.Events;
 using System;
 
-public class DynamicMessageBroadcaster : MonoBehaviour
+namespace AdvancedUnityPlugin
 {
-    public Queue<string> queue = new Queue<string>();
-
-    public StringUnityEvent stringEvent;
-
-    public void Post(string json)
+    public class DynamicMessageBroadcaster : MonoBehaviour
     {
-        queue.Enqueue(json);
-    }
+        public Queue<string> queue = new Queue<string>();
 
-    private void Update()
-    {
-        if (queue.Count <= 0)
-            return;
+        public StringUnityEvent stringEvent;
 
-        Pull();
-    }
+        public void Post(string json)
+        {
+            queue.Enqueue(json);
+        }
 
-    private void Pull()
-    {
-        string message = Get();
+        private void Update()
+        {
+            if (queue.Count <= 0)
+                return;
 
-        stringEvent.Invoke(message);
-    }
+            Pull();
+        }
 
-    private string Get()
-    {
-        return queue.Dequeue();
+        private void Pull()
+        {
+            string message = Get();
+
+            stringEvent.Invoke(message);
+        }
+
+        private string Get()
+        {
+            return queue.Dequeue();
+        }
     }
 }
