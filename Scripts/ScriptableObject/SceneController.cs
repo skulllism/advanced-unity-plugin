@@ -9,7 +9,6 @@ namespace AdvancedUnityPlugin
     public class SceneController : ScriptableObject
     {
         public StringGameEvent onUnload;
-        public StringGameEvent onSingleLoad;
         public StringGameEvent onAdditiveLoad;
         public StringGameEvent onActivate;
         public StringGameEvent onUnloaded;
@@ -46,14 +45,6 @@ namespace AdvancedUnityPlugin
             loadedScene.Add(arg0);
             prev = latest;
             latest = arg0;
-        }
-
-        public IEnumerator SingleLoad(string sceneName)
-        {
-            onSingleLoad.Raise(sceneName);
-            SceneManager.LoadScene(sceneName);
-
-            yield return null;
         }
 
         public void SetActiveScene(string sceneName)
