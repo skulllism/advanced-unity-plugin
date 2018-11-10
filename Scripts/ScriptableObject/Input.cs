@@ -21,8 +21,15 @@ namespace AdvancedUnityPlugin
         private Dictionary<string, Key> dicKeys = new Dictionary<string, Key>();
         private Dictionary<string, bool> keyPressed = new Dictionary<string, bool>();
 
-        private void OnEnable()
+        public void Init()
         {
+            dicKeys.Clear();
+            keyPressed.Clear();
+
+            onKeyDown.onEventRaised -= OnKeyDown;
+            onKeyUp.onEventRaised -= OnKeyUp;
+            onUpdate.onEventRaised -= OnUpdate;
+
             for (int i = 0; i < keys.Length; i++)
             {
                 dicKeys[keys[i].name] = keys[i];
@@ -32,16 +39,6 @@ namespace AdvancedUnityPlugin
             onKeyDown.onEventRaised += OnKeyDown;
             onKeyUp.onEventRaised += OnKeyUp;
             onUpdate.onEventRaised += OnUpdate;
-        }
-
-        private void OnDisable()
-        {
-            dicKeys.Clear();
-            keyPressed.Clear();
-
-            onKeyDown.onEventRaised -= OnKeyDown;
-            onKeyUp.onEventRaised -= OnKeyUp;
-            onUpdate.onEventRaised -= OnUpdate;
         }
 
         private void OnKeyUp(string arg)

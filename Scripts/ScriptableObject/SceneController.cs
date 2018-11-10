@@ -9,7 +9,6 @@ namespace AdvancedUnityPlugin
     public class SceneController : ScriptableObject
     {
         public StringGameEvent onUnload;
-        public StringGameEvent onSingleLoad;
         public StringGameEvent onAdditiveLoad;
         public StringGameEvent onActivate;
         public StringGameEvent onUnloaded;
@@ -22,19 +21,15 @@ namespace AdvancedUnityPlugin
         private Dictionary<string, AsyncOperation> loadingOperations = new Dictionary<string, AsyncOperation>();
         private Dictionary<string, AsyncOperation> unloadingOperations = new Dictionary<string, AsyncOperation>();
 
-        private void OnEnable()
-        {
-            SceneManager.sceneLoaded += OnSceneLoaded;
-            SceneManager.sceneUnloaded += OnSceneUnloaded;
-        }
-
-        private void OnDisable()
+        public void Init()
         {
             SceneManager.sceneLoaded -= OnSceneLoaded;
             SceneManager.sceneUnloaded -= OnSceneUnloaded;
             loadingOperations.Clear();
             unloadingOperations.Clear();
             loadedScene.Clear();
+            SceneManager.sceneLoaded += OnSceneLoaded;
+            SceneManager.sceneUnloaded += OnSceneUnloaded;
         }
 
         private void OnSceneUnloaded(Scene arg0)
@@ -50,14 +45,6 @@ namespace AdvancedUnityPlugin
             loadedScene.Add(arg0);
             prev = latest;
             latest = arg0;
-        }
-
-        public IEnumerator SingleLoad(string sceneName)
-        {
-            onSingleLoad.Raise(sceneName);
-            SceneManager.LoadScene(sceneName);
-
-            yield return null;
         }
 
         public void SetActiveScene(string sceneName)

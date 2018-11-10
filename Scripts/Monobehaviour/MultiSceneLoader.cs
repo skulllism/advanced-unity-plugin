@@ -7,12 +7,12 @@ namespace AdvancedUnityPlugin
 {
     public class MultiSceneLoader : MonoBehaviour
     {
+        public Worker worker;
         public List<string> requirements;
 
         public StringStorage prevRequirements;
 
         public SceneController controller;
-        public Looper looper;
 
         private void Awake()
         {
@@ -47,12 +47,11 @@ namespace AdvancedUnityPlugin
                         continue;
                 }
 
-
                 additiveLoadRoutines.Enqueue(controller.AdditiveLoad(requirement));
             }
+            Debug.Assert(worker);
 
-            looper.monoBehaviour.worker.StartWork("multi_scene_load" , additiveLoadRoutines);
-
+            worker.StartWork("multi_scene_load", additiveLoadRoutines);
         }
 
         public void UnloadRequirements()
@@ -67,10 +66,10 @@ namespace AdvancedUnityPlugin
                 if (IsRequirement(prevLoaded))
                     continue;
 
-                unloadRoutines.Enqueue(controller.Unload(looper.monoBehaviour, prevLoaded));
+                unloadRoutines.Enqueue(controller.Unload(worker, prevLoaded));
             }
 
-            looper.monoBehaviour.worker.StartWork("multi_scene_unload" , unloadRoutines);
+            worker.StartWork("multi_scene_unload", unloadRoutines);
         }
 
         private bool IsRequirement(string prevLoaded)
