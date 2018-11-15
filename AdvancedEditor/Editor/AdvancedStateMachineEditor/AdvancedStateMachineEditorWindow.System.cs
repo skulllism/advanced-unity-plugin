@@ -12,11 +12,11 @@ namespace AdvancedUnityPlugin.Editor
         //TODO : 타겟의 이름이 바뀌면 캐시 삭제
         //ISSUE : 인스턴스 ID가 경로에 포함되기 때문에, 프리팹으로 이동시 문제가 될 수 있다. 하지만 인스턴스 id를 안쓰면 같은 이름을 가진 프리팹에 대해서 문제가 발생할 수 있다 ?
 
-        private const string PATH = "Assets/Editor Defalult Resources/AdvancedStateMachineEditor/cache/";
+        private const string PATH = "Assets/Editor Default Resources/AdvancedStateMachineEditor/cache/";
         public void SaveData()
         {
-            if (editorNodes == null || editorNodes.Count <= 0)
-                return;
+            if (editorNodes == null || editorNodes.Count <= 0 || Target == null)
+                return; 
 
             serializedObject.Update();
 
@@ -48,6 +48,9 @@ namespace AdvancedUnityPlugin.Editor
 
         private void LoadData()
         {
+            if (Target == null)
+                return;
+            
             AdvancedStateMachineEditorData asset = AssetDatabase.LoadAssetAtPath<AdvancedStateMachineEditorData>(PATH + Target.transform.root.name + ".asset");
             if (asset == null)
                 return;

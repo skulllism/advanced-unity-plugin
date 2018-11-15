@@ -15,14 +15,15 @@ namespace AdvancedUnityPlugin
         }
 
         [Serializable]
-        public class AdvancedTransition
+        public class AdvancedTransition 
         {
             public string ID;
 
             public string stateID;
+
             public List<AdvancedDecision> decisions = new List<AdvancedDecision>();
 
-            public virtual bool IsTransition()
+            public bool IsTransition()
             {
                 for (int i = 0; i < decisions.Count; i++)
                 {

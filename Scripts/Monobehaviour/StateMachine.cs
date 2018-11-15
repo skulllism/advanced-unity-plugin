@@ -58,6 +58,7 @@ namespace AdvancedUnityPlugin
                 return;
 
             string transition = null;
+
             if (current.IsTransition(out transition))
             {
                 TransitionToState(transition);
