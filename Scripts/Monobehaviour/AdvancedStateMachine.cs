@@ -37,13 +37,11 @@ namespace AdvancedUnityPlugin
             {
                 for (int i = 0; i < transitions.Count; i++)
                 {
-                    AdvancedTransition transition = advancedStateMachine.GetTransition(transitions[i].ID);
+                    Debug.Assert(transitions[i] != null , transitions[i].ID);
 
-                    Debug.Assert(transition != null , transitions[i].ID);
-
-                    if (transition.IsTransition())
+                    if (transitions[i].IsTransition())
                     {
-                        ID = transition.stateID;
+                        ID = transitions[i].stateID;
                         return true;
                     }
                 }
@@ -80,7 +78,6 @@ namespace AdvancedUnityPlugin
 
         public string initialStateID;
         public List<AdvancedState> advancedStates = new List<AdvancedState>();
-        public List<AdvancedTransition> advancedTransitions = new List<AdvancedTransition>();
 
         private void Awake()
         {
@@ -104,17 +101,6 @@ namespace AdvancedUnityPlugin
         public void TransitionToState(StringVariable ID)
         {
             TransitionToState(ID.runtimeValue);
-        }
-
-        public AdvancedTransition GetTransition(string ID)
-        {
-            foreach (var transition in advancedTransitions)
-            {
-                if (transition.ID == ID)
-                    return transition;
-            }
-
-            return null;
         }
     }
 }
