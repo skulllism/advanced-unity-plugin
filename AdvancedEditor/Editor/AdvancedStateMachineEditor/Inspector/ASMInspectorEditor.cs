@@ -1,114 +1,114 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
+﻿//using System.Collections;
+//using System.Collections.Generic;
+//using UnityEngine;
+//using UnityEditor;
 
-namespace AdvancedUnityPlugin.Editor
-{
-    [CustomEditor(typeof(AdvancedStateMachine))]
-    public class ASMInspectorEditor : EditorBase
-    {
-        private AdvancedStateMachine origin;
-        private new SerializedObject serializedObject;
-        private SerializedProperty initState;
+//namespace AdvancedUnityPlugin.Editor
+//{
+//    [CustomEditor(typeof(AdvancedStateMachine))]
+//    public class ASMInspectorEditor : EditorBase
+//    {
+//        private AdvancedStateMachine origin;
+//        private new SerializedObject serializedObject;
+//        private SerializedProperty initState;
  
-        private int selectInitalState = 0;
+//        private int selectInitalState = 0;
 
-        public void OnEnable()
-        {
-            origin = (AdvancedStateMachine)target;
-            serializedObject = new SerializedObject(origin);
-            initState = serializedObject.FindProperty("initialStateID");
+//        public void OnEnable()
+//        {
+//            origin = (AdvancedStateMachine)target;
+//            serializedObject = new SerializedObject(origin);
+//            initState = serializedObject.FindProperty("initialStateID");
 
-            selectInitalState = FindStateIndex();
-        }
+//            selectInitalState = FindStateIndex();
+//        }
 
-        private int FindStateIndex()
-        {
-            for (int i = 0; i < origin.advancedStates.Count; i++)
-            {
-                if(origin.initialStateID == origin.advancedStates[i].ID)
-                {
-                    return i;
-                }
-            }
-            return 0;
-        }
+//        private int FindStateIndex()
+//        {
+//            for (int i = 0; i < origin.advancedStates.Count; i++)
+//            {
+//                if(origin.initialStateID == origin.advancedStates[i].ID)
+//                {
+//                    return i;
+//                }
+//            }
+//            return 0;
+//        }
 
-        public override void OnInspectorGUI()
-        {
-            Space(10.0f);
+//        public override void OnInspectorGUI()
+//        {
+//            Space(10.0f);
 
-            GUILayout.BeginVertical("box");
-            {
-                if (GUILayout.Button("Open Editor"))
-                {
-                    AdvancedStateMachineEditorWindow.OpenWindow(origin);
-                }
+//            GUILayout.BeginVertical("box");
+//            {
+//                if (GUILayout.Button("Open Editor"))
+//                {
+//                    AdvancedStateMachineEditorWindow.OpenWindow(origin);
+//                }
 
-                DrawStatePanel();
-            }
-            GUILayout.EndVertical();
+//                DrawStatePanel();
+//            }
+//            GUILayout.EndVertical();
 
-            Space(10.0f);
+//            Space(10.0f);
 
-            //===================================
-            //## Show Unity Default InspectorGUI
-            //===================================
-            base.OnInspectorGUI();
-        }
+//            //===================================
+//            //## Show Unity Default InspectorGUI
+//            //===================================
+//            base.OnInspectorGUI();
+//        }
 
-        private void DrawStatePanel()
-        {
-            Space(10.0f);
+//        private void DrawStatePanel()
+//        {
+//            Space(10.0f);
 
-            DrawInitialState();
-        }
+//            DrawInitialState();
+//        }
 
-        private string[] currentStates = new string[10];
-        private void DrawInitialState()
-        {
-            GUILayout.BeginHorizontal();
-            {
-                GUILayout.Label("Initial State : ");
+//        private string[] currentStates = new string[10];
+//        private void DrawInitialState()
+//        {
+//            GUILayout.BeginHorizontal();
+//            {
+//                GUILayout.Label("Initial State : ");
 
-                if (currentStates.Length - 1 <= origin.advancedStates.Count)
-                {
-                    currentStates = new string[origin.advancedStates.Count];
-                }
+//                if (currentStates.Length - 1 <= origin.advancedStates.Count)
+//                {
+//                    currentStates = new string[origin.advancedStates.Count];
+//                }
 
-                for (int i = 0; i < currentStates.Length; i++)
-                {
-                    currentStates[i] = string.Empty;
-                }
+//                for (int i = 0; i < currentStates.Length; i++)
+//                {
+//                    currentStates[i] = string.Empty;
+//                }
 
-                for (int i = 0; i < origin.advancedStates.Count; i++)
-                {
-                    currentStates[i] = origin.advancedStates[i].ID;
-                }
+//                for (int i = 0; i < origin.advancedStates.Count; i++)
+//                {
+//                    currentStates[i] = origin.advancedStates[i].ID;
+//                }
 
-                EditorGUI.BeginChangeCheck();
-                {
-                    selectInitalState = EditorGUILayout.Popup(selectInitalState, currentStates);
-                }
-                if (EditorGUI.EndChangeCheck())
-                {
-                    EditorUtility.SetDirty(origin);
-                }
-                if (selectInitalState >= origin.advancedStates.Count)
-                {
-                    selectInitalState = 0;
-                    if (origin.advancedStates.Count <= 0)
-                    {
-                        initState.stringValue = origin.initialStateID = string.Empty;
-                    }
-                }
-                else
-                {
-                    initState.stringValue = origin.initialStateID = currentStates[selectInitalState];
-                }
-            }
-            GUILayout.EndHorizontal();
-        }
-    }
-}
+//                EditorGUI.BeginChangeCheck();
+//                {
+//                    selectInitalState = EditorGUILayout.Popup(selectInitalState, currentStates);
+//                }
+//                if (EditorGUI.EndChangeCheck())
+//                {
+//                    EditorUtility.SetDirty(origin);
+//                }
+//                if (selectInitalState >= origin.advancedStates.Count)
+//                {
+//                    selectInitalState = 0;
+//                    if (origin.advancedStates.Count <= 0)
+//                    {
+//                        initState.stringValue = origin.initialStateID = string.Empty;
+//                    }
+//                }
+//                else
+//                {
+//                    initState.stringValue = origin.initialStateID = currentStates[selectInitalState];
+//                }
+//            }
+//            GUILayout.EndHorizontal();
+//        }
+//    }
+//}
