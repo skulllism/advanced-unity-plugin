@@ -12,7 +12,6 @@ namespace AdvancedUnityPlugin
         {
             public string ID;
             public string stateID;
-
             public abstract bool IsTransition();
         }
 

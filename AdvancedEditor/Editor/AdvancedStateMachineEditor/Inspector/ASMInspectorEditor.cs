@@ -55,7 +55,7 @@ namespace AdvancedUnityPlugin.Editor
             //===================================
             //## Show Unity Default InspectorGUI
             //===================================
-            //base.OnInspectorGUI();
+            base.OnInspectorGUI();
         }
 
         private void DrawStatePanel()
