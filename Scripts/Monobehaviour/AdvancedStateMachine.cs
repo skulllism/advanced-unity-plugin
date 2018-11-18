@@ -8,29 +8,12 @@ namespace AdvancedUnityPlugin
     public class AdvancedStateMachine : StateMachine
     {
         [Serializable]
-        public class AdvancedDecision
-        {
-            public bool isTrue;
-            public Condition condition;
-        }
-
-        [Serializable]
-        public class AdvancedTransition
+        public abstract class AdvancedTransition : MonoBehaviour
         {
             public string ID;
-
             public string stateID;
-            public List<AdvancedDecision> decisions = new List<AdvancedDecision>();
 
-            public virtual bool IsTransition()
-            {
-                for (int i = 0; i < decisions.Count; i++)
-                {
-                    if (decisions[i].condition.Invoke() != decisions[i].isTrue)
-                        return false;
-                }
-                return true;
-            }
+            public abstract bool IsTransition();
         }
 
         [Serializable]
