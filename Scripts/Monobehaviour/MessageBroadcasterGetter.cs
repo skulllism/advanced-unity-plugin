@@ -9,11 +9,11 @@ namespace AdvancedUnityPlugin
     public class MessageBroadcasterGetter : MonoBehaviour
     {
         [Serializable]
-        public class GetBroadcastEvent : UnityEvent<DynamicMessageBroadcaster,Trigger2DEventBroadcaster.TriggerData> { }
+        public class GetBroadcastEvent : UnityEvent<DynamicMessageBroadcaster,MultiTrigger2DEventBroadcaster.TriggerData> { }
 
         public GetBroadcastEvent onGet;
 
-        public void OnTriggerEventEnter(Trigger2DEventBroadcaster.TriggerData data)
+        public void OnTriggerEventEnter(MultiTrigger2DEventBroadcaster.TriggerData data)
         {
             DynamicMessageBroadcaster dynamicMessageBroadcaster =  data.other.GetComponent<DynamicMessageBroadcaster>();
 

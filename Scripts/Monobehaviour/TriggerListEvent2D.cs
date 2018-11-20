@@ -1,21 +1,20 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace AdvancedUnityPlugin
 {
-    public class BackgroundController : MonoBehaviour
+    public class TriggerListEvent2D : MonoBehaviour
     {
-        public GameObject backgrounds;
+        public UnityEvent onEnter;
+        public UnityEvent onExit;
+        public UnityEvent onFirstEnter;
+        public UnityEvent onEmpty;
 
         [TagSelector]
         public string[] valids;
 
         private readonly List<GameObject> gameObjects = new List<GameObject>();
-
-        private void Start()
-        {
-            backgrounds.SetActive(false);
-        }
 
         private void Update()
         {
@@ -36,11 +35,10 @@ namespace AdvancedUnityPlugin
             Debug.Assert(!gameObjects.Contains(gameObject));
 
             gameObjects.Add(gameObject);
+            onEnter.Invoke();
 
-            if (backgrounds.activeSelf)
-                return;
-
-            backgrounds.SetActive(true);
+            if (gameObjects.Count == 1)
+                onFirstEnter.Invoke();
         }
 
         private void Remove(GameObject gameObject)
@@ -48,13 +46,17 @@ namespace AdvancedUnityPlugin
             Debug.Assert(gameObjects.Contains(gameObject));
 
             gameObjects.Remove(gameObject);
+            onExit.Invoke();
 
             if (gameObjects.Count <= 0)
-                backgrounds.SetActive(false);
+                onEmpty.Invoke();
         }
 
         private bool IsValid(string tag)
         {
+            if (valids.Length <= 0)
+                return true;
+
             for (int i = 0; i < valids.Length; i++)
             {
                 if (tag == valids[i])
