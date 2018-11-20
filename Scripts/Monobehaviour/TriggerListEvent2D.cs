@@ -6,10 +6,10 @@ namespace AdvancedUnityPlugin
 {
     public class TriggerListEvent2D : MonoBehaviour
     {
-        public UnityEvent onEnter;
-        public UnityEvent onExit;
-        public UnityEvent onFirstEnter;
-        public UnityEvent onEmpty;
+        public GameObjectUnityEvent onEnter;
+        public GameObjectUnityEvent onExit;
+        public GameObjectUnityEvent onFirstEnter;
+        public GameObjectUnityEvent onEmpty;
 
         [TagSelector]
         public string[] valids;
@@ -35,10 +35,10 @@ namespace AdvancedUnityPlugin
             Debug.Assert(!gameObjects.Contains(gameObject));
 
             gameObjects.Add(gameObject);
-            onEnter.Invoke();
+            onEnter.Invoke(gameObject);
 
             if (gameObjects.Count == 1)
-                onFirstEnter.Invoke();
+                onFirstEnter.Invoke(gameObject);
         }
 
         private void Remove(GameObject gameObject)
@@ -46,10 +46,10 @@ namespace AdvancedUnityPlugin
             Debug.Assert(gameObjects.Contains(gameObject));
 
             gameObjects.Remove(gameObject);
-            onExit.Invoke();
+            onExit.Invoke(gameObject);
 
             if (gameObjects.Count <= 0)
-                onEmpty.Invoke();
+                onEmpty.Invoke(gameObject);
         }
 
         private bool IsValid(string tag)
