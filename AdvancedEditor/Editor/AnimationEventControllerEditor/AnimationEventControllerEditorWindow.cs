@@ -108,23 +108,55 @@ namespace AdvancedUnityPlugin.Editor
                 Repaint();
         }
 
+
         public void SelectAnimationEvent(int index)
         {
-            if (animationEventController.animationEvents.Count <= index)
-                return;
-            
             selectedIndex = index;
-            selected = animationEventController.animationEvents[index];
+
+            if (animationEventController.animationEvents.Count > 0)
+                selected = animationEventController.animationEvents[index];
+            else
+                selected = null;
         }
+
+        public float GetSelectedClipLength()
+        {
+            if (selected == null)
+                return 0;
+
+            return selected.clip.length;
+        }
+
+        public float GetSelectedClipFrameRate()
+        {
+            if (selected == null)
+                return 1.0f;
+
+            return selected.clip.frameRate;
+        }
+
+        public int GetSelectedKeyframeEventsCount()
+        {
+            if (selected == null)
+                return 0;
+
+            return selected.keyframeEvents.Count;
+        }
+
+
 
         public SerializedProperty GetSerializedPropertyOfSelectedAnimation()
         {
             if (serializedObject == null)
                 InitializeSerializedObject();
-            
-            SerializedProperty serializedProperty = serializedObject.FindProperty("animationEvents").GetArrayElementAtIndex(selectedIndex);
 
-            return serializedProperty;
+            if(serializedObject.FindProperty("animationEvents").arraySize > 0)
+            {
+                SerializedProperty serializedProperty = serializedObject.FindProperty("animationEvents").GetArrayElementAtIndex(selectedIndex);
+
+                return serializedProperty;                
+            }
+            return null;
         }
 
         public bool AddNewEventAnimation(int index)
@@ -153,7 +185,11 @@ namespace AdvancedUnityPlugin.Editor
             
             animationEventController.animationEvents.Remove(selected);
 
-            SelectAnimationEvent(0);
+            if(animationEventController.animationEvents != null)
+            {
+                SelectAnimationEvent(animationEventController.animationEvents.Count - 1);
+            }
+
             return true;
         }
 

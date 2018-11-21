@@ -25,11 +25,11 @@ namespace AdvancedUnityPlugin.Editor
         {
             base.UpdateView(editorRect, percentageRect);
 
-            frameRate = AnimationEventControllerEditorWindow.Instance.selected.clip.frameRate;
+            frameRate = AnimationEventControllerEditorWindow.Instance.GetSelectedClipFrameRate();
 
             frameInterval = 1.0f / frameRate;
 
-            frameCount = AnimationEventControllerEditorWindow.Instance.selected.clip.length / frameInterval;
+            frameCount = AnimationEventControllerEditorWindow.Instance.GetSelectedClipLength() / frameInterval;
         }
 
         public override void GUIView(Event e)
