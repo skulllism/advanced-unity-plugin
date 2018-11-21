@@ -34,6 +34,11 @@ namespace AdvancedUnityPlugin.Editor
 
         public override void UpdateView(Rect editorRect, Rect percentageRect)
         {
+            if (workTimelineView == null)
+            {
+                InitializeSubView();
+            }
+
             base.UpdateView(editorRect, percentageRect);
 
             workTimelineView.UpdateView(new Rect(viewRect.width, viewRect.height, viewRect.width, viewRect.height)
