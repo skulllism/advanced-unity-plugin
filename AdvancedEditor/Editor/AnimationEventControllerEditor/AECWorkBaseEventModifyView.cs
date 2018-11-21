@@ -32,9 +32,11 @@ namespace AdvancedUnityPlugin.Editor
                     AnimationEventControllerEditorWindow.Instance.serializedObject.Update();
 
                     SerializedProperty serializedProperty = AnimationEventControllerEditorWindow.Instance.GetSerializedPropertyOfSelectedAnimation();
-                    EditorGUILayout.PropertyField(serializedProperty.FindPropertyRelative("onStartFrame"));
-                    EditorGUILayout.PropertyField(serializedProperty.FindPropertyRelative("onLastFrame"));
-
+                    if(serializedProperty != null)
+                    {
+                        EditorGUILayout.PropertyField(serializedProperty.FindPropertyRelative("onStartFrame"));
+                        EditorGUILayout.PropertyField(serializedProperty.FindPropertyRelative("onLastFrame"));       
+                    }
                     AnimationEventControllerEditorWindow.Instance.serializedObject.ApplyModifiedProperties();
                 }
                 GUILayout.EndScrollView();

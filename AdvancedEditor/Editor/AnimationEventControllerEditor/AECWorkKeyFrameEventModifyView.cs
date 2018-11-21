@@ -33,12 +33,14 @@ namespace AdvancedUnityPlugin.Editor
                     AnimationEventControllerEditorWindow.Instance.serializedObject.Update();
 
                     SerializedProperty serializedProperty = AnimationEventControllerEditorWindow.Instance.GetSerializedPropertyOfSelectedAnimation();
-
-                    for (int i = 0; i < serializedProperty.FindPropertyRelative("keyframeEvents").arraySize; i++)
+                    if(serializedProperty != null)
                     {
-                        if(serializedProperty.FindPropertyRelative("keyframeEvents").GetArrayElementAtIndex(i).FindPropertyRelative("eventKeyframe").intValue == currentFrameIndex)
+                        for (int i = 0; i < serializedProperty.FindPropertyRelative("keyframeEvents").arraySize; i++)
                         {
-                            EditorGUILayout.PropertyField(serializedProperty.FindPropertyRelative("keyframeEvents").GetArrayElementAtIndex(i).FindPropertyRelative("onKeyframe"));    
+                            if (serializedProperty.FindPropertyRelative("keyframeEvents").GetArrayElementAtIndex(i).FindPropertyRelative("eventKeyframe").intValue == currentFrameIndex)
+                            {
+                                EditorGUILayout.PropertyField(serializedProperty.FindPropertyRelative("keyframeEvents").GetArrayElementAtIndex(i).FindPropertyRelative("onKeyframe"));
+                            }
                         }
                     }
                     AnimationEventControllerEditorWindow.Instance.serializedObject.ApplyModifiedProperties();
