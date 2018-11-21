@@ -11,46 +11,46 @@ namespace AdvancedUnityPlugin
         {
             public string[] tags;
 
-            public MultiTrigger2DEventBroadcaster.Trigger2DBroadcastEvent onEnter;
-            public MultiTrigger2DEventBroadcaster.Trigger2DBroadcastEvent onStay;
-            public MultiTrigger2DEventBroadcaster.Trigger2DBroadcastEvent onExit;
+            public Collider2DUnityEvent onEnter;
+            public Collider2DUnityEvent onStay;
+            public Collider2DUnityEvent onExit;
         }
 
         public TagEvent[] tagEvents;
 
-        public void OnEnter(MultiTrigger2DEventBroadcaster.TriggerData data)
+        public void OnEnter(Collider2D other)
         {
             for (int i = 0; i < tagEvents.Length; i++)
             {
-                if (IsInTags(data, tagEvents[i]))
-                    tagEvents[i].onEnter.Invoke(data);
+                if (IsInTags(other, tagEvents[i]))
+                    tagEvents[i].onEnter.Invoke(other);
             }
         }
 
-        public void OnStay(MultiTrigger2DEventBroadcaster.TriggerData data)
+        public void OnStay(Collider2D other)
         {
             for (int i = 0; i < tagEvents.Length; i++)
             {
-                if (IsInTags(data, tagEvents[i]))
-                    tagEvents[i].onStay.Invoke(data);
+                if (IsInTags(other, tagEvents[i]))
+                    tagEvents[i].onStay.Invoke(other);
             }
         }
 
-        public void OnExit(MultiTrigger2DEventBroadcaster.TriggerData data)
+        public void OnExit(Collider2D other)
         {
             for (int i = 0; i < tagEvents.Length; i++)
             {
-                if (IsInTags(data, tagEvents[i]))
-                    tagEvents[i].onExit.Invoke(data);
+                if (IsInTags(other, tagEvents[i]))
+                    tagEvents[i].onExit.Invoke(other);
             }
         }
 
-        private bool IsInTags(MultiTrigger2DEventBroadcaster.TriggerData data, TagEvent tagEvent)
+        private bool IsInTags(Collider2D other, TagEvent tagEvent)
         {
             if (tagEvent.tags.Length != 0)
                 for (int i = 0; i < tagEvent.tags.Length; i++)
                 {
-                    if (data.other.CompareTag(tagEvent.tags[i]))
+                    if (other.CompareTag(tagEvent.tags[i]))
                         return true;
                 }
             return false;
