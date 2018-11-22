@@ -4,15 +4,16 @@ using UnityEngine.Events;
 
 namespace AdvancedUnityPlugin
 {
+    [RequireComponent(typeof(Collider2D))]
     public class TriggerListEvent2D : MonoBehaviour
     {
+        [TagSelector]
+        public string[] valids;
+
         public GameObjectUnityEvent onEnter;
         public GameObjectUnityEvent onExit;
         public GameObjectUnityEvent onFirstEnter;
         public GameObjectUnityEvent onEmpty;
-
-        [TagSelector]
-        public string[] valids;
 
         private readonly List<GameObject> gameObjects = new List<GameObject>();
 

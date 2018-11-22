@@ -87,10 +87,7 @@ namespace AdvancedUnityPlugin
                 state.Init(this);
                 states.Add(state);
             }
-        }
 
-        private void Start()
-        {
             TransitionToState(initialStateID);
         }
 
