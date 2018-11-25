@@ -5,41 +5,34 @@ using UnityEngine.SceneManagement;
 
 namespace AdvancedUnityPlugin
 {
-    [CreateAssetMenu(menuName = "AdvancedUnityPlugin/SceneController")]
-    public class SceneController : ScriptableObject
+    public class SceneController
     {
-        public StringGameEvent onUnload;
-        public StringGameEvent onAdditiveLoad;
-        public StringGameEvent onActivate;
-        public StringGameEvent onUnloaded;
+        public static event SceneControllerEvent onUnload;
 
-        public Scene latest { private set; get; }
-        public Scene prev { private set; get; }
+        public static event SceneControllerEvent onAdditiveLoad;
 
-        public readonly List<Scene> loadedScene = new List<Scene>();
+        public static event SceneControllerEvent onActivate;
 
-        private Dictionary<string, AsyncOperation> loadingOperations = new Dictionary<string, AsyncOperation>();
-        private Dictionary<string, AsyncOperation> unloadingOperations = new Dictionary<string, AsyncOperation>();
+        public static event SceneControllerEvent onUnloaded;
 
-        public void Init()
-        {
-            SceneManager.sceneLoaded -= OnSceneLoaded;
-            SceneManager.sceneUnloaded -= OnSceneUnloaded;
-            loadingOperations.Clear();
-            unloadingOperations.Clear();
-            loadedScene.Clear();
-            SceneManager.sceneLoaded += OnSceneLoaded;
-            SceneManager.sceneUnloaded += OnSceneUnloaded;
-        }
+        public delegate void SceneControllerEvent(string sceneName);
 
-        private void OnSceneUnloaded(Scene arg0)
+        public static Scene latest { private set; get; }
+        public static Scene prev { private set; get; }
+
+        public static readonly List<Scene> loadedScene = new List<Scene>();
+
+        private static Dictionary<string, AsyncOperation> loadingOperations = new Dictionary<string, AsyncOperation>();
+        private static Dictionary<string, AsyncOperation> unloadingOperations = new Dictionary<string, AsyncOperation>();
+
+        private static void OnSceneUnloaded(Scene arg0)
         {
             loadedScene.Remove(arg0);
         }
 
-        private void OnSceneLoaded(Scene arg0, LoadSceneMode arg1)
+        private static void OnSceneLoaded(Scene arg0, LoadSceneMode arg1)
         {
-            if(arg1 == LoadSceneMode.Single)
+            if (arg1 == LoadSceneMode.Single)
                 loadedScene.Clear();
 
             loadedScene.Add(arg0);
@@ -47,14 +40,14 @@ namespace AdvancedUnityPlugin
             latest = arg0;
         }
 
-        public void SetActiveScene(string sceneName)
+        public static void SetActiveScene(string sceneName)
         {
             SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
         }
 
-        public void ActivateAdditiveScene(string sceneName)
+        public static void ActivateAdditiveScene(string sceneName)
         {
-            onActivate.Raise(sceneName);
+            onActivate.Invoke(sceneName);
 
             AsyncOperation operation = GetLoadingOperation(sceneName);
             if (operation == null)
@@ -73,7 +66,7 @@ namespace AdvancedUnityPlugin
             loadingOperations.Remove(sceneName);
         }
 
-        private AsyncOperation GetUnloadingOperation(string sceneName)
+        private static AsyncOperation GetUnloadingOperation(string sceneName)
         {
             AsyncOperation tmp;
 
@@ -83,7 +76,7 @@ namespace AdvancedUnityPlugin
             return null;
         }
 
-        private AsyncOperation GetLoadingOperation(string sceneName)
+        private static AsyncOperation GetLoadingOperation(string sceneName)
         {
             AsyncOperation tmp;
 
@@ -93,7 +86,7 @@ namespace AdvancedUnityPlugin
             return null;
         }
 
-        public IEnumerator Unload(MonoBehaviour caller , string sceneName, System.Action onStart = null, System.Action onComplete = null)
+        public static IEnumerator Unload(MonoBehaviour caller, string sceneName, System.Action onStart = null, System.Action onComplete = null)
         {
             yield return null;
 
@@ -112,7 +105,7 @@ namespace AdvancedUnityPlugin
                 yield break;
             }
 
-            onUnload.Raise(sceneName);
+            onUnload.Invoke(sceneName);
 
             operation = GetUnloadingOperation(sceneName);
 
@@ -140,13 +133,13 @@ namespace AdvancedUnityPlugin
 
             unloadingOperations.Remove(sceneName);
 
-            onUnloaded.Raise(sceneName);
+            onUnloaded.Invoke(sceneName);
 
             if (onComplete != null)
                 onComplete.Invoke();
         }
 
-        public IEnumerator AdditiveLoad(string sceneName, bool autoActivate = true, System.Action onStart = null, System.Action onComplete = null)
+        public static IEnumerator AdditiveLoad(string sceneName, bool autoActivate = true, System.Action onStart = null, System.Action onComplete = null)
         {
             if (loadedScene.Contains(SceneManager.GetSceneByName(sceneName)))
             {
@@ -154,7 +147,7 @@ namespace AdvancedUnityPlugin
                 yield break;
             }
 
-            onAdditiveLoad.Raise(sceneName);
+            onAdditiveLoad.Invoke(sceneName);
 
             yield return null;
 

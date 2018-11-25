@@ -3,8 +3,7 @@ using UnityEngine;
 
 namespace AdvancedUnityPlugin
 {
-    [CreateAssetMenu(menuName = "AdvancedUnityPlugin/Input")]
-    public class Input : ScriptableObject
+    public class Input : MonoBehaviour
     {
         public abstract class Key : ScriptableObject
         {
@@ -12,58 +11,48 @@ namespace AdvancedUnityPlugin
             public abstract bool GetKeyUp();
         }
 
-        public StringGameEvent onKeyDown;
-        public StringGameEvent onKeyUp;
-        public GameEvent onUpdate;
+        public StringUnityEvent onKeyDown;
+        public StringUnityEvent onKeyUp;
 
         public Key[] keys;
 
         private Dictionary<string, Key> dicKeys = new Dictionary<string, Key>();
         private Dictionary<string, bool> keyPressed = new Dictionary<string, bool>();
 
-        public void Init()
+        private void Awake()
         {
-            dicKeys.Clear();
-            keyPressed.Clear();
-
-            onKeyDown.onEventRaised -= OnKeyDown;
-            onKeyUp.onEventRaised -= OnKeyUp;
-            onUpdate.onEventRaised -= OnUpdate;
-
             for (int i = 0; i < keys.Length; i++)
             {
                 dicKeys[keys[i].name] = keys[i];
                 keyPressed[keys[i].name] = false;
             }
-
-            onKeyDown.onEventRaised += OnKeyDown;
-            onKeyUp.onEventRaised += OnKeyUp;
-            onUpdate.onEventRaised += OnUpdate;
         }
 
         private void OnKeyUp(string arg)
         {
+            Debug.Assert(keyPressed.ContainsKey(arg));
             keyPressed[arg] = false;
         }
 
         private void OnKeyDown(string arg)
         {
+            Debug.Assert(keyPressed.ContainsKey(arg));
             keyPressed[arg] = true;
         }
 
-        private void OnUpdate()
+        private void Update()
         {
             for (int i = 0; i < keys.Length; i++)
             {
                 if (keys[i].GetKeyDown())
                 {
-                    onKeyDown.Raise(keys[i].name);
+                    onKeyDown.Invoke(keys[i].name);
                     continue;
                 }
 
                 if (keys[i].GetKeyUp())
                 {
-                    onKeyUp.Raise(keys[i].name);
+                    onKeyUp.Invoke(keys[i].name);
                     continue;
                 }
             }
@@ -84,19 +73,34 @@ namespace AdvancedUnityPlugin
             return dicKeys[key.name].GetKeyUp();
         }
 
-        public bool GetKey(string keyName)
+        public bool GetKeyDown(KeyCode keyCode)
         {
-            return keyPressed[keyName];
+            return UnityEngine.Input.GetKeyDown(keyCode);
         }
 
-        public bool GetKeyDown(string keyName)
+        public bool GetKeyUp(KeyCode keyCode)
         {
-            return dicKeys[keyName].GetKeyDown();
+            return UnityEngine.Input.GetKeyUp(keyCode);
         }
 
-        public bool GetKeyUp(string keyName)
+        public bool GetKey(KeyCode keyCode)
         {
-            return dicKeys[keyName].GetKeyUp();
+            return UnityEngine.Input.GetKey(keyCode);
+        }
+
+        public bool GetKey(string advancedKey)
+        {
+            return keyPressed[advancedKey];
+        }
+
+        public bool GetKeyDown(string advancedKey)
+        {
+            return dicKeys[advancedKey].GetKeyDown();
+        }
+
+        public bool GetKeyUp(string advancedKey)
+        {
+            return dicKeys[advancedKey].GetKeyUp();
         }
     }
 }

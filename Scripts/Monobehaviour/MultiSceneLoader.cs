@@ -41,13 +41,13 @@ namespace AdvancedUnityPlugin
 
             foreach (var requirement in requirements)
             {
-                foreach (var loaded in controller.loadedScene)
+                foreach (var loaded in SceneController.loadedScene)
                 {
                     if (requirement == loaded.name)
                         continue;
                 }
 
-                additiveLoadRoutines.Enqueue(controller.AdditiveLoad(requirement));
+                additiveLoadRoutines.Enqueue(SceneController.AdditiveLoad(requirement));
             }
             Debug.Assert(worker);
 
@@ -66,7 +66,7 @@ namespace AdvancedUnityPlugin
                 if (IsRequirement(prevLoaded))
                     continue;
 
-                unloadRoutines.Enqueue(controller.Unload(worker, prevLoaded));
+                unloadRoutines.Enqueue(SceneController.Unload(worker, prevLoaded));
             }
 
             worker.StartWork("multi_scene_unload", unloadRoutines);
