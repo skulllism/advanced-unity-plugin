@@ -73,6 +73,21 @@ namespace AdvancedUnityPlugin
             return dicKeys[key.name].GetKeyUp();
         }
 
+        public bool GetButton(string button)
+        {
+            return UnityEngine.Input.GetButton(button);
+        }
+
+        public bool GetButtonDown(string button)
+        {
+            return UnityEngine.Input.GetButtonDown(button);
+        }
+
+        public bool GetButtonUp(string button)
+        {
+            return UnityEngine.Input.GetButtonUp(button);
+        }
+
         public bool GetKeyDown(KeyCode keyCode)
         {
             return UnityEngine.Input.GetKeyDown(keyCode);
