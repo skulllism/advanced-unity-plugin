@@ -3,7 +3,7 @@ using AdvancedUnityPlugin;
 
 public class SampleInitializer : MonoBehaviour {
 
-    public GameObjectContainer container;
+    public Pooler container;
     public int max;
 
 	// Use this for initialization
