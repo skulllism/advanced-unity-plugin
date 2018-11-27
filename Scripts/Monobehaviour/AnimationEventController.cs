@@ -86,6 +86,14 @@ namespace AdvancedUnityPlugin
             }
         }
 
+        private void OnDestroy()
+        {
+            foreach (var animationEvent in animationEvents)
+            {
+                animationEvent.clip.events = null;
+            }
+        }
+
         private void SetAnimationEvent(AdvancedAnimationEvent advancedAnimationEvent)
         {
             float interval = 1.0f / advancedAnimationEvent.clip.frameRate;
