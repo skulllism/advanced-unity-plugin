@@ -22,6 +22,11 @@ namespace AdvancedUnityPlugin
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
+            if (!enabled)
+                return;
+
+            Debug.Log("attack@@@@@@@@@@@@");
+
             TransferTrigger2D<T> hit = collision.gameObject.GetComponent<TransferTrigger2D<T>>();
 
             if (!hit)
