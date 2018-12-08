@@ -12,8 +12,6 @@ namespace AdvancedUnityPlugin
         public class AdvancedAnimationEvent
         {
             public AnimationClip clip;
-            public UnityEvent onStartFrame;
-            public UnityEvent onLastFrame;
             public List<UnityKeyframeEvent> keyframeEvents;
         }
 
@@ -76,61 +74,6 @@ namespace AdvancedUnityPlugin
             }
 
             return false;
-        }
-
-        private void Awake()
-        {
-            foreach (var animationEvent in animationEvents)
-            {
-                SetAnimationEvent(animationEvent);
-            }
-        }
-
-        private void OnDestroy()
-        {
-            foreach (var animationEvent in animationEvents)
-            {
-                animationEvent.clip.events = null;
-            }
-        }
-
-        private void SetAnimationEvent(AdvancedAnimationEvent advancedAnimationEvent)
-        {
-            float interval = 1.0f / advancedAnimationEvent.clip.frameRate;
-            AddKeyframeEvent(advancedAnimationEvent.clip, new UnityKeyframeEvent(advancedAnimationEvent.clip.name + "_onStart", 0, advancedAnimationEvent.onStartFrame));
-            AddKeyframeEvent(advancedAnimationEvent.clip,new UnityKeyframeEvent(advancedAnimationEvent.clip.name + "_onLast", (int)(advancedAnimationEvent.clip.length / interval), advancedAnimationEvent.onLastFrame));
-
-            foreach (var keyframeEvent in advancedAnimationEvent.keyframeEvents)
-            {
-                AddKeyframeEvent(advancedAnimationEvent.clip, keyframeEvent);
-            }
-        }
-
-        private void AddKeyframeEvent(AnimationClip clip, KeyframeEvent keyframeEvent)
-        {
-            AnimationClip runtimeClip = GetUnityAnimationEvent(clip);
-
-            float interval = 1.0f / runtimeClip.frameRate;
-
-            AnimationEvent newEvent = new AnimationEvent();
-            newEvent.functionName = "StartAnimationKeyframeEvent";
-            newEvent.stringParameter = keyframeEvent.ID;
-            newEvent.time = keyframeEvent.eventKeyframe * interval;
-
-            runtimeClip.AddEvent(newEvent);
-
-            keyframeEvents.Add(keyframeEvent);
-        }
-
-        private AnimationClip GetUnityAnimationEvent(AnimationClip clip)
-        {
-            foreach (var animationClip in animator.runtimeAnimatorController.animationClips)
-            {
-                if (animationClip == clip)
-                    return animationClip;
-            }
-
-            return null;
         }
 
         private KeyframeEvent GetKeyframeEvent(string ID)

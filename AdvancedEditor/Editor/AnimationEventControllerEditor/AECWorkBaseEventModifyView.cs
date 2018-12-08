@@ -34,8 +34,35 @@ namespace AdvancedUnityPlugin.Editor
                     SerializedProperty serializedProperty = AnimationEventControllerEditorWindow.Instance.GetSerializedPropertyOfSelectedAnimation();
                     if(serializedProperty != null)
                     {
-                        EditorGUILayout.PropertyField(serializedProperty.FindPropertyRelative("onStartFrame"));
-                        EditorGUILayout.PropertyField(serializedProperty.FindPropertyRelative("onLastFrame"));       
+                        int size = serializedProperty.FindPropertyRelative("keyframeEvents").arraySize;
+                        if(size > 0)
+                        {
+                            AnimationClip clip = serializedProperty.FindPropertyRelative("clip").objectReferenceValue as AnimationClip;
+                            int frameCount = (int)(clip.length / (1.0f / clip.frameRate));
+
+                            for (int i = 0; i < serializedProperty.FindPropertyRelative("keyframeEvents").arraySize; i++)
+                            {
+                                int frame = serializedProperty.FindPropertyRelative("keyframeEvents").GetArrayElementAtIndex(i).FindPropertyRelative("eventKeyframe").intValue;
+                                if(frame == 0)
+                                {
+                                    GUILayout.BeginVertical();
+                                    {
+                                        GUILayout.Label("onStartKeyframeEvent");
+                                        EditorGUILayout.PropertyField(serializedProperty.FindPropertyRelative("keyframeEvents").GetArrayElementAtIndex(i).FindPropertyRelative("onKeyframe"));        
+                                    }
+                                    GUILayout.EndVertical();
+                                }
+                                else if(frame == frameCount - 1)
+                                {
+                                    GUILayout.BeginVertical();
+                                    {
+                                        GUILayout.Label("onLastKeyframeEvent");
+                                        EditorGUILayout.PropertyField(serializedProperty.FindPropertyRelative("keyframeEvents").GetArrayElementAtIndex(i).FindPropertyRelative("onKeyframe"));        
+                                    }
+                                    GUILayout.EndVertical();
+                                }
+                            }
+                        }
                     }
                     AnimationEventControllerEditorWindow.Instance.serializedObject.ApplyModifiedProperties();
                 }

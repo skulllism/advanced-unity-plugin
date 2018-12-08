@@ -35,8 +35,15 @@ namespace AdvancedUnityPlugin.Editor
                     SerializedProperty serializedProperty = AnimationEventControllerEditorWindow.Instance.GetSerializedPropertyOfSelectedAnimation();
                     if(serializedProperty != null)
                     {
+                        AnimationClip clip = serializedProperty.FindPropertyRelative("clip").objectReferenceValue as AnimationClip;
+                        int frameCount = (int)(clip.length / (1.0f / clip.frameRate));
+
                         for (int i = 0; i < serializedProperty.FindPropertyRelative("keyframeEvents").arraySize; i++)
                         {
+                            int frame = serializedProperty.FindPropertyRelative("keyframeEvents").GetArrayElementAtIndex(i).FindPropertyRelative("eventKeyframe").intValue;
+                            if (frame == 0 || frame == frameCount - 1)
+                                continue;
+                            
                             if (serializedProperty.FindPropertyRelative("keyframeEvents").GetArrayElementAtIndex(i).FindPropertyRelative("eventKeyframe").intValue == currentFrameIndex)
                             {
                                 EditorGUILayout.PropertyField(serializedProperty.FindPropertyRelative("keyframeEvents").GetArrayElementAtIndex(i).FindPropertyRelative("onKeyframe"));
