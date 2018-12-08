@@ -172,12 +172,18 @@ namespace AdvancedUnityPlugin.Editor
 
         private void CreateKeyframeNode(Vector2 mousePosition, int index)
         {
-            AnimationEventControllerEditorWindow.Instance.AddKeyframeEvent(index);
+            if (AnimationEventControllerEditorWindow.Instance.selected == null)
+                return;
+
+            AnimationEventControllerEditorWindow.Instance.AddKeyframeEvent(AnimationEventControllerEditorWindow.Instance.selected, index);
         }
 
         private void DeleteKeyframeNode(Vector2 mousePosition, int index)
         {
-            AnimationEventControllerEditorWindow.Instance.RemoveKeyframeEvent(index);
+            if (AnimationEventControllerEditorWindow.Instance.selected == null)
+                return;
+
+            AnimationEventControllerEditorWindow.Instance.RemoveKeyframeEvent(AnimationEventControllerEditorWindow.Instance.selected, index);
         }
     }
 }
