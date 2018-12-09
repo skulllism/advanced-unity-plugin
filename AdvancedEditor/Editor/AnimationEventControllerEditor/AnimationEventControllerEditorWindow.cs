@@ -327,6 +327,9 @@ namespace AdvancedUnityPlugin.Editor
 
         private void RemoveEventInClip(AnimationEventController.AdvancedAnimationEvent selected, int frame)
         {
+            if (selected.clip.events.Length <= 0)
+                return;
+            
             AnimationEvent[] events = new AnimationEvent[selected.clip.events.Length - 1];
 
             int index = 0;

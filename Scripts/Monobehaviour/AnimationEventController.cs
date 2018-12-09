@@ -41,8 +41,6 @@ namespace AdvancedUnityPlugin
         [Header("Events")]
         public List<AdvancedAnimationEvent> animationEvents;
 
-        private List<KeyframeEvent> keyframeEvents = new List<KeyframeEvent>();
-
         public bool IsPlaying(AnimationClip clip , int layer)
         {
             foreach (var clipInfo in animator.GetCurrentAnimatorClipInfo(layer))
@@ -78,10 +76,13 @@ namespace AdvancedUnityPlugin
 
         private KeyframeEvent GetKeyframeEvent(string ID)
         {
-            for (int i = 0; i < keyframeEvents.Count; i++)
+            for (int i = 0; i < animationEvents.Count; i++)
             {
-                if (keyframeEvents[i].ID == ID)
-                    return keyframeEvents[i];
+                for (int j = 0; j < animationEvents[i].keyframeEvents.Count; j++)
+                {
+                    if (animationEvents[i].keyframeEvents[j].ID == ID)
+                        return animationEvents[i].keyframeEvents[j];
+                }
             }
 
             return null;
