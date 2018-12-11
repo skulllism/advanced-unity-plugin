@@ -1,198 +1,92 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
+using UnityEngine.Events;
 
 namespace AdvancedUnityPlugin
 {
     public class Equipment : MonoBehaviour
     {
-        [Serializable]
-        public class SlotField
-        {
-            public string equipableCategory;
-            public EquipmentSlot[] slots;
-        }
+        public class EquipableUnityEvent : UnityEvent<Equipable> { }
 
-        public class Cursor
-        {
-            public EquipmentSlot selected { private set; get; }
+        public EquipableUnityEvent onEquip;
+        public EquipableUnityEvent onUnequip;
 
-            public void Select(EquipmentSlot slot)
+        public List<Equipable> prefabs;
+
+        public Equipable Default;
+
+        public Transform origin;
+
+        private readonly Dictionary<string, Equipable> equipables = new Dictionary<string, Equipable>();
+
+        private Equipable currentEquipped;
+
+        private Equipable GetOrigin(string itemID)
+        {
+            foreach (var origin in prefabs)
             {
-                selected = slot;
-            }
-        }
-
-        public EquipmentEvent onSlotEquip;
-        public EquipmentEvent onSlotUnequip;
-
-        public EquipmentCursorEvent onCursorEquip;
-        public EquipmentCursorEvent onCursorUnequip;
-        public EquipmentCursorEvent onSelectCursor;
-
-        public SlotField[] slotFields;
-        private List<Equipable> equipables = new List<Equipable>();
-
-        public Dictionary<string, Cursor> cursors = new Dictionary<string, Cursor>();
-
-        private void Awake()
-        {
-            foreach (var field in slotFields)
-            {
-                foreach (var slot in field.slots)
-                {
-                    slot.equipableCategory = field.equipableCategory;
-                }
-
-                Cursor cursor = new Cursor();
-                cursor.Select(field.slots[0]);
-                cursors.Add(field.equipableCategory, cursor);
-            }
-        }
-
-        private void OnDestroy()
-        {
-            foreach (var field in slotFields)
-            {
-                foreach (var slot in field.slots)
-                {
-                    slot.equipableCategory = null;
-                    slot.equipped = null;
-                }
-            }
-        }
-
-        public Equipable GetEquipableByitemTimeStamp(string itemTimeStamp)
-        {
-            foreach (var equipable in equipables)
-            {
-                if (equipable.timeStamp == itemTimeStamp)
-                    return equipable;
+                if (origin.itemID == itemID)
+                    return origin;
             }
 
+            Debug.LogError("Not found origin : " + itemID);
             return null;
         }
 
-        public Cursor GetCursor(string equipCategory)
+        private Equipable GetEquipable(string itemID)
         {
-            return cursors[equipCategory];
-        }
-
-        private SlotField GetField(string equipCategory)
-        {
-            foreach (var field in slotFields)
+            Equipable equipable = null;
+            if (equipables.TryGetValue(itemID, out equipable))
             {
-                if (field.equipableCategory == equipCategory)
-                    return field;
+                return equipable;
             }
 
-            return null;
+            //On demand
+            equipable = Instantiate(GetOrigin(itemID));
+            equipable.transform.SetParent(origin, false);
+            equipables.Add(equipable.itemID, equipable);
+
+            return equipable;
         }
 
-        private bool IsAlreadyEquip(Equipable equipable, out EquipmentSlot alreadyEquipped)
+        public Equipable GetCurrent()
         {
-            foreach (var slot in GetField(equipable.category).slots)
-            {
-                if (slot.equipped == null)
-                    continue;
+            if (!currentEquipped)
+                Equip(Default);
 
-                if (slot.equipped.timeStamp == equipable.timeStamp)
-                {
-                    alreadyEquipped = slot;
-                    return true;
-                }
-            }
-
-            alreadyEquipped = null;
-            return false;
-        }
-
-        public void AddEquipable(string equipType, string itemID , string timeStamp)
-        {
-            Equipable equipable = new Equipable(equipType, itemID , timeStamp);
-
-            if (equipables.Contains(equipable))
-                return;
-
-            equipables.Add(equipable);
-        }
-
-        public void RemoveEquipable(string itemTimeStamp)
-        {
-            Equipable equipable = GetEquipableByitemTimeStamp(itemTimeStamp);
-
-            if (equipable == null)
-                return;
-
-            RemoveEquipableOfSlot(equipable);
-
-            equipables.Remove(equipable);
-        }
-
-        private void RemoveEquipableOfSlot(Equipable equipable)
-        {
-            foreach (var field in slotFields)
-            {
-                if (field.equipableCategory != equipable.category)
-                    continue;
-                
-                foreach (var slot in field.slots)
-                {
-                    if(slot.equipped == equipable)
-                    {
-                        Unequip(slot);
-                        break;
-                    }
-                }
-            }
-        }
-
-        public void Select(string equipType, EquipmentSlot slot)
-        {
-            GetCursor(equipType).Select(slot);
-            onSelectCursor.Raise(GetCursor(equipType));
-            Debug.Log("Cursor 변경 : " + equipType + " - " + slot);
-        }
-
-        public void EquipByItemTimeStamp(string itemTimeStamp)
-        {
-            Equip(GetEquipableByitemTimeStamp(itemTimeStamp));
+            return currentEquipped;
         }
 
         public void Equip(Equipable equipable)
         {
-            EquipmentSlot selected = GetCursor(equipable.category).selected;
-            Equip(selected, equipable);
+            Debug.Assert(Default != null);
 
-            onCursorEquip.Raise(GetCursor(equipable.category));
+            if (equipable == null)
+            {
+                Equip(Default);
+                return;
+            }
+
+            if (currentEquipped)
+                Unequip();
+
+            currentEquipped = equipable;
+            onEquip.Invoke(currentEquipped);
         }
 
-        public void Equip(EquipmentSlot slot , Equipable equipable)
+        public void Equip(string itemID)
         {
-            if (slot.equipped != null)
-                Unequip(slot);
-
-            EquipmentSlot alreadyEquipped;
-            if (IsAlreadyEquip(equipable, out alreadyEquipped))
-                alreadyEquipped.Unequip();
-
-            slot.Equip(equipable);
-
-            onSlotEquip.Raise(equipable);
+            Equip(GetEquipable(itemID));
         }
 
-        public void Unequip(string category)
+        public void Unequip()
         {
-            Equipable equipped = GetCursor(category).selected.Unequip();
+            if (currentEquipped == null)
+                return;
 
-            onCursorUnequip.Raise(GetCursor(category));
-        }
-
-        public void Unequip(EquipmentSlot slot)
-        {
-            Equipable equipped = slot.Unequip();
-
-            onSlotUnequip.Raise(equipped);
+            onUnequip.Invoke(currentEquipped);
+            currentEquipped = null;
         }
     }
 }
