@@ -211,7 +211,7 @@ namespace AdvancedUnityPlugin.Editor
 
             float frameRate = advancedAnimationEvent.clip.frameRate;
             float frameInterval = 1.0f / frameRate;
-            float frameCount = advancedAnimationEvent.clip .length / frameInterval;
+            float frameCount = Mathf.Round(advancedAnimationEvent.clip .length / frameInterval);
 
             if(frameCount > 0.0f)
             {
