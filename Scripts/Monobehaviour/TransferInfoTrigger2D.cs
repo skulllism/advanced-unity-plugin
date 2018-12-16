@@ -6,7 +6,7 @@ using System;
 
 namespace AdvancedUnityPlugin
 {
-    public abstract class TransferTrigger2D<T> : MonoBehaviour
+    public abstract class TransferInfoTrigger2D<T> : MonoBehaviour
     {
         public enum TriggerMode
         {
@@ -18,7 +18,13 @@ namespace AdvancedUnityPlugin
 
         public TriggerMode mode;
 
-        public T info;
+        public T info { set; get; }
+        public T Default;
+
+        private void Awake()
+        {
+            info = Default;
+        }
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
@@ -27,7 +33,7 @@ namespace AdvancedUnityPlugin
 
             Debug.Log("attack@@@@@@@@@@@@");
 
-            TransferTrigger2D<T> hit = collision.gameObject.GetComponent<TransferTrigger2D<T>>();
+            TransferInfoTrigger2D<T> hit = collision.gameObject.GetComponent<TransferInfoTrigger2D<T>>();
 
             if (!hit)
                 return;
