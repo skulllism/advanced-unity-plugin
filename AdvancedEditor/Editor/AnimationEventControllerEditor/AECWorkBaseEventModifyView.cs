@@ -38,7 +38,7 @@ namespace AdvancedUnityPlugin.Editor
                         if(size > 0)
                         {
                             AnimationClip clip = serializedProperty.FindPropertyRelative("clip").objectReferenceValue as AnimationClip;
-                            int frameCount = (int)(clip.length / (1.0f / clip.frameRate));
+                            int frameCount = (int)Mathf.Round(clip.length / (1.0f / clip.frameRate));
 
                             for (int i = 0; i < serializedProperty.FindPropertyRelative("keyframeEvents").arraySize; i++)
                             {

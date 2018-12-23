@@ -39,8 +39,9 @@ namespace AdvancedUnityPlugin.Editor
                 Instance.animationEventController = data;
 
                 Instance.InitializeSerializedObject();
-                Instance.InitializeView();
                 Instance.InitializeKeyframeEvents();
+
+                Instance.InitializeView();
             }
             else
                 Debug.LogError("[Editor]Not Found AnimationEventController");
@@ -75,20 +76,18 @@ namespace AdvancedUnityPlugin.Editor
 
         private void InitializeView()
         {
-            if (Instance != null)
-            {
-                propertiesView = new AECPropertiesView();
-                workView = new AECWorkView();
-            }
-            else
+            if (Instance == null)
             {
                 Instance = GetWindow<AnimationEventControllerEditorWindow>();
                 Instance.titleContent = new GUIContent("AnimationEventController");
                 Instance.Show();
-
-                propertiesView = new AECPropertiesView();
-                workView = new AECWorkView();
             }
+
+            if(propertiesView == null)
+                propertiesView = new AECPropertiesView();
+            
+            if(workView == null)
+                workView = new AECWorkView();
 
             propertiesView.Initialize();
             workView.Initialize();
@@ -96,9 +95,16 @@ namespace AdvancedUnityPlugin.Editor
 
         private void InitializeKeyframeEvents()
         {
-            int clipCount = animationEventController.animationEvents.Count;
-            for (int i = 0; i < clipCount; i++)
+            for (int i = 0; i < animationEventController.animationEvents.Count; i++)
             {
+                //존재하지 않는 클립이면
+                if(animationEventController.animationEvents[i].clip == null)
+                {
+                    animationEventController.animationEvents.Remove(animationEventController.animationEvents[i]);
+                    i--;
+                    continue;
+                }
+
                 float frameRate = animationEventController.animationEvents[i].clip.frameRate;
 
                 int eventCount = animationEventController.animationEvents[i].keyframeEvents.Count;
@@ -153,6 +159,8 @@ namespace AdvancedUnityPlugin.Editor
                 selected = animationEventController.animationEvents[index];
             else
                 selected = null;
+
+            workView.Initialize();
         }
 
         public float GetSelectedClipLength()
@@ -165,7 +173,7 @@ namespace AdvancedUnityPlugin.Editor
 
         public float GetSelectedClipFrameRate()
         {
-            if (selected == null)
+            if (selected == null || selected.clip == null)
                 return 1.0f;
 
             return selected.clip.frameRate;
@@ -293,6 +301,12 @@ namespace AdvancedUnityPlugin.Editor
         private bool IsEvetInClip(AnimationClip clip, int frame)
         {
             float frameRate = clip.frameRate;
+
+            if(clip == null)
+            {
+                Debug.LogError("[AnimationEventController] Not found clip");
+                return false;
+            }
 
             for (int i = 0; i < clip.events.Length; i++)
             {

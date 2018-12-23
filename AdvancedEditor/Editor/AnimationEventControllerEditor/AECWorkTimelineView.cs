@@ -15,10 +15,10 @@ namespace AdvancedUnityPlugin.Editor
         private float frameRate;
         private Vector2 scrollPosition;
 
-
         public void Initialize()
         {
-            
+            lineInterval = 25.0f;
+            scrollPosition = Vector2.zero;
         }
 
         public override void UpdateView(Rect editorRect, Rect percentageRect)
@@ -29,18 +29,20 @@ namespace AdvancedUnityPlugin.Editor
 
             frameInterval = 1.0f / frameRate;
 
-            frameCount = AnimationEventControllerEditorWindow.Instance.GetSelectedClipLength() / frameInterval;
+            frameCount = Mathf.Round(AnimationEventControllerEditorWindow.Instance.GetSelectedClipLength() / frameInterval);
         }
 
         public override void GUIView(Event e)
         {
             base.GUIView(e);
 
-            GUILayout.BeginArea(viewRect, "", (GUIStyle)"MeBlendBackground");
+            GUILayout.BeginArea(viewRect, "");
             {
+                GUILayout.BeginArea(new Rect(viewRect.x, viewRect.y, viewRect.width, viewRect.height * 0.45f), "", (GUIStyle)"AnimationKeyframeBackground");
+                GUILayout.EndArea();
                 DrawLine();
- 
-                Handles.DrawLine(new Vector3(0.0f, viewRect.height * 0.45f, 0), new Vector3(1000.0f, viewRect.height* 0.45f, 0));
+
+                Handles.DrawLine(new Vector3(0.0f, viewRect.height * 0.45f, 0), new Vector3(1000.0f, viewRect.height * 0.45f, 0));
             }
             GUILayout.EndArea();
         }
@@ -61,10 +63,10 @@ namespace AdvancedUnityPlugin.Editor
         private void DrawLine()
         {
             //뷰의 width / 해당 클립의 길이 
-            if(frameRate < frameCount)
-                lineInterval = (viewRect.width / frameRate);
-            else
-                lineInterval = (viewRect.width / frameCount);
+            //if(frameRate < frameCount)
+            //    lineInterval = (viewRect.width / frameRate);
+            //else
+                //lineInterval = (viewRect.width / frameCount);
             
             Handles.color = Color.black;
 
@@ -72,7 +74,7 @@ namespace AdvancedUnityPlugin.Editor
             {
                 GUILayout.BeginHorizontal();
                 {
-                    for (int i = 0; i < frameCount; i++)
+                    for (int i = 0; i < frameCount + 3; i++)
                     {
                         GUILayout.Space((lineInterval));
                     }

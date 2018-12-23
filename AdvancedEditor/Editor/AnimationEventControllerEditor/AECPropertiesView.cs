@@ -40,12 +40,24 @@ namespace AdvancedUnityPlugin.Editor
 
         private void InitializeAllAnimationsPopup()
         {
-            int popupSize = animationEventController.animator.runtimeAnimatorController.animationClips.Length;
- 
-            allAnimationNames = new string[popupSize];
-            for (int i = 0; i < popupSize; i++)
+            int popupSize = 0;
+            for (int i = 0; i < animationEventController.animator.runtimeAnimatorController.animationClips.Length; i++)
             {
-                allAnimationNames[i] = animationEventController.animator.runtimeAnimatorController.animationClips[i].name;
+                if (animationEventController.animator.runtimeAnimatorController.animationClips[i] == null)
+                    continue;
+
+                popupSize++;
+            }
+
+            allAnimationNames = new string[popupSize];
+
+            int count = 0;
+            for (int i = 0; i < animationEventController.animator.runtimeAnimatorController.animationClips.Length; i++)
+            {
+                if (animationEventController.animator.runtimeAnimatorController.animationClips[i] == null)
+                    continue;
+
+                allAnimationNames[count++] = animationEventController.animator.runtimeAnimatorController.animationClips[i].name;
             }
 
             selectedAllAnimationIndex = 0;
