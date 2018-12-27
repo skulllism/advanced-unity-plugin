@@ -31,6 +31,16 @@ namespace AdvancedUnityPlugin
             }
         }
 
+        public bool HasBeenTriggered()
+        {
+            return gameObjects.Count > 0;
+        }
+
+        public bool HasBeenTriggered(GameObject target)
+        {
+            return gameObjects.Contains(target);
+        }
+
         private void Add(GameObject gameObject)
         {
             Debug.Assert(!gameObjects.Contains(gameObject));
