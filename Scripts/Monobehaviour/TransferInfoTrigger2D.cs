@@ -31,8 +31,6 @@ namespace AdvancedUnityPlugin
             if (!enabled)
                 return;
 
-            Debug.Log("attack@@@@@@@@@@@@");
-
             TransferInfoTrigger2D<T> hit = collision.gameObject.GetComponent<TransferInfoTrigger2D<T>>();
 
             if (!hit)
