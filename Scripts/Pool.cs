@@ -4,13 +4,12 @@ using UnityEngine;
 
 namespace AdvancedUnityPlugin
 {
-    [Serializable]
-    public class Pool
+    public class Pool<T> where T : MonoBehaviour
     {
-        public GameObject origin;
+        public T origin;
         public int count;
 
-        private List<GameObject> gameObjects = new List<GameObject>();
+        protected List<T> pools = new List<T>();
 
         public void Init()
         {
@@ -19,33 +18,41 @@ namespace AdvancedUnityPlugin
 
             for (int i = 0; i < count; i++)
             {
-                GameObject gameObject = GameObject.Instantiate(origin);
-                gameObject.SetActive(false);
-                gameObjects.Add(gameObject);
+                Create();
             }
         }
 
-        public GameObject Get()
+        private T Create()
         {
-            foreach (var gameObject in gameObjects)
+            T component = GameObject.Instantiate(origin);
+            component.gameObject.SetActive(false);
+            pools.Add(component);
+            return component;
+        }
+
+        public T Get()
+        {
+            foreach (var pool in pools)
             {
-                if (gameObject.activeSelf)
+                if (pool.gameObject.activeSelf)
                     continue;
 
-                gameObject.SetActive(true);
+                pool.gameObject.SetActive(true);
 
-                return gameObject;
+                return pool;
             }
 
-            Debug.Log("[AGOC] Not Enough Pool : " + origin.name);
-            return null;
+            Debug.Log("Create on demand : " + origin.name);
+            Create();
+
+            return Get();
         }
 
         public void PoolAll()
         {
-            foreach (var gameObject in gameObjects)
+            foreach (var pool in pools)
             {
-                gameObject.SetActive(false);
+                pool.gameObject.SetActive(false);
             }
         }
 
@@ -57,12 +64,12 @@ namespace AdvancedUnityPlugin
 
         public void DestroyAll()
         {
-            foreach (var item in gameObjects)
+            foreach (var pool in pools)
             {
-                GameObject.Destroy(item);
+                GameObject.Destroy(pool.gameObject);
             }
 
-            gameObjects.Clear();
+            pools.Clear();
         }
     }
 

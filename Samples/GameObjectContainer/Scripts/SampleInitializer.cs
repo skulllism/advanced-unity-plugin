@@ -3,7 +3,6 @@ using AdvancedUnityPlugin;
 
 public class SampleInitializer : MonoBehaviour {
 
-    public Pooler container;
     public int max;
 
 	// Use this for initialization
