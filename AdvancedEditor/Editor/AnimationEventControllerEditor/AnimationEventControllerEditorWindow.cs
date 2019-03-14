@@ -4,10 +4,21 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.Callbacks;
 
+/*
+    TODO : 이름 검색으로 변경
+*/
+
 namespace AdvancedUnityPlugin.Editor
 {
     public class AnimationEventControllerEditorWindow : EditorWindow
     {
+        public struct AECUndoData
+        {
+            public int group;
+            public int selectedIndex;
+            public int frameIndex;
+        }
+
         public static AnimationEventControllerEditorWindow Instance;
 
         //=========================
@@ -20,6 +31,8 @@ namespace AdvancedUnityPlugin.Editor
         private int selectedIndex;
 
         public int currentFrameIndex;
+
+        private AECUndoData undoData;
 
         //=========================
         //  ## View
@@ -34,44 +47,86 @@ namespace AdvancedUnityPlugin.Editor
             Instance = GetWindow<AnimationEventControllerEditorWindow>();
             Instance.titleContent = new GUIContent("AnimationEventController");
 
-            if(data != null)
-            {
-                Instance.animationEventController = data;
-
-                Instance.InitializeSerializedObject();
-                Instance.InitializeKeyframeEvents();
-
-                Instance.InitializeView();
-            }
-            else
-                Debug.LogError("[Editor]Not Found AnimationEventController");
+            Instance.Initialize(data);
 
             Instance.Show();
         }
+
+        //public void OnEnable()
+        //{
+        //    Undo.undoRedoPerformed += UndoRedoPerformed;
+        //}
+
+        //public void OnDisable()
+        //{
+        //    Undo.undoRedoPerformed -= UndoRedoPerformed;
+        //}
+
         public void OnSelectionChange()
         {
-            //AnimationEventController target = null;
-            //GameObject gameObject = Selection.activeGameObject;
+            GameObject gameObject = Selection.activeGameObject;
+            if (gameObject == null)
+                return;
 
-            //if(gameObject != null)
-            //{
-            //    target = gameObject.GetComponent<AnimationEventController>();
-            //    if (target != null)
-            //    {
-            //        Instance = GetWindow<AnimationEventControllerEditorWindow>();
-            //        Debug.Log("awad");
-            //        Instance.animationEventController = target;
+            AnimationEventController data = gameObject.GetComponent<AnimationEventController>();
+            if (data != null)
+            {
+                Initialize(data);
+                Update();
 
-            //        //OpenWindow(target);
-            //    }
-            //}
+                Repaint();
+            }
+        }
+
+        //public void RecordObject(string text)
+        //{
+        //    if(animationEventController.animationEvents.Count >= selectedIndex)
+        //    {
+        //        selectedIndex = (animationEventController.animationEvents.Count - 1) < 0 ? 0 : animationEventController.animationEvents.Count - 1;
+        //    }
+
+        //    undoData.group = Undo.GetCurrentGroup();
+        //    undoData.selectedIndex = selectedIndex;
+        //    undoData.frameIndex = currentFrameIndex;
+
+        //    Undo.RecordObject(animationEventController, text);
+
+        //}
+
+        //private void UndoRedoPerformed()
+        //{
+        //    Undo.CollapseUndoOperations(undoData.group);
+
+        //    Initialize(animationEventController);
+
+        //    selectedIndex = undoData.selectedIndex;
+        //    currentFrameIndex = undoData.frameIndex;
+
+        //    propertiesView.SetSelectAnimationIndex(selectedIndex);
+
+        //    Repaint();
+        //}
+
+        private void Initialize(AnimationEventController data)
+        {
+            if (data == null)
+            {
+                Debug.LogError("[Editor]Not Found AnimationEventController");
+                return;
+            }
+
+            animationEventController = data;
+
+            InitializeSerializedObject();
+            InitializeKeyframeEvents();
+            InitializeView();
+
+            currentFrameIndex = 0;
         }
 
         private void InitializeSerializedObject()
         {
             serializedObject = new SerializedObject(animationEventController);
-
-            currentFrameIndex = 0;
         }
 
         private void InitializeView()
@@ -95,9 +150,11 @@ namespace AdvancedUnityPlugin.Editor
 
         private void InitializeKeyframeEvents()
         {
+            if (animationEventController.animationEvents == null)
+                animationEventController.animationEvents = new List<AnimationEventController.AdvancedAnimationEvent>();
+
             for (int i = 0; i < animationEventController.animationEvents.Count; i++)
             {
-                //존재하지 않는 클립이면
                 if(animationEventController.animationEvents[i].clip == null)
                 {
                     animationEventController.animationEvents.Remove(animationEventController.animationEvents[i]);
@@ -188,7 +245,6 @@ namespace AdvancedUnityPlugin.Editor
         }
 
 
-
         public SerializedProperty GetSerializedPropertyOfSelectedAnimation()
         {
             if (serializedObject == null)
@@ -203,6 +259,7 @@ namespace AdvancedUnityPlugin.Editor
             return null;
         }
 
+        //TODO : 스트링 서치로 변경
         public bool AddNewEventAnimation(int index)
         {
             for (int i = 0; i < animationEventController.animationEvents.Count; i++)
@@ -210,6 +267,8 @@ namespace AdvancedUnityPlugin.Editor
                 if (animationEventController.animator.runtimeAnimatorController.animationClips[index].name == animationEventController.animationEvents[i].clip.name)
                     return false;
             }
+
+           // RecordObject("[AECE] Add Selected Animatin");
 
             AnimationEventController.AdvancedAnimationEvent advancedAnimationEvent = new AnimationEventController.AdvancedAnimationEvent();
             advancedAnimationEvent.clip = animationEventController.animator.runtimeAnimatorController.animationClips[index];
@@ -235,6 +294,8 @@ namespace AdvancedUnityPlugin.Editor
             if (selected == null)
                 return false;
 
+            //RecordObject("[AECE] Remove Selected Animation");
+
             //리스트에서 삭제하고 동시에 클립의 애니메이션을 없애줘야한다 .
             AnimationUtility.SetAnimationEvents(selected.clip, new AnimationEvent[0] { });
 
@@ -256,6 +317,8 @@ namespace AdvancedUnityPlugin.Editor
             if (IsEvetInClip(selected.clip, frame))
                 return false;
 
+            //RecordObject("[AECE] Add keyframeEvent");
+
             string eventName = selected.clip.name + frame;
             AnimationEventController.UnityKeyframeEvent newKeyframeEvent = new AnimationEventController.UnityKeyframeEvent(eventName, frame, null);
             selected.keyframeEvents.Add(newKeyframeEvent);
@@ -267,6 +330,8 @@ namespace AdvancedUnityPlugin.Editor
 
         private void AddEventInClip(AnimationEventController.UnityKeyframeEvent keyframeEvent ,AnimationClip clip)
         {
+            //Undo.RecordObject(clip, "Add Event in clip");
+
             float interval = 1.0f / clip.frameRate;
 
             AnimationEvent newEvent = new AnimationEvent();
@@ -320,10 +385,11 @@ namespace AdvancedUnityPlugin.Editor
 
         public bool RemoveKeyframeEvent(AnimationEventController.AdvancedAnimationEvent selected, int frame)
         {
-            //클립의 퍼스트 라스트 이벤트는 손 안된? ㅇㅋ 
-            int frameCount = (int)(selected.clip.length / (1.0f / selected.clip.frameRate));
+            int frameCount = (int)Mathf.Round(selected.clip.length / (1.0f / selected.clip.frameRate));
             if (frame == 0 || frame == frameCount - 1)
                 return false;
+
+            //RecordObject("[AECE] Remove keyframeEvent");
 
             for (int i = 0; i < selected.keyframeEvents.Count; i++)
             {
@@ -343,7 +409,9 @@ namespace AdvancedUnityPlugin.Editor
         {
             if (selected.clip.events.Length <= 0)
                 return;
-            
+
+            //Undo.RecordObject(selected.clip, "Remove Event in clip");
+
             AnimationEvent[] events = new AnimationEvent[selected.clip.events.Length - 1];
 
             int index = 0;

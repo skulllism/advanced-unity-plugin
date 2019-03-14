@@ -60,12 +60,15 @@ namespace AdvancedUnityPlugin.Editor
 
             GUILayout.BeginArea(viewRect, "", "box");
             {
-                workTimelineView.SetCurrentFrameIdex(AnimationEventControllerEditorWindow.Instance.currentFrameIndex);
-                workTimelineView.GUIView(e);
-                baseEventModifyView.GUIView(e);
+                if (AnimationEventControllerEditorWindow.Instance.animationEventController.animationEvents.Count > 0)
+                {
+                    workTimelineView.SetCurrentFrameIdex(AnimationEventControllerEditorWindow.Instance.currentFrameIndex);
+                    workTimelineView.GUIView(e);
+                    baseEventModifyView.GUIView(e);
 
-                keyFrameEventModifyView.SetCurrentFrameIndex(AnimationEventControllerEditorWindow.Instance.currentFrameIndex);
-                keyFrameEventModifyView.GUIView(e);
+                    keyFrameEventModifyView.SetCurrentFrameIndex(AnimationEventControllerEditorWindow.Instance.currentFrameIndex);
+                    keyFrameEventModifyView.GUIView(e);
+                }
             }
             GUILayout.EndArea();
         }

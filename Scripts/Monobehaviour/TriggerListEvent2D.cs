@@ -41,6 +41,21 @@ namespace AdvancedUnityPlugin
             return gameObjects.Contains(target);
         }
 
+        public bool Contains(string tag, out GameObject gameObject)
+        {
+            gameObject = null;
+            foreach(var iter in gameObjects)
+            {
+                if(iter.tag == tag)
+                {
+                    gameObject = iter;
+                    break;
+                }
+            }
+
+            return gameObject != null ? true : false;
+        }
+
         private void Add(GameObject gameObject)
         {
             Debug.Assert(!gameObjects.Contains(gameObject));
