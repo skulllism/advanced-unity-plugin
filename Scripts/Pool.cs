@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace AdvancedUnityPlugin
 {
-    public class Pool<T> where T : MonoBehaviour
+    public abstract class Pool<T> where T : MonoBehaviour
     {
         public T origin;
         public int count;
