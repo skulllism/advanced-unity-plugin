@@ -6,17 +6,19 @@ using System;
 
 namespace AdvancedUnityPlugin
 {
+    public enum TransferInfoTrigger2DMode
+    {
+        None,
+        Attack,
+        Hitbox,
+        Both
+    }
+
     public abstract class TransferInfoTrigger2D<T> : MonoBehaviour
     {
-        public enum TriggerMode
-        {
-            None,
-            Attack,
-            Hitbox,
-            Both
-        }
+    
 
-        public TriggerMode mode;
+        public TransferInfoTrigger2DMode mode;
 
         public T info { set; get; }
         public T Default;
@@ -36,7 +38,7 @@ namespace AdvancedUnityPlugin
             if (!hit)
                 return;
 
-            if (hit.mode != TriggerMode.Both && hit.mode != TriggerMode.Hitbox)
+            if (hit.mode != TransferInfoTrigger2DMode.Both && hit.mode != TransferInfoTrigger2DMode.Hitbox)
                 return;
 
             hit.OnHit(info);
