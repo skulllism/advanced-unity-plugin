@@ -11,8 +11,8 @@ namespace AdvancedUnityPlugin
         public enum TriggerMode
         {
             None,
-            Attack,
-            Hitbox,
+            Giver,
+            Receiver,
             Both
         }
 
@@ -31,17 +31,21 @@ namespace AdvancedUnityPlugin
             if (!enabled)
                 return;
 
-            TransferInfoTrigger2D<T> hit = collision.gameObject.GetComponent<TransferInfoTrigger2D<T>>();
+            TransferInfoTrigger2D<T> receiver = collision.gameObject.GetComponent<TransferInfoTrigger2D<T>>();
 
-            if (!hit)
+            if (!receiver || !receiver.enabled)
                 return;
 
-            if (hit.mode != TriggerMode.Both && hit.mode != TriggerMode.Hitbox)
+            if (receiver.mode != TriggerMode.Both && receiver.mode != TriggerMode.Receiver)
                 return;
 
-            hit.OnHit(info);
+            OnGive(info);
+            receiver.OnReceive(info);
         }
 
-        public abstract void OnHit(T info);
+        public abstract void OnGive(T info);
+
+        public abstract void OnReceive(T info);
+
     }
 }
