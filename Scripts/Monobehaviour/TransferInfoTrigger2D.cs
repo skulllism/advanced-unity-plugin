@@ -9,15 +9,13 @@ namespace AdvancedUnityPlugin
     public enum TransferInfoTrigger2DMode
     {
         None,
-        Attack,
-        Hitbox,
+        Giver,
+        Receiver,
         Both
     }
 
     public abstract class TransferInfoTrigger2D<T> : MonoBehaviour
     {
-    
-
         public TransferInfoTrigger2DMode mode;
 
         public T info { set; get; }
@@ -33,17 +31,21 @@ namespace AdvancedUnityPlugin
             if (!enabled)
                 return;
 
-            TransferInfoTrigger2D<T> hit = collision.gameObject.GetComponent<TransferInfoTrigger2D<T>>();
+            TransferInfoTrigger2D<T> receiver = collision.gameObject.GetComponent<TransferInfoTrigger2D<T>>();
 
-            if (!hit)
+            if (!receiver || !receiver.enabled)
                 return;
 
-            if (hit.mode != TransferInfoTrigger2DMode.Both && hit.mode != TransferInfoTrigger2DMode.Hitbox)
+            if (receiver.mode != TransferInfoTrigger2DMode.Both && receiver.mode != TransferInfoTrigger2DMode.Receiver)
                 return;
 
-            hit.OnHit(info);
+            OnGive(info);
+            receiver.OnReceive(info);
         }
 
-        public abstract void OnHit(T info);
+        public abstract void OnGive(T info);
+
+        public abstract void OnReceive(T info);
+
     }
 }
