@@ -91,7 +91,7 @@ namespace AdvancedUnityPlugin
         public void StartAnimationKeyframeEvent(string ID)
         {
             KeyframeEvent keyframeEvent = GetKeyframeEvent(ID);
-            Debug.Assert(keyframeEvent != null);
+            Debug.Assert(keyframeEvent != null, "ID : " + ID);
 
             if (keyframeEvent.HasEvent())
                 StartCoroutine(StartAnimationKeyframeEvent(keyframeEvent));
