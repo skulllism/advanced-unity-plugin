@@ -9,7 +9,7 @@ namespace AdvancedUnityPlugin
     public enum TransferInfoTrigger2DMode
     {
         None,
-        Giver,
+        Sender,
         Receiver,
         Both
     }
