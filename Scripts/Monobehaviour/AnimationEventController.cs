@@ -38,6 +38,8 @@ namespace AdvancedUnityPlugin
 
         public Animator animator;
 
+        public string creationDate = String.Empty;
+
         [Header("Events")]
         public List<AdvancedAnimationEvent> animationEvents;
 
