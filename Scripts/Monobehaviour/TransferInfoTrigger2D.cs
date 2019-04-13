@@ -31,6 +31,9 @@ namespace AdvancedUnityPlugin
             if (!enabled)
                 return;
 
+            if (mode != TransferInfoTrigger2DMode.Both || mode != TransferInfoTrigger2DMode.Sender)
+                return;
+
             TransferInfoTrigger2D<T> receiver = collision.gameObject.GetComponent<TransferInfoTrigger2D<T>>();
 
             if (!receiver || !receiver.enabled)
