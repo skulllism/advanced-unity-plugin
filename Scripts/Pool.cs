@@ -11,15 +11,18 @@ namespace AdvancedUnityPlugin
 
         protected List<GameObject> pools = new List<GameObject>();
 
+        public void Init()
+        {
+            for (int i = 0; i < count; i++)
+                Create();
+        }
+
         private void Awake()
         {
-            Debug.Assert(origin);
-            Debug.Assert(count > 0);
+            if (!origin || count <= 0)
+                return;
 
-            for (int i = 0; i < count; i++)
-            {
-                Create();
-            }
+            Init();
         }
 
         private GameObject Create()
