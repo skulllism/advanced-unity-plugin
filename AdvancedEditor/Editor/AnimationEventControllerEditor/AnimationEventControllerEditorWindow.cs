@@ -62,7 +62,17 @@ namespace AdvancedUnityPlugin.Editor
         //    Undo.undoRedoPerformed -= UndoRedoPerformed;
         //}
 
+        public void OnProjectChange()
+        {
+            Refresh();
+        }
+
         public void OnSelectionChange()
+        {
+            Refresh();
+        }
+
+        private void Refresh()
         {
             GameObject gameObject = Selection.activeGameObject;
             if (gameObject == null)
@@ -118,7 +128,10 @@ namespace AdvancedUnityPlugin.Editor
             animationEventController = data;
 
             InitializeSerializedObject();
-            InitializeKeyframeEvents();
+
+            InitializeClip();
+            InitializeKeyframeEventsInClip();
+            //InitializeKeyframeEvents();
             InitializeView();
 
             currentFrameIndex = 0;
@@ -148,11 +161,34 @@ namespace AdvancedUnityPlugin.Editor
             workView.Initialize();
         }
 
+        private void InitializeClip()
+        {
+            for (int i = 0; i < animationEventController.animator.runtimeAnimatorController.animationClips.Length; i++)
+            {
+                AnimationUtility.SetAnimationEvents(animationEventController.animator.runtimeAnimatorController.animationClips[i], new AnimationEvent[0] { });        
+            }
+
+            for (int i = 0; i < animationEventController.animator.runtimeAnimatorController.animationClips.Length; i++)
+            {
+                //oreach(var iter in animationEventController.animationEvents)
+            }
+        }
+
+        private void InitializeKeyframeEventsInClip()
+        {
+            //AEC에 등록된 클립에 이벤트를 등록시킨다.
+            for (int i = 0; i < animationEventController.animationEvents.Count; i++)
+            {
+                foreach(var iter in animationEventController.animationEvents[i].keyframeEvents)
+                {
+                    AddKeyframeEvent(animationEventController.animationEvents[i], iter.eventKeyframe);   
+                }
+            }
+        }
+
+        //TODO : AEC 바탕으로 키프레임 재구성
         private void InitializeKeyframeEvents()
         {
-            if (animationEventController.animationEvents == null)
-                animationEventController.animationEvents = new List<AnimationEventController.AdvancedAnimationEvent>();
-
             for (int i = 0; i < animationEventController.animationEvents.Count; i++)
             {
                 if(animationEventController.animationEvents[i].clip == null)
@@ -314,6 +350,8 @@ namespace AdvancedUnityPlugin.Editor
             if (IsEventInAdvancedAnimationEvents(selected, frame))
                 return false;
 
+            //클립체크
+
             if (IsEvetInClip(selected.clip, frame))
                 return false;
 
@@ -326,6 +364,11 @@ namespace AdvancedUnityPlugin.Editor
             AddEventInClip(newKeyframeEvent, selected.clip);
 
             return true;
+        }
+
+        private bool IsClipInAnimator()
+        {
+            return false;
         }
 
         private void AddEventInClip(AnimationEventController.UnityKeyframeEvent keyframeEvent ,AnimationClip clip)

@@ -11,6 +11,7 @@ namespace AdvancedUnityPlugin
         [Serializable]
         public class AdvancedAnimationEvent
         {
+            public string clipName;
             public AnimationClip clip;
             public List<UnityKeyframeEvent> keyframeEvents;
         }
