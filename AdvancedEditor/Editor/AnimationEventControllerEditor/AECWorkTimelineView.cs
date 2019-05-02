@@ -109,14 +109,29 @@ namespace AdvancedUnityPlugin.Editor
             if (advancedAnimationEvent == null)
                 return;
 
-            for (int i = 0; i < advancedAnimationEvent.keyframeEvents.Count; i++)
+            if (AnimationEventControllerEditorWindow.Instance.IsEventFrameInAdvancedAnimationEvents(advancedAnimationEvent, frame))
             {
-                if (advancedAnimationEvent.keyframeEvents[i].eventKeyframe == frame)
+                if (currentFrameIndex == frame)
                 {
-                    if(currentFrameIndex == frame)
-                        GUI.Button(new Rect(position.x, position.y, 10.0f, 10.0f), new GUIContent(""),(GUIStyle)"TL Playhead");
+                    if (frame == 0 || frame == AnimationEventControllerEditorWindow.Instance.GetCurrentEventAnimationClipFrameCount() - 1)
+                    {
+                        GUI.Button(new Rect(position.x - 7.5f, position.y - 1.8f, 10.0f, 10.0f), new GUIContent(""), (GUIStyle)"TrackCollapseMarkerButton");
+                    }
                     else
-                        GUI.Button(new Rect(position.x - 2.3f, position.y - 1.8f, 10.0f, 10.0f), new GUIContent(""), (GUIStyle)"Icon.Event");
+                    {
+                        GUI.Button(new Rect(position.x, position.y, 10.0f, 10.0f), new GUIContent(""), (GUIStyle)"TL Playhead");
+                    }
+                }
+                else
+                {
+                    if (frame == 0 || frame == AnimationEventControllerEditorWindow.Instance.GetCurrentEventAnimationClipFrameCount() - 1)
+                    {
+                        GUI.Button(new Rect(position.x - 7.5f, position.y - 1.8f, 10.0f, 10.0f), new GUIContent(""), (GUIStyle)"TrackCollapseMarkerButton");
+                    }
+                    else
+                    {
+                        GUI.Button(new Rect(position.x - 7.5f, position.y - 1.8f, 10.0f, 10.0f), new GUIContent(""), (GUIStyle)"Icon.AvatarMaskOff");
+                    }
                 }
             }
         }

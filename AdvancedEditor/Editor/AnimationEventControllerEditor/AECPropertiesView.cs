@@ -322,6 +322,16 @@ namespace AdvancedUnityPlugin.Editor
             GUILayout.BeginVertical("box");
             {
                 GUILayout.Space(10.0f);
+
+                if (AnimationEventControllerEditorWindow.Instance.mismatchEvents.Count > 0)
+                {
+                    GUILayout.BeginHorizontal();
+                    {
+                        GUI.Label(new Rect(EditorGUILayout.GetControlRect().x, EditorGUILayout.GetControlRect().y - 1.8f, 0.1f, 1.0f), new GUIContent(""), (GUIStyle)"CN EntryWarnIconSmall");
+                    }
+                    GUILayout.EndHorizontal();
+                }
+
                 GUILayout.BeginHorizontal();
                 {
                     EditorGUI.BeginChangeCheck();

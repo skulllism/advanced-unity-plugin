@@ -463,9 +463,6 @@ namespace AdvancedUnityPlugin.Editor
 
         public AnimationEventController.UnityKeyframeEvent SwapKeyFrameEvent(int targetIndex, AnimationEventController.UnityKeyframeEvent b)
         {
-            //a가 도착지 , b가 출발지 
-            //b가 a에 와야한  b는 null일 수 없다
-            //a는 null일 수 있다 
             AnimationEventController.UnityKeyframeEvent target = GetKeyframeEventInCurrentEventAnimation(targetIndex);
             AnimationEventController.UnityKeyframeEvent temp = new AnimationEventController.UnityKeyframeEvent(b.ID, b.eventKeyframe, b.onKeyframe);
 
@@ -493,7 +490,6 @@ namespace AdvancedUnityPlugin.Editor
 
         public void MatchingAnimationClip(string clipName)
         {
-            //해당 애니메이션이 이미 등록이 되어있는 상태이면 죽인다 
             foreach(var iter in matchEvents)
             {
                 if (iter.clipName == clipName)
