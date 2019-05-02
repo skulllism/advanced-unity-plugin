@@ -11,6 +11,7 @@ namespace AdvancedUnityPlugin
         [Serializable]
         public class AdvancedAnimationEvent
         {
+            public string clipName;
             public AnimationClip clip;
             public List<UnityKeyframeEvent> keyframeEvents;
         }
@@ -37,9 +38,50 @@ namespace AdvancedUnityPlugin
         }
 
         public Animator animator;
+        public AnimationEventControllerMetaFile metaFile;
 
         [Header("Events")]
         public List<AdvancedAnimationEvent> animationEvents;
+
+        public AdvancedAnimationEvent Add(string clipName)
+        {
+            AdvancedAnimationEvent advancedAnimationEvent = new AdvancedAnimationEvent();
+            advancedAnimationEvent.clipName = clipName;
+            advancedAnimationEvent.keyframeEvents = new List<UnityKeyframeEvent>();
+
+            animationEvents.Add(advancedAnimationEvent);
+
+            return advancedAnimationEvent;
+        }
+
+        public bool Remove(string clipName)
+        {
+            AdvancedAnimationEvent animationEvent = FindAnimationEvent(clipName);
+            return animationEvents.Remove(animationEvent);
+        }
+
+        private AdvancedAnimationEvent FindAnimationEvent(string clipName)
+        {
+            AdvancedAnimationEvent value = null;
+            foreach (var iter in animationEvents)
+            {
+                if (iter.clipName == clipName)
+                    value = iter;
+            }
+
+            return value;
+        }
+
+        public bool Contains(string name)
+        {
+            foreach(var iter in animationEvents)
+            {
+                if (iter.clipName == name)
+                    return true;
+            }
+
+            return false;
+        }
 
         public bool IsPlaying(AnimationClip clip , int layer)
         {

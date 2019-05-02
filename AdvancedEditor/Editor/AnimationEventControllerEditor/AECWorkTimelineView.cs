@@ -25,11 +25,11 @@ namespace AdvancedUnityPlugin.Editor
         {
             base.UpdateView(editorRect, percentageRect);
 
-            frameRate = AnimationEventControllerEditorWindow.Instance.GetSelectedClipFrameRate();
+            frameRate = AnimationEventControllerEditorWindow.Instance.GetCurrentEventAnimationClipFrameRate();
 
             frameInterval = 1.0f / frameRate;
 
-            frameCount = Mathf.Round(AnimationEventControllerEditorWindow.Instance.GetSelectedClipLength() / frameInterval);
+            frameCount = Mathf.Round(AnimationEventControllerEditorWindow.Instance.GetCurrentEventAnimationClipLength() / frameInterval);
         }
 
         public override void GUIView(Event e)
@@ -105,7 +105,7 @@ namespace AdvancedUnityPlugin.Editor
 
         private void DrawKeyframeEventIcon(int frame, Vector2 position)
         {
-            AnimationEventController.AdvancedAnimationEvent advancedAnimationEvent = AnimationEventControllerEditorWindow.Instance.selected;
+            AnimationEventController.AdvancedAnimationEvent advancedAnimationEvent = AnimationEventControllerEditorWindow.Instance.current.eventAnimation;
             if (advancedAnimationEvent == null)
                 return;
 
