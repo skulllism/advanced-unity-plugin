@@ -14,13 +14,13 @@ namespace AdvancedUnityPlugin
         [Serializable]
         public struct MetaData
         {
-            public DateTime creationTime;
-            public DateTime latelyModifiedTime;
+            public string creationTime;
+            public string latelyModifiedTime;
 
-            public string guid;
             public string sceneName;
             public string objectName;
             public string path;
+            public int instanceID;
 
         }
         [SerializeField]
@@ -28,20 +28,30 @@ namespace AdvancedUnityPlugin
 
 #if UNITY_EDITOR
 
-        public void Initialize(string path, string sceneName, string objectName)
+        public void Initialize(string path, string sceneName, string objectName, int instanceID)
         {
-            current.creationTime = DateTime.Now;
+            current.creationTime = DateTime.Now.ToString();
             ModifyDate(current.creationTime);
 
             current.sceneName = sceneName;
             current.objectName = objectName;
             current.path = path;
-            current.guid = AssetDatabase.AssetPathToGUID(current.path);
+            current.instanceID = instanceID;
         }
 
-        private void ModifyDate(DateTime time)
+        private void ModifyDate(string time)
         {
             current.latelyModifiedTime = time;
+        }
+
+        public string GetCreationTime()
+        {
+            return current.creationTime;
+        }
+
+        public string GetLatelyModifiedTime()
+        {
+            return current.latelyModifiedTime;
         }
 
 #endif

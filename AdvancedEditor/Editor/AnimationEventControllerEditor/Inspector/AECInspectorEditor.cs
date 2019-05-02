@@ -63,23 +63,23 @@ namespace AdvancedUnityPlugin.Editor
                     {
 #region Current Animatior Information
                         {
+                            GUILayout.Box(new GUIContent("Animator Info"), (GUIStyle)"dragtabdropwindow");
                             DrawAnimatorInformation();
                         }
 #endregion End Animator Information
 
                         Space(20.0f);
 
-#region Current AEC MetaFile Information
-                        {
-                            DrawAECMetafileInformation();
-                        }
-#endregion End AEC MetaFile Information
-
-
 #region Animation Event Controller Information
-                        GUILayout.Box(new GUIContent("AEC Infomation"), (GUIStyle)"dragtabdropwindow");
+                        GUILayout.Box(new GUIContent("AEC Info"), (GUIStyle)"dragtabdropwindow");
                         GUILayout.BeginVertical("box");
                         {
+                            #region Current AEC MetaFile Information
+                            {
+                                DrawAECMetafileInformation();
+                            }
+                            #endregion End AEC MetaFile Information
+
                             DrawAECInformation();
                         }
                         GUILayout.EndVertical();
@@ -95,6 +95,13 @@ namespace AdvancedUnityPlugin.Editor
                     EditorGUILayout.HelpBox("Please add a Animator", MessageType.Error);
                 }
             }
+
+            if(origin.metaFile)
+            {
+                Space(10.0f);
+                ButtonOpenEditor();
+            }
+
             GUILayout.EndVertical();
 
           //  base.DrawDefaultInspector();
@@ -135,14 +142,8 @@ namespace AdvancedUnityPlugin.Editor
                         AssetDatabase.CreateAsset(metaFile, path);
 
                         origin.metaFile = metaFile;
-                        origin.metaFile.Initialize(path, origin.gameObject.scene.name, origin.gameObject.name);
+                        origin.metaFile.Initialize(path, origin.gameObject.scene.name, origin.gameObject.name, origin.gameObject.GetInstanceID());
                     }
-                }
-                else
-                {
-
-                    Space(10.0f);
-                    ButtonOpenEditor();
                 }
             }
             GUILayout.EndHorizontal();
@@ -167,6 +168,8 @@ namespace AdvancedUnityPlugin.Editor
                     }
                 }
                 GUILayout.EndHorizontal();
+
+                Space(20.0f);
             }
             GUILayout.EndVertical();
         }
@@ -179,7 +182,16 @@ namespace AdvancedUnityPlugin.Editor
 
             GUILayout.BeginVertical("box");
             {
-                Space(10.0f);
+                Space(3.0f);
+
+                GUILayout.BeginHorizontal();
+                {
+                    GUILayout.Label("", (GUIStyle)"TV Ping", GUILayout.Width(40.0f), GUILayout.Height(5.0f));
+                    GUILayout.Label("Test");
+                }
+                GUILayout.EndHorizontal();
+
+                Space(20.0f);
 
                 GUILayout.BeginHorizontal();
                 {
@@ -196,6 +208,14 @@ namespace AdvancedUnityPlugin.Editor
                     }
                 }
                 GUILayout.EndHorizontal();
+
+                if (origin.metaFile)
+                {
+                    Space(10.0f);
+
+                    GUILayout.Label("Created  : " + origin.metaFile.GetCreationTime());
+                    GUILayout.Label("Modified : " + origin.metaFile.GetLatelyModifiedTime());
+                }
             }
             GUILayout.EndVertical();
         }
