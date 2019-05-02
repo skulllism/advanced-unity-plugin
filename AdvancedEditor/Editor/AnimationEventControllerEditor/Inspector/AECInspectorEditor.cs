@@ -110,6 +110,9 @@ namespace AdvancedUnityPlugin.Editor
 
         private void InitializeRegisteredEventNames()
         {
+            if (origin.animationEvents == null)
+                origin.animationEvents = new List<AnimationEventController.AdvancedAnimationEvent>();
+            
             registeredEventNames = new string[origin.animationEvents.Count];
 
             for (int i = 0; i < origin.animationEvents.Count; i++)

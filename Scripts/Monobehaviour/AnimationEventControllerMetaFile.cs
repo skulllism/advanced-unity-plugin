@@ -23,7 +23,7 @@ namespace AdvancedUnityPlugin
             public string path;
 
         }
-
+        [SerializeField]
         private MetaData current;
 
 #if UNITY_EDITOR

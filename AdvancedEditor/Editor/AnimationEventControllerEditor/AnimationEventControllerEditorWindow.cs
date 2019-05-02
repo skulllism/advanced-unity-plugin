@@ -70,16 +70,37 @@ namespace AdvancedUnityPlugin.Editor
             RefreshEditorWindow();
         }
 
+        public void OnHierarchyChange()
+        {
+            RefreshEditorWindow();
+        }
+
+        public void OnInspectorUpdate()
+        {
+            if (animationEventController == null || animationEventController.animator == null || animationEventController.animator.runtimeAnimatorController == null)
+            {
+                RefreshEditorWindow();
+                return;
+            }
+            
+            if (animationEventController.metaFile == null)
+            {
+                string path = AssetDatabase.GetAssetPath(animationEventController.animator.runtimeAnimatorController) + "Metafile.asset";
+                animationEventController.metaFile = (AnimationEventControllerMetaFile)AssetDatabase.LoadAssetAtPath(path, typeof(AnimationEventControllerMetaFile));
+                RefreshEditorWindow();
+            }
+        }
+
         private void RefreshEditorWindow()
         {
             GameObject activeGameObject = Selection.activeGameObject;
 
             AnimationEventController data = activeGameObject != null ? activeGameObject.GetComponent<AnimationEventController>() : null;
-            if (data != null && data.animator != null && data.animator.runtimeAnimatorController != null)
+            if (data != null )
             {
+                //&& data.animator != null && data.animator.runtimeAnimatorController != null
                 Initialize(data);
                 Update();
-
                 Repaint();
             }
         }
@@ -87,6 +108,11 @@ namespace AdvancedUnityPlugin.Editor
         public void Initialize(AnimationEventController data)
         {
             animationEventController = data;
+            if (animationEventController == null || animationEventController.animator == null || animationEventController.animator.runtimeAnimatorController == null || animationEventController.metaFile == null)
+                return;
+            //TODO
+            if (animationEventController.animationEvents == null)
+                animationEventController.animationEvents = new List<AnimationEventController.AdvancedAnimationEvent>();
 
             InitializeSerializedObject();
             //TODO : Meta파일 기반으로 이전 기록된 로그 데이터 뽑아내기
@@ -193,7 +219,7 @@ namespace AdvancedUnityPlugin.Editor
 
         private void Update()
         {
-            if (workView == null || animationEventController == null)
+            if (workView == null || animationEventController == null || animationEventController.metaFile == null)
                 return;
 
             propertiesView.UpdateView(new Rect(position.width, position.height, position.width, position.height)
@@ -207,7 +233,7 @@ namespace AdvancedUnityPlugin.Editor
 
         private void OnGUI()
         {
-            if (workView == null || animationEventController == null)
+            if (workView == null || animationEventController == null || animationEventController.metaFile == null)
             {
                 EditorGUILayout.HelpBox("Please select a AnimationEventController", MessageType.Info);
                 return;
