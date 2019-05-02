@@ -8,6 +8,7 @@ namespace AdvancedUnityPlugin.Editor
     public class AECPropertiesView : ViewBase
     {
         private AnimationEventController animationEventController;
+        private RuntimeAnimatorController runtimeAnimatorController;
 
         //===========================================
         //  ##  Animation Preview
@@ -22,25 +23,19 @@ namespace AdvancedUnityPlugin.Editor
         //===========================================
         //  ##  Selected Animation - Popup Control
         //===========================================
-        private string[] allAnimationNames;
-        private string[] eventAnimationNames;
+        private string[] allAnimationNames   = new string[0];
+        private string[] eventAnimationNames = new string[0];
         private int   selectedAllAnimationIndex;
-        private int   selectedEventAnimationIndex;
-        private float selectedFrameRate;
-
-        public void Initialize()
+      
+        public void Initialize(AnimationEventController data)
         {
-            animationEventController = AnimationEventControllerEditorWindow.Instance.animationEventController;
+            animationEventController = data;
+            runtimeAnimatorController = animationEventController.animator.runtimeAnimatorController;
+
             InitializeAllAnimationsPopup();
             InitializeEventAnimationsPopup();
 
-          
-            AnimationEventControllerEditorWindow.Instance.SelectAnimationEvent(selectedEventAnimationIndex);
-        }
-
-        public void SetSelectAnimationIndex(int index)
-        {
-            selectedEventAnimationIndex = index;
+            AnimationEventControllerEditorWindow.Instance.SelectAnimationEvent(AnimationEventControllerEditorWindow.Instance.current.eventAnimationIndex);
         }
 
         private void InitializeAllAnimationsPopup()
@@ -55,7 +50,7 @@ namespace AdvancedUnityPlugin.Editor
 
                 foreach (var iter in animationEventController.animationEvents)
                 {
-                    if (iter.clip.name == animationEventController.animator.runtimeAnimatorController.animationClips[i].name)
+                    if (iter.clipName == animationEventController.animator.runtimeAnimatorController.animationClips[i].name)
                     {
                         popupSize--;
                         break;
@@ -83,11 +78,12 @@ namespace AdvancedUnityPlugin.Editor
             selectedAllAnimationIndex = 0;
         }
 
+        //필요하나 ?? 에디터 윈도우에 존재하는데 ?
         private bool IsClipInEvents(string name)
         {
             foreach (var iter in animationEventController.animationEvents)
             {
-                if (iter.clip.name == name)
+                if (iter.clipName == name)
                 {
                     return true;
                 }
@@ -98,45 +94,46 @@ namespace AdvancedUnityPlugin.Editor
 
         private void InitializeEventAnimationsPopup()
         {
-            if (animationEventController.animationEvents == null)
+            int popupSize = AnimationEventControllerEditorWindow.Instance.matchEvents.Count + AnimationEventControllerEditorWindow.Instance.mismatchEvents.Count;
+            if (popupSize <= 0)
+            {
+                eventAnimationNames = new string[0];
                 return;
-            
-            int popupSize = animationEventController.animationEvents.Count;
- 
+            }
+
+            int count = 0;
             eventAnimationNames = new string[popupSize];
             for (int i = 0; i < popupSize; i++)
             {
-                eventAnimationNames[i] = animationEventController.animationEvents[i].clip.name;
+                foreach(var match in AnimationEventControllerEditorWindow.Instance.matchEvents)
+                {
+                    if(match == animationEventController.animationEvents[i])
+                    {
+                        eventAnimationNames[i] = match.clipName;
+                        break;
+                    }
+                }
+
+                foreach(var misMatch in AnimationEventControllerEditorWindow.Instance.mismatchEvents)
+                {
+                    if (misMatch == animationEventController.animationEvents[i])
+                    {
+                        eventAnimationNames[i] = "[Mismatch] empty clip " + count.ToString() + "-" + misMatch.clipName;
+                        break;
+                    }
+                }
+
+                count++;
             }
-
-            AnimationEventControllerEditorWindow.Instance.SelectAnimationEvent(selectedEventAnimationIndex);
-
-            if (popupSize <= 0)
-                return;
-
-            selectedFrameRate = AnimationEventControllerEditorWindow.Instance.GetSelectedClipFrameRate();
-            //TODO : Instance.select .....
 
             InitializeCurrentAnimationData();
         }
 
         private void InitializeCurrentAnimationData()
         {
-            if(animationEventController.animationEvents.Count > 0)
-            {
-                selectedFrameRate = AnimationEventControllerEditorWindow.Instance.GetSelectedClipFrameRate();
-                interval = 1.0f / AnimationEventControllerEditorWindow.Instance.GetSelectedClipFrameRate();
-            }
-            else
-            {
-                selectedFrameRate = 0;
-                interval = 0.0f;    
-            }
-
+            interval = animationEventController.animationEvents.Count > 0 ? 1.0f / AnimationEventControllerEditorWindow.Instance.GetCurrentEventAnimationClipFrameRate() : 0.0f;
             samplingTime = 0.0f;
             isAutoSampling = false;
-
-            AnimationEventControllerEditorWindow.Instance.currentFrameIndex = 0;
         }
 
         public override void UpdateView(Rect editorRect, Rect percentageRect)
@@ -156,8 +153,11 @@ namespace AdvancedUnityPlugin.Editor
 
                 AnimationMode.BeginSampling();
                 {
-                    samplingTime = interval * AnimationEventControllerEditorWindow.Instance.currentFrameIndex;
-                    AnimationMode.SampleAnimationClip(animationEventController.animator.gameObject, animationEventController.animationEvents[selectedEventAnimationIndex].clip, samplingTime);
+                    samplingTime = interval * AnimationEventControllerEditorWindow.Instance.current.timeline.frameIndex;
+
+                    AnimationClip clip = AnimationEventControllerEditorWindow.Instance.GetCurrentClip();
+
+                    AnimationMode.SampleAnimationClip(animationEventController.animator.gameObject, clip, samplingTime);
                 }
                 AnimationMode.EndSampling();
 
@@ -228,15 +228,14 @@ namespace AdvancedUnityPlugin.Editor
                 }
 
 
-                strCurrentSamplingIndex = AnimationEventControllerEditorWindow.Instance.currentFrameIndex.ToString();
+                strCurrentSamplingIndex = AnimationEventControllerEditorWindow.Instance.current.timeline.frameIndex.ToString();
                 EditorGUI.BeginChangeCheck();
                 {
                     strCurrentSamplingIndex = GUILayout.TextField(strCurrentSamplingIndex);    
                 }
                 if(EditorGUI.EndChangeCheck())
                 {
-                    
-                    int.TryParse(strCurrentSamplingIndex, out AnimationEventControllerEditorWindow.Instance.currentFrameIndex);   
+                    int.TryParse(strCurrentSamplingIndex, out AnimationEventControllerEditorWindow.Instance.current.timeline.frameIndex);   
                 }
             }
             GUILayout.EndHorizontal();
@@ -271,10 +270,10 @@ namespace AdvancedUnityPlugin.Editor
         {
             startSamplingTime = elapseSamplingTime = Time.realtimeSinceStartup;
 
-            AnimationEventControllerEditorWindow.Instance.currentFrameIndex++;
-
-            samplingTime = interval * AnimationEventControllerEditorWindow.Instance.currentFrameIndex;
-            if (samplingTime >= AnimationEventControllerEditorWindow.Instance.GetSelectedClipLength())
+            AnimationEventControllerEditorWindow.Instance.current.timeline.frameIndex++;
+            //TODO : 함수화
+            samplingTime = interval * AnimationEventControllerEditorWindow.Instance.current.timeline.frameIndex;
+            if (samplingTime >= AnimationEventControllerEditorWindow.Instance.GetCurrentEventAnimationClipLength())
             {
                 MoveStartSamplingTime();
             }
@@ -284,10 +283,10 @@ namespace AdvancedUnityPlugin.Editor
 
         private void MoveNextSamplingTime()
         {
-            AnimationEventControllerEditorWindow.Instance.currentFrameIndex++;
+            AnimationEventControllerEditorWindow.Instance.current.timeline.frameIndex++;
 
-            samplingTime = interval * AnimationEventControllerEditorWindow.Instance.currentFrameIndex;
-            if (samplingTime >= AnimationEventControllerEditorWindow.Instance.GetSelectedClipLength())
+            samplingTime = interval * AnimationEventControllerEditorWindow.Instance.current.timeline.frameIndex;
+            if (samplingTime >= AnimationEventControllerEditorWindow.Instance.GetCurrentEventAnimationClipLength())
             {
                 MoveFinishSamplingTime();
             }
@@ -295,16 +294,16 @@ namespace AdvancedUnityPlugin.Editor
 
         private void MoveFinishSamplingTime()
         {
-            AnimationEventControllerEditorWindow.Instance.currentFrameIndex = (int)((AnimationEventControllerEditorWindow.Instance.GetSelectedClipLength() / interval) - 1.0f);
+            AnimationEventControllerEditorWindow.Instance.current.timeline.frameIndex = (int)((AnimationEventControllerEditorWindow.Instance.GetCurrentEventAnimationClipLength() / interval) - 1.0f);
 
-            samplingTime = AnimationEventControllerEditorWindow.Instance.currentFrameIndex * interval;
+            samplingTime = AnimationEventControllerEditorWindow.Instance.current.timeline.frameIndex * interval;
         }
 
         private void MovePrevSamplingTime()
         {
-            AnimationEventControllerEditorWindow.Instance.currentFrameIndex--;
+            AnimationEventControllerEditorWindow.Instance.current.timeline.frameIndex--;
 
-            samplingTime = interval * AnimationEventControllerEditorWindow.Instance.currentFrameIndex;
+            samplingTime = interval * AnimationEventControllerEditorWindow.Instance.current.timeline.frameIndex;
             if (samplingTime < 0.0f)
             {
                 MoveStartSamplingTime();
@@ -313,7 +312,7 @@ namespace AdvancedUnityPlugin.Editor
 
         private void MoveStartSamplingTime()
         {
-            AnimationEventControllerEditorWindow.Instance.currentFrameIndex = 0;
+            AnimationEventControllerEditorWindow.Instance.current.timeline.frameIndex = 0;
 
             samplingTime = 0.0f;
         }
@@ -328,13 +327,15 @@ namespace AdvancedUnityPlugin.Editor
                     EditorGUI.BeginChangeCheck();
                     {
                         if(eventAnimationNames.Length > 0)
-                            selectedEventAnimationIndex = EditorGUILayout.Popup(selectedEventAnimationIndex, eventAnimationNames, (GUIStyle)"PreDropDown");
+                        {
+                            AnimationEventControllerEditorWindow.Instance.current.eventAnimationIndex = EditorGUILayout.Popup(AnimationEventControllerEditorWindow.Instance.current.eventAnimationIndex, eventAnimationNames, (GUIStyle)"PreDropDown");
+                        }
                         else
                             EditorGUILayout.Popup(0, new string[] {"Empty"}, (GUIStyle)"PreDropDown");
                     }
                     if (EditorGUI.EndChangeCheck())
                     {
-                        AnimationEventControllerEditorWindow.Instance.SelectAnimationEvent(selectedEventAnimationIndex);
+                        AnimationEventControllerEditorWindow.Instance.SelectAnimationEvent(AnimationEventControllerEditorWindow.Instance.current.eventAnimationIndex);
 
                         InitializeCurrentAnimationData();
                     }
@@ -350,8 +351,12 @@ namespace AdvancedUnityPlugin.Editor
                 {
                     if (GUILayout.Button(new GUIContent("Find Clip")))
                     {
-                        if (AnimationEventControllerEditorWindow.Instance.selected != null)
-                            Selection.activeObject = AnimationEventControllerEditorWindow.Instance.selected.clip;
+                        if (AnimationEventControllerEditorWindow.Instance.current.eventAnimation != null)
+                        {
+                            //함수화a
+                            AnimationClip clip =  AnimationEventControllerEditorWindow.Instance.FindClipInAnimator(AnimationEventControllerEditorWindow.Instance.current.eventAnimation.clipName);
+                            Selection.activeObject = clip;
+                        }
                     }
 
                     if (GUILayout.Button(new GUIContent("Find Hierarchy Object")))
@@ -373,13 +378,13 @@ namespace AdvancedUnityPlugin.Editor
                     GUILayout.BeginHorizontal();
                     {
                         GUILayout.Label("FrameRate : ");
-                        GUILayout.Label(selectedFrameRate.ToString());
+                        GUILayout.Label(AnimationEventControllerEditorWindow.Instance.GetCurrentEventAnimationClipFrameRate().ToString());
                     }
                     GUILayout.EndHorizontal();
 
                     GUILayout.BeginHorizontal();
                     {
-                        int frameCount = (int)(AnimationEventControllerEditorWindow.Instance.GetSelectedClipLength() / (1.0f / AnimationEventControllerEditorWindow.Instance.GetSelectedClipFrameRate()));
+                        int frameCount = AnimationEventControllerEditorWindow.Instance.GetCurrentEventAnimationClipFrameCount();
                         GUILayout.Label("FrameCount : ");
                         GUILayout.Label(frameCount.ToString());
                     }
@@ -388,7 +393,7 @@ namespace AdvancedUnityPlugin.Editor
                     GUILayout.BeginHorizontal();
                     {
                         GUILayout.Label("KeyframeEvenets : ");
-                        GUILayout.Label(AnimationEventControllerEditorWindow.Instance.GetSelectedKeyframeEventsCount().ToString());
+                        GUILayout.Label(AnimationEventControllerEditorWindow.Instance.GetCurrentKeyframeEventCount().ToString());
                     }
                     GUILayout.EndHorizontal();
                 }
@@ -396,16 +401,9 @@ namespace AdvancedUnityPlugin.Editor
 
                 if (GUILayout.Button(new GUIContent("Remove")))
                 {
-                    if (AnimationEventControllerEditorWindow.Instance.RemoveSelectedAnimation())
+                    if (AnimationEventControllerEditorWindow.Instance.RemoveEventAnimation(AnimationEventControllerEditorWindow.Instance.GetCurrentClipName()))
                     {
-                        selectedEventAnimationIndex = animationEventController.animationEvents.Count - 1;
-
-                        selectedEventAnimationIndex = selectedEventAnimationIndex < 0 ? 0 : selectedEventAnimationIndex;
-
-                        InitializeEventAnimationsPopup();
-                        InitializeCurrentAnimationData();
-
-                        InitializeAllAnimationsPopup();
+                        AnimationEventControllerEditorWindow.Instance.Initialize(animationEventController);
                     }
                 }
             }
@@ -441,16 +439,11 @@ namespace AdvancedUnityPlugin.Editor
                         {
                             if(allAnimationNames.Length > 0)
                             {
-                                if (AnimationEventControllerEditorWindow.Instance.AddNewEventAnimation(FindIndex(allAnimationNames[selectedAllAnimationIndex])))
+                                if (AnimationEventControllerEditorWindow.Instance.AddEventAnimation(FindIndex(allAnimationNames[selectedAllAnimationIndex])))
                                 {
+                                    AnimationEventControllerEditorWindow.Instance.Initialize(animationEventController);
+
                                     AnimationEventControllerEditorWindow.Instance.SelectAnimationEvent(animationEventController.animationEvents.Count - 1);
-
-                                    selectedEventAnimationIndex = animationEventController.animationEvents.Count - 1;
-
-                                    InitializeCurrentAnimationData();
-                                    InitializeEventAnimationsPopup();
-
-                                    InitializeAllAnimationsPopup();
                                 }   
                             }
                         }
@@ -464,17 +457,17 @@ namespace AdvancedUnityPlugin.Editor
         }
 
         //TODO : 임시
-        private int FindIndex(string name)
+        private string FindIndex(string name)
         {
             for (int i = 0; i < animationEventController.animator.runtimeAnimatorController.animationClips.Length; i++)
             {
                 if(animationEventController.animator.runtimeAnimatorController.animationClips[i].name == name)
                 {
-                    return i;    
+                    return animationEventController.animator.runtimeAnimatorController.animationClips[i].name;    
                 }
             }
 
-            return 0;
+            return string.Empty;
         }
     }
 }
