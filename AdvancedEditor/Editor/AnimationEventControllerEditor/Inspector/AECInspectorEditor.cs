@@ -104,7 +104,7 @@ namespace AdvancedUnityPlugin.Editor
 
             GUILayout.EndVertical();
 
-          //  base.DrawDefaultInspector();
+            base.DrawDefaultInspector();
         }  
 
         private void InitializeAllAnimationNames(AnimationClip[] clips)

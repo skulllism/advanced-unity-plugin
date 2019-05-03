@@ -152,7 +152,8 @@ namespace AdvancedUnityPlugin.Editor
         {
             for (int i = 0; i < animationEventController.animationEvents.Count; i++)
             {
-                if(animationEventController.animationEvents[i].clipName == string.Empty)
+                if(animationEventController.animationEvents[i].clipName == string.Empty ||
+                   animationEventController.animationEvents[i].clipName == null)
                 {
                     if(animationEventController.animationEvents[i].keyframeEvents.Count > 0)
                     {
@@ -188,6 +189,8 @@ namespace AdvancedUnityPlugin.Editor
 
             foreach (var iter in animationEventController.animationEvents)
             {
+                iter.clip = null;
+
                 for (int i = 0; i < length; i++)
                 {
                     if (iter.clipName == animationEventController.animator.runtimeAnimatorController.animationClips[i].name)
