@@ -51,13 +51,12 @@ namespace AdvancedUnityPlugin.Editor
 
             base.UpdateView(editorRect, percentageRect);
 
-            if(AnimationEventControllerEditorWindow.Instance.current.eventAnimation != null)
+            if (AnimationEventControllerEditorWindow.Instance.mismatchEvents.Count <= 0)
             {
-                if(AnimationEventControllerEditorWindow.Instance.current.eventAnimation.clip != null)
+                if (AnimationEventControllerEditorWindow.Instance.current.eventAnimation != null)
                 {
                     workTimelineView.UpdateView(new Rect(viewRect.width, viewRect.height, viewRect.width, viewRect.height)
-                        , new Rect(0.0f, 0.0f, 1.0f, 0.2f));
-
+                                    , new Rect(0.0f, 0.0f, 1.0f, 0.2f));
 
                     baseEventModifyView.UpdateView(new Rect(viewRect.width, viewRect.height, viewRect.width, viewRect.height)
                                     , new Rect(0.0f, 0.2f, 0.5f, 0.9f));
@@ -65,11 +64,11 @@ namespace AdvancedUnityPlugin.Editor
                     keyFrameEventModifyView.UpdateView(new Rect(viewRect.width, viewRect.height, viewRect.width, viewRect.height)
                                     , new Rect(0.5f, 0.2f, 0.5f, 0.9f));
                 }
-                else
-                {
-                    matchingView.UpdateView(new Rect(viewRect.width, viewRect.height, viewRect.width, viewRect.height)
-                            , new Rect(0.0f, 0.0f, 1.0f, 1.0f));
-                }
+            }
+            else
+            {
+                matchingView.UpdateView(new Rect(viewRect.width, viewRect.height, viewRect.width, viewRect.height)
+                        , new Rect(0.0f, 0.0f, 1.0f, 1.0f));
             }
         }
 
@@ -88,9 +87,9 @@ namespace AdvancedUnityPlugin.Editor
 
             GUILayout.BeginArea(viewRect, "", "box");
             {
-                if (AnimationEventControllerEditorWindow.Instance.current.eventAnimation != null)
+                if (AnimationEventControllerEditorWindow.Instance.mismatchEvents.Count <= 0)
                 {
-                    if (AnimationEventControllerEditorWindow.Instance.current.eventAnimation.clip != null)
+                    if (AnimationEventControllerEditorWindow.Instance.current.eventAnimation != null)
                     {
                         workTimelineView.SetCurrentFrameIdex(AnimationEventControllerEditorWindow.Instance.current.timeline.frameIndex);
                         workTimelineView.GUIView(e);
@@ -99,10 +98,10 @@ namespace AdvancedUnityPlugin.Editor
                         keyFrameEventModifyView.SetCurrentFrameIndex(AnimationEventControllerEditorWindow.Instance.current.timeline.frameIndex);
                         keyFrameEventModifyView.GUIView(e);
                     }
-                    else
-                    {
-                        matchingView.GUIView(e);
-                    }
+                }
+                else
+                {
+                    matchingView.GUIView(e);
                 }
             }
             GUILayout.EndArea();
@@ -131,15 +130,11 @@ namespace AdvancedUnityPlugin.Editor
                         }
                         else if(workTimelineView.IsInKeyframeView(new Vector2(e.mousePosition.x - viewRect.x, e.mousePosition.y - viewRect.y)))
                         {
-                            //선택한 곳에 EventAnimation이 존재하면 
-                            //드래그 된 곳에 EventAnimation이 존재하면 스왑 1,마지막프레임 제외
-                            //혹은 이동
                             if(e.button == 0)
                             {
                                 int index = workTimelineView.GetFrameIndexOfRange(new Vector2(e.mousePosition.x - viewRect.x, e.mousePosition.y - viewRect.y));
                                 if (index != -1)
                                 {
-                                    //선택한 곳에 eventAnimation이 존재 하면 ?
                                     AnimationEventController.UnityKeyframeEvent keyframeEvent = AnimationEventControllerEditorWindow.Instance.GetKeyframeEventInCurrentEventAnimation(index);
                                     if(keyframeEvent != null)
                                     {
