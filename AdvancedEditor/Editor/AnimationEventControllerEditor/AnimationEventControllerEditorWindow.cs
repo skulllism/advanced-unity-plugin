@@ -517,7 +517,7 @@ namespace AdvancedUnityPlugin.Editor
             return result;
         }
 
-        public void MatchingAnimationClip(string clipName)
+        public void MatchingAnimationClip(AnimationEventController.AdvancedAnimationEvent advancedAnimationEvent, string clipName)
         {
             foreach(var iter in matchEvents)
             {
@@ -525,8 +525,8 @@ namespace AdvancedUnityPlugin.Editor
                     RemoveEventAnimation(clipName);
             }
 
-            current.eventAnimation.clipName = clipName;
-            current.eventAnimation.clip = FindClipInAnimator(clipName);
+            advancedAnimationEvent.clipName = clipName;
+            advancedAnimationEvent.clip = FindClipInAnimator(clipName);
         }
 
         public float GetClipLength(string clipName)
