@@ -24,6 +24,8 @@ namespace AdvancedUnityPlugin.Editor
         private string[] registeredEventNames = new string[0];
         private int registeredEventSelected;
 
+        private bool isDrawBaseInspector;
+
         public void OnEnable()
         {
             origin = (AnimationEventController)target;
@@ -53,6 +55,10 @@ namespace AdvancedUnityPlugin.Editor
                 return;
 
             Space(10.0f);
+
+            isDrawBaseInspector = GUILayout.Toggle(isDrawBaseInspector, "Draw BaseInspector");
+
+            Space(20.0f);
 
             GUILayout.BeginVertical("box");
             {
@@ -104,7 +110,8 @@ namespace AdvancedUnityPlugin.Editor
 
             GUILayout.EndVertical();
 
-            //base.DrawDefaultInspector();
+            if(isDrawBaseInspector)
+                base.DrawDefaultInspector();
         }  
 
         private void InitializeAllAnimationNames(AnimationClip[] clips)
