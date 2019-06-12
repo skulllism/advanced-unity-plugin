@@ -12,28 +12,28 @@ namespace AdvancedUnityPlugin
    * @date 2018-05-31
    * @version 0.0.1
    * */
-    public class StateMachine : MonoBehaviour
+    public abstract class StateMachine : MonoBehaviour
     {
-        public abstract class State
+        public interface IState
         {
-            public string ID;
+            string ID { get; }
 
-            public abstract bool IsTransition(out string ID);
+            bool IsTransition(out string ID);
 
-            public abstract void OnEnter();
+            void OnEnter();
 
-            public abstract void OnFixedUpdate();
+            void OnFixedUpdate();
 
-            public abstract void OnUpdate();
+            void OnUpdate();
 
-            public abstract void OnLateUpdate();
+            void OnLateUpdate();
 
-            public abstract void OnExit();
+            void OnExit();
         }
 
-        public readonly List<State> states = new List<State>();
+        public readonly List<IState> states = new List<IState>();
 
-        public State current { private set; get; }
+        public IState current { private set; get; }
 
         public bool IsState(string ID)
         {
@@ -84,7 +84,7 @@ namespace AdvancedUnityPlugin
             current.OnFixedUpdate();
         }
 
-        private State GetState(string ID)
+        private IState GetState(string ID)
         {
             for (int i = 0; i < states.Count; i++)
             {

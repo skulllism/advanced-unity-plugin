@@ -17,7 +17,7 @@ namespace AdvancedUnityPlugin
         }
 
         [Serializable]
-        public class AdvancedState : State
+        public class AdvancedState : IState
         {
             public List<AdvancedTransition> transitions = new List<AdvancedTransition>();
      
@@ -29,12 +29,20 @@ namespace AdvancedUnityPlugin
 
             private AdvancedStateMachine advancedStateMachine;
 
+            public string ID
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
             public void Init(AdvancedStateMachine advancedStateMachine)
             {
                 this.advancedStateMachine = advancedStateMachine;
             }
 
-            public override bool IsTransition(out string ID)
+            public bool IsTransition(out string ID)
             {
                 for (int i = 0; i < transitions.Count; i++)
                 {
@@ -51,27 +59,27 @@ namespace AdvancedUnityPlugin
                 return false;
             }
 
-            public override void OnEnter()
+            public void OnEnter()
             {
                 onEnter.Invoke();
             }
 
-            public override void OnExit()
+            public void OnExit()
             {
                 onExit.Invoke();
             }
 
-            public override void OnFixedUpdate()
+            public void OnFixedUpdate()
             {
                 onFixedUpdate.Invoke();
             }
 
-            public override void OnLateUpdate()
+            public void OnLateUpdate()
             {
                 onLateUpdate.Invoke();
             }
 
-            public override void OnUpdate()
+            public void OnUpdate()
             {
                 onUpdate.Invoke();
             }
@@ -85,7 +93,7 @@ namespace AdvancedUnityPlugin
             foreach (var state in advancedStates)
             {
                 state.Init(this);
-                states.Add(state);
+                //states.Add(state);
             }
 
             TransitionToState(initialStateID);
