@@ -262,7 +262,7 @@ namespace AdvancedUnityPlugin.Editor
         public void CreateState(Vector2 position)
         {
             AdvancedStateMachine.AdvancedState state = new AdvancedStateMachine.AdvancedState();
-            state.ID = "New State" + Target.advancedStates.Count;
+            //state.ID = "New State" + Target.advancedStates.Count;
             Target.advancedStates.Add(state);
 
             InitializePropertyData();
@@ -514,7 +514,7 @@ namespace AdvancedUnityPlugin.Editor
             if(selectNode.myData.type == NodeType.STATE)
             {
                 AdvancedStateMachine.AdvancedState state = new AdvancedStateMachine.AdvancedState();
-                state.ID = "copy_" + selectNode.myData.state.ID;
+                //state.ID = "copy_" + selectNode.myData.state.ID;
 
        
                 Target.advancedStates.Add(state);
