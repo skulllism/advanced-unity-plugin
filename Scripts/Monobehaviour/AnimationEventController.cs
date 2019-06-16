@@ -26,12 +26,12 @@ namespace AdvancedUnityPlugin
                 this.onKeyframe = onKeyframe;
             }
 
-            public override bool HasEvent()
+            public bool HasEvent()
             {
                 return onKeyframe.GetPersistentEventCount() > 0;
             }
 
-            public override void OnKeyframeEvent()
+            public void OnKeyframeEvent()
             {
                 onKeyframe.Invoke();
             }
@@ -135,15 +135,15 @@ namespace AdvancedUnityPlugin
             KeyframeEvent keyframeEvent = GetKeyframeEvent(ID);
             Debug.Assert(keyframeEvent != null, "ID : " + ID);
 
-            if (keyframeEvent.HasEvent())
-                StartCoroutine(StartAnimationKeyframeEvent(keyframeEvent));
+            //if (keyframeEvent.HasEvent())
+            //    StartCoroutine(StartAnimationKeyframeEvent(keyframeEvent));
         }
 
         private IEnumerator StartAnimationKeyframeEvent(KeyframeEvent Event)
         {
             yield return new WaitForEndOfFrame();
 
-            Event.OnKeyframeEvent();
+            //Event.OnKeyframeEvent();
         }
     }
 }

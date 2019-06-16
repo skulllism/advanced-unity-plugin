@@ -5,7 +5,7 @@ using UnityEngine.Events;
 
 namespace AdvancedUnityPlugin
 {
-    public abstract class KeyframeEvent 
+    public class KeyframeEvent 
     {
         public string ID;
 
@@ -17,9 +17,5 @@ namespace AdvancedUnityPlugin
             this.ID = ID;
             this.eventKeyframe = eventKeyframe;
         }
-
-        public abstract bool HasEvent();
-
-        public abstract void OnKeyframeEvent();
     }
 }
