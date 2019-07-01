@@ -19,11 +19,15 @@ namespace AdvancedUnityPlugin
         [Serializable]
         public class UnityKeyframeEvent : KeyframeEvent
         {
+            public string keyName;
+
             public UnityEvent onKeyframe;
 
             public UnityKeyframeEvent(string ID, int eventKeyframe, UnityEvent onKeyframe) : base(ID, eventKeyframe)
             {
                 this.onKeyframe = onKeyframe;
+
+                this.keyName = ID;
             }
 
             public override bool HasEvent()
@@ -61,9 +65,11 @@ namespace AdvancedUnityPlugin
 
         public AdvancedAnimationEvent Add(string clipName)
         {
-            AdvancedAnimationEvent advancedAnimationEvent = new AdvancedAnimationEvent();
-            advancedAnimationEvent.clipName = clipName;
-            advancedAnimationEvent.keyframeEvents = new List<UnityKeyframeEvent>();
+            AdvancedAnimationEvent advancedAnimationEvent = new AdvancedAnimationEvent
+            {
+                clipName = clipName,
+                keyframeEvents = new List<UnityKeyframeEvent>()
+            };
 
             animationEvents.Add(advancedAnimationEvent);
 
@@ -138,7 +144,7 @@ namespace AdvancedUnityPlugin
             {
                 for (int j = 0; j < animationEvents[i].keyframeEvents.Count; j++)
                 {
-                    if (animationEvents[i].keyframeEvents[j].ID == ID)
+                    if (animationEvents[i].keyframeEvents[j].keyName == ID)
                         return animationEvents[i].keyframeEvents[j];
                 }
             }
@@ -170,12 +176,12 @@ namespace AdvancedUnityPlugin
 
             if (!temporaryEvents.TryGetValue(clipName, out events))
             {
-                events = new List<TemporaryEvent>
-                {
-                    new TemporaryEvent(eventName, call)
-                };
-
-                temporaryEvents.Add(clipName, events);
+                temporaryEvents.Add(clipName
+                    , events = new List<TemporaryEvent>
+                        {
+                            new TemporaryEvent(eventName, call)
+                        }
+                );
 
                 return true;
             }

@@ -120,6 +120,7 @@ namespace AdvancedUnityPlugin.Editor
             CompareWithClipNameInAnimator();
             InitializeKeyframeEventsInClip();
             CheckEventAnimationClipName();
+            CheckAnimationKeyName();
 
             InitializeView();
         }
@@ -148,6 +149,22 @@ namespace AdvancedUnityPlugin.Editor
             workView.Initialize(animationEventController);
         }
 
+        //Temp
+        private void CheckAnimationKeyName()
+        {
+            for (int i = 0; i < animationEventController.animationEvents.Count; i++)
+            {
+                for(int j = 0; j < animationEventController.animationEvents[i].keyframeEvents.Count; j++)
+                {
+                    if(animationEventController.animationEvents[i].keyframeEvents[j].keyName == string.Empty ||
+                    animationEventController.animationEvents[i].keyframeEvents[j].keyName == null)
+                    {
+                        animationEventController.animationEvents[i].keyframeEvents[j].keyName = animationEventController.animationEvents[i].clipName + animationEventController.animationEvents[i].keyframeEvents[j].eventKeyframe; ;
+                    }
+                }
+            }
+        }
+
         private void CheckEventAnimationClipName()
         {
             for (int i = 0; i < animationEventController.animationEvents.Count; i++)
@@ -157,7 +174,7 @@ namespace AdvancedUnityPlugin.Editor
                 {
                     if(animationEventController.animationEvents[i].keyframeEvents.Count > 0)
                     {
-                        animationEventController.animationEvents[i].clipName = animationEventController.animationEvents[i].keyframeEvents[0].ID;
+                        animationEventController.animationEvents[i].clipName = animationEventController.animationEvents[i].keyframeEvents[0].keyName;
                     }
                     else
                         animationEventController.animationEvents[i].clipName = "empty name" + i.ToString();

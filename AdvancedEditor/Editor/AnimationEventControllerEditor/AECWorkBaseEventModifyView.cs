@@ -9,6 +9,8 @@ namespace AdvancedUnityPlugin.Editor
     {
         private Vector2 eventScrollPosition;
 
+        private string eventName;
+
         public void Initialize()
         {
             eventScrollPosition = Vector2.zero;
@@ -62,6 +64,24 @@ namespace AdvancedUnityPlugin.Editor
                                 }
                             }
                         }
+
+                        //Temp
+                        for (int i = 0; i < serializedProperty.FindPropertyRelative("keyframeEvents").arraySize; i++)
+                        {
+                            int frame = serializedProperty.FindPropertyRelative("keyframeEvents").GetArrayElementAtIndex(i).FindPropertyRelative("eventKeyframe").intValue;
+                        
+                            if (AnimationEventControllerEditorWindow.Instance.current.timeline.frameIndex == frame)
+                            {
+                                GUILayout.BeginHorizontal();
+                                {
+                                   // GUILayout.Label("EventName : ");
+                                    EditorGUILayout.PropertyField(serializedProperty.FindPropertyRelative("keyframeEvents").GetArrayElementAtIndex(i).FindPropertyRelative("ID"));
+                                    //GUILayout.TextField("");
+                                }
+                                GUILayout.EndHorizontal();
+                            }
+                        }
+        
                     }
                     AnimationEventControllerEditorWindow.Instance.serializedObject.ApplyModifiedProperties();
                 }
