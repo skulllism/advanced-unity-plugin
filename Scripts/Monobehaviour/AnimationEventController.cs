@@ -28,7 +28,7 @@ namespace AdvancedUnityPlugin
 
             public override bool HasEvent()
             {
-                return onKeyframe.GetPersistentEventCount() > 0;
+                return onKeyframe != null;
             }
 
             public override void OnKeyframeEvent()
@@ -160,6 +160,8 @@ namespace AdvancedUnityPlugin
             yield return new WaitForEndOfFrame();
 
             Event.OnKeyframeEvent();
+
+            InvokeEvent(Event.ID);
         }
 
         public bool RegistEvent(string clipName, string eventName, System.Action call)
@@ -190,7 +192,7 @@ namespace AdvancedUnityPlugin
             return true;
         }
 
-        public void InvokeEvent(string eventName)
+        private void InvokeEvent(string eventName)
         {
             AnimatorClipInfo[] clips = animator.GetCurrentAnimatorClipInfo(0);
 
@@ -208,8 +210,6 @@ namespace AdvancedUnityPlugin
                     }
                 }
             }
-
-            Debug.LogError("[AEC]Unregistered Event : " + transform.root.name  + " , EventName - " + eventName);
         }
 
         private TemporaryEvent GetTemporaryEvent(List<TemporaryEvent> events, string eventName)
