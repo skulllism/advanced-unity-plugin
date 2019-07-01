@@ -37,11 +37,27 @@ namespace AdvancedUnityPlugin
             }
         }
 
+        private class TemporaryEvent
+        {
+            public string eventName;
+            public System.Action call;
+
+            public TemporaryEvent(string eventName, System.Action call)
+            {
+                this.eventName = eventName;
+                this.call = call;
+            }
+        }
+
         public Animator animator;
         public AnimationEventControllerMetaFile metaFile;
 
         [Header("Events")]
         public List<AdvancedAnimationEvent> animationEvents;
+
+        [NonSerialized]
+        private Dictionary<string, List<TemporaryEvent>> temporaryEvents = new Dictionary<string, List<TemporaryEvent>>();
+
 
         public AdvancedAnimationEvent Add(string clipName)
         {
@@ -144,6 +160,72 @@ namespace AdvancedUnityPlugin
             yield return new WaitForEndOfFrame();
 
             Event.OnKeyframeEvent();
+        }
+
+        public bool RegistEvent(string clipName, string eventName, System.Action call)
+        {
+            List<TemporaryEvent> events;
+
+            if (!temporaryEvents.TryGetValue(clipName, out events))
+            {
+                events = new List<TemporaryEvent>
+                {
+                    new TemporaryEvent(eventName, call)
+                };
+
+                temporaryEvents.Add(clipName, events);
+
+                return true;
+            }
+
+            TemporaryEvent Event = GetTemporaryEvent(events, eventName);
+            if (Event != null)
+            {
+                Debug.LogError("[AEC]The same event exists : " + transform.root.name + " , ClipName - " + clipName  + ", EventName - " + eventName);
+                return false;
+            }
+
+            events.Add(new TemporaryEvent(eventName, call));
+
+            return true;
+        }
+
+        public void InvokeEvent(string eventName)
+        {
+            AnimatorClipInfo[] clips = animator.GetCurrentAnimatorClipInfo(0);
+
+            foreach(var iter in clips)
+            {
+                List<TemporaryEvent> events;
+
+                if (temporaryEvents.TryGetValue(iter.clip.name, out events))
+                {
+                    TemporaryEvent Event = GetTemporaryEvent(events, eventName);
+                    if (Event != null)
+                    {
+                        Event.call.Invoke();
+                        return;
+                    }
+                }
+            }
+
+            Debug.LogError("[AEC]Unregistered Event : " + transform.root.name  + " , EventName - " + eventName);
+        }
+
+        private TemporaryEvent GetTemporaryEvent(List<TemporaryEvent> events, string eventName)
+        {
+            TemporaryEvent result = null;
+ 
+            foreach(var iter in events)
+            {
+                if (iter.eventName == eventName)
+                {
+                    result = iter;
+                    break;
+                }
+            }
+
+            return result;
         }
     }
 }
