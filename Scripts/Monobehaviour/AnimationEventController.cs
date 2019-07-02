@@ -62,6 +62,7 @@ namespace AdvancedUnityPlugin
         [NonSerialized]
         private Dictionary<string, List<TemporaryEvent>> temporaryEvents = new Dictionary<string, List<TemporaryEvent>>();
 
+        private const string staticEventName = "s_static_event";
 
         public AdvancedAnimationEvent Add(string clipName)
         {
@@ -170,7 +171,17 @@ namespace AdvancedUnityPlugin
             InvokeEvent(Event.ID);
         }
 
-        public bool RegistEvent(string clipName, string eventName, System.Action call)
+        public bool RegisterEvent(string eventName, System.Action call)
+        {
+            return Register(staticEventName, eventName, call);
+        }
+
+        public bool RegisterEvent(string clipName, string eventName, System.Action call)
+        {
+            return Register(clipName, eventName, call);
+        }
+
+        private bool Register(string clipName, string eventName, System.Action call)
         {
             List<TemporaryEvent> events;
 
@@ -189,7 +200,7 @@ namespace AdvancedUnityPlugin
             TemporaryEvent Event = GetTemporaryEvent(events, eventName);
             if (Event != null)
             {
-                Debug.LogError("[AEC]The same event exists : " + transform.root.name + " , ClipName - " + clipName  + ", EventName - " + eventName);
+                Debug.LogError("[AEC]The same event exists : " + transform.root.name + " , ClipName - " + clipName + ", EventName - " + eventName);
                 return false;
             }
 
@@ -214,6 +225,23 @@ namespace AdvancedUnityPlugin
                         Event.call.Invoke();
                         return;
                     }
+                }
+            }
+
+            InvokeStaticEvent(eventName);
+        }
+
+        private void InvokeStaticEvent(string eventName)
+        {
+            List<TemporaryEvent> events;
+
+            if (temporaryEvents.TryGetValue(staticEventName, out events))
+            {
+                TemporaryEvent Event = GetTemporaryEvent(events, eventName);
+                if (Event != null)
+                {
+                    Event.call.Invoke();
+                    return;
                 }
             }
         }

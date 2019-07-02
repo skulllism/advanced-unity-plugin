@@ -409,7 +409,7 @@ namespace AdvancedUnityPlugin.Editor
 
             AnimationEvent newEvent = new AnimationEvent();
             newEvent.functionName    = EVENT_FUNCTION_NAME;
-            newEvent.stringParameter = keyframeEvent.ID;
+            newEvent.stringParameter = keyframeEvent.keyName;
             newEvent.time = keyframeEvent.eventKeyframe * interval;
 
             int length = clip.events.Length + 1;
@@ -507,10 +507,12 @@ namespace AdvancedUnityPlugin.Editor
             return null;
         }
 
+        //맴카피가 안되니 좆 같음 
         public AnimationEventController.UnityKeyframeEvent SwapKeyFrameEvent(int targetIndex, AnimationEventController.UnityKeyframeEvent b)
         {
             AnimationEventController.UnityKeyframeEvent target = GetKeyframeEventInCurrentEventAnimation(targetIndex);
             AnimationEventController.UnityKeyframeEvent temp = new AnimationEventController.UnityKeyframeEvent(b.ID, b.eventKeyframe, b.onKeyframe);
+
 
             AnimationEventController.UnityKeyframeEvent result = null;
             if(target == null)
