@@ -52,7 +52,7 @@ namespace AdvancedUnityPlugin
             current.OnEnter();
         }
 
-        private void Update()
+        protected virtual void Update()
         {
             if (current == null)
                 return;
