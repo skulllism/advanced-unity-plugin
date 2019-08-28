@@ -90,7 +90,7 @@ namespace AdvancedUnityPlugin
         }
     }
 
-    public abstract class Pool<T> where T : MonoBehaviour
+    public abstract class Pool<T> where T : Behaviour
     {
         public T origin;
         public int count;
