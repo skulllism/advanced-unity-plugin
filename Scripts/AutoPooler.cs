@@ -42,6 +42,7 @@ namespace AdvancedUnityPlugin
         {
             isRun = false;
             transform.parent = null;
+            transform.localPosition = Vector3.zero;
         }
 
         private void Pool()
