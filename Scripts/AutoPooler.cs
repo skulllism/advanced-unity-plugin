@@ -41,6 +41,7 @@ namespace AdvancedUnityPlugin
         private void Reset()
         {
             isRun = false;
+            transform.parent = null;
         }
 
         private void Pool()
