@@ -58,6 +58,9 @@ namespace AdvancedUnityPlugin
 
         private void Add(GameObject gameObject)
         {
+            if (gameObjects.Contains(gameObject))
+                return;
+
             Debug.Assert(!gameObjects.Contains(gameObject));
 
             gameObjects.Add(gameObject);
@@ -69,6 +72,9 @@ namespace AdvancedUnityPlugin
 
         private void Remove(GameObject gameObject)
         {
+            if (!gameObjects.Contains(gameObject))
+                return;
+
             Debug.Assert(gameObjects.Contains(gameObject));
 
             gameObjects.Remove(gameObject);
