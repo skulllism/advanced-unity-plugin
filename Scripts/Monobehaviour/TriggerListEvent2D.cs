@@ -58,7 +58,8 @@ namespace AdvancedUnityPlugin
 
         private void Add(GameObject gameObject)
         {
-            Debug.Assert(!gameObjects.Contains(gameObject));
+            if (gameObjects.Contains(gameObject))
+                return;
 
             gameObjects.Add(gameObject);
             onEnter.Invoke(gameObject);
@@ -95,12 +96,9 @@ namespace AdvancedUnityPlugin
             return false;
         }
 
-        private void OnTriggerStay2D(Collider2D collision)
+        private void OnTriggerEnter2D(Collider2D collision)
         {
             if (!IsValid(collision.tag))
-                return;
-
-            if (gameObjects.Contains(collision.gameObject))
                 return;
 
             Add(collision.gameObject);
