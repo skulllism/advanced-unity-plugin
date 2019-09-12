@@ -74,9 +74,12 @@ namespace AdvancedUnityPlugin.Editor
                             {
                                 GUILayout.BeginHorizontal();
                                 {
-                                   // GUILayout.Label("EventName : ");
-                                    EditorGUILayout.PropertyField(serializedProperty.FindPropertyRelative("keyframeEvents").GetArrayElementAtIndex(i).FindPropertyRelative("ID"));
-                                    //GUILayout.TextField("");
+                                    string id = serializedProperty.FindPropertyRelative("keyframeEvents").GetArrayElementAtIndex(i).FindPropertyRelative("ID").stringValue;
+                                    GUILayout.Label("Event ID");
+                                    id = GUILayout.TextField(id);
+
+                                    serializedProperty.FindPropertyRelative("keyframeEvents").GetArrayElementAtIndex(i).FindPropertyRelative("ID").stringValue = id;
+                                    //일반 레이아웃으로 변경 
                                 }
                                 GUILayout.EndHorizontal();
                             }
