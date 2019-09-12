@@ -45,7 +45,7 @@ namespace AdvancedUnityPlugin
                 return pool;
             }
 
-            Debug.Log("Create on demand : " + origin.name);
+            //Debug.Log("Create on demand : " + origin.name);
             Create();
 
             return Get();
