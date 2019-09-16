@@ -41,7 +41,6 @@ namespace AdvancedUnityPlugin
         private void Reset()
         {
             isRun = false;
-            transform.parent = null;
             transform.localPosition = Vector3.zero;
         }
 
