@@ -25,6 +25,11 @@ namespace AdvancedUnityPlugin
             Run();
         }
 
+        private void OnDisable()
+        {
+            Pool();
+        }
+
         private void Run()
         {
             if (isRun)
@@ -41,6 +46,8 @@ namespace AdvancedUnityPlugin
         private void Reset()
         {
             isRun = false;
+
+            //StartCoroutine(WaitForFrame());
         }
 
         private void Pool()
