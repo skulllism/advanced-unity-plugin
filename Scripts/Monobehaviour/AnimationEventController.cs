@@ -106,6 +106,11 @@ namespace AdvancedUnityPlugin
             return false;
         }
 
+        public void Play(string stateName, int layer = 0)
+        {
+            animator.Play(stateName, layer);
+        }
+
         public bool IsPlaying(AnimationClip clip , int layer)
         {
             foreach (var clipInfo in animator.GetCurrentAnimatorClipInfo(layer))
