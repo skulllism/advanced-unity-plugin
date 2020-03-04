@@ -115,7 +115,7 @@ namespace AdvancedUnityPlugin.Editor
                 {
                     if (frame == 0 || frame == AnimationEventControllerEditorWindow.Instance.GetCurrentEventAnimationClipFrameCount() - 1)
                     {
-                        GUI.Button(new Rect(position.x - 7.5f, position.y - 1.8f, 10.0f, 10.0f), new GUIContent(""), (GUIStyle)"TrackCollapseMarkerButton");
+                        GUI.Button(new Rect(position.x - 7.5f, position.y - 1.8f, 10.0f, 10.0f), new GUIContent(""), (GUIStyle)"ProfilerTimelineRollUpArrow");
                     }
                     else
                     {
@@ -126,11 +126,11 @@ namespace AdvancedUnityPlugin.Editor
                 {
                     if (frame == 0 || frame == AnimationEventControllerEditorWindow.Instance.GetCurrentEventAnimationClipFrameCount() - 1)
                     {
-                        GUI.Button(new Rect(position.x - 7.5f, position.y - 1.8f, 10.0f, 10.0f), new GUIContent(""), (GUIStyle)"TrackCollapseMarkerButton");
+                        GUI.Button(new Rect(position.x - 7.5f, position.y - 1.8f, 10.0f, 10.0f), new GUIContent(""), (GUIStyle)"ProfilerTimelineRollUpArrow");
                     }
                     else
                     {
-                        GUI.Button(new Rect(position.x - 7.5f, position.y - 1.8f, 10.0f, 10.0f), new GUIContent(""), (GUIStyle)"Icon.AvatarMaskOff");
+                        GUI.Button(new Rect(position.x - 7.5f, position.y - 1.8f, 10.0f, 10.0f), new GUIContent(""), (GUIStyle)"U2D.dragDotDimmed");
                     }
                 }
             }

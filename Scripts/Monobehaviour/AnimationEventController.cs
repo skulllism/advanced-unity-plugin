@@ -176,6 +176,41 @@ namespace AdvancedUnityPlugin
             InvokeEvent(Event.ID);
         }
 
+        public bool RegisterStartEvent(string clipName, System.Action call)
+        {
+            foreach(var iter in animationEvents)
+            {
+                if(iter.clip.name == clipName)
+                {
+                    foreach(var keyframeEvent in iter.keyframeEvents)
+                    {
+                        if (keyframeEvent.eventKeyframe == 0)
+                            return Register(clipName, keyframeEvent.ID, call);
+                    }
+                }
+            }
+            return false;
+        }
+
+        public bool RegisterLastEvent(string clipName, System.Action call)
+        {
+            foreach (var iter in animationEvents)
+            {
+                if (iter.clip.name == clipName)
+                {
+                    float frameCount = (int)Mathf.Round(iter.clip.length / (1.0f / iter.clip.frameRate));
+
+                    foreach (var keyframeEvent in iter.keyframeEvents)
+                    {
+                        if (keyframeEvent.eventKeyframe == frameCount - 1)
+                            return Register(clipName, keyframeEvent.ID, call);
+                    }
+                }
+            }
+
+            return false;
+        }
+
         public bool RegisterEvent(string eventName, System.Action call)
         {
             return Register(staticEventName, eventName, call);
