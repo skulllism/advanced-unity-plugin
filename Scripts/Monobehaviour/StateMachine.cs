@@ -43,7 +43,12 @@ namespace AdvancedUnityPlugin
         public void TransitionToState(string ID)
         {
             if (current != null)
+            {
+                #if SHOW_TRANSITION
+                Debug.Log("Transition : " + current.ID + " → " + ID);
+                #endif
                 current.OnExit();
+            }
 
             current = GetState(ID);
 
