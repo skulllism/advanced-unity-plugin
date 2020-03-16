@@ -10,11 +10,9 @@ public class AUPPhysics2D
     public AUPForward Forward { private set; get; }
     public Collider2D[] Colliders { get; private set; }
 
-    private float defaultDrag;
 
-    public AUPPhysics2D(Rigidbody2D rigidbody2D, Transform transform, string motionColliderPath, float defaultDrag, eHorizontalDirection startDirection)
+    public AUPPhysics2D(Rigidbody2D rigidbody2D, Transform transform, string motionColliderPath, eHorizontalDirection startDirection)
     {
-        this.defaultDrag = defaultDrag;
         this.Rigidbody2D = rigidbody2D;
         Forward = new AUPForward();
         Forward.Init(transform, startDirection);
@@ -26,8 +24,5 @@ public class AUPPhysics2D
         Move2D = new AUPMove2D(rigidbody2D, Colliders[0]);
     }
 
-    public void SetDefaultDrag()
-    {
-        Rigidbody2D.drag = defaultDrag;
-    }
+    
 }
