@@ -44,8 +44,17 @@ namespace AdvancedUnityPlugin
         {
             if (current != null)
             {
-                #if SHOW_TRANSITION
-                Debug.Log("Transition : " + current.ID + " → " + ID);
+                #if DEBUG_PLAYER_TRANSITION
+                if (name == "Player")
+                {
+                    Debug.Log(name + "'s Transition : " + current.ID + " → " + ID);
+                }
+                #endif
+                #if DEBUG_NONPLAYER_TRANSITION
+                if (name != "Player")
+                {
+                    Debug.Log(name + "'s Transition : " + current.ID + " → " + ID);
+                }
                 #endif
                 current.OnExit();
             }
