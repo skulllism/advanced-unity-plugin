@@ -12,10 +12,10 @@ namespace AdvancedUnityPlugin.Editor
         public class NodeData
         {
             public NodeType type;
-            public AdvancedStateMachine.AdvancedState state;
-            public AdvancedStateMachine.AdvancedTransition transition;
+            public AdvancedState state;
+            public AdvancedTransition transition;
 
-            public NodeData(NodeType type, AdvancedStateMachine.AdvancedState state, AdvancedStateMachine.AdvancedTransition transition)
+            public NodeData(NodeType type, AdvancedState state, AdvancedTransition transition)
             {
                 this.type = type;
                 this.state = state;
@@ -126,7 +126,7 @@ namespace AdvancedUnityPlugin.Editor
 
             for (int i = 0; i < selected.advancedStates.Count; i++)
             {
-                AdvancedStateMachine.AdvancedState state = selected.advancedStates[i];
+                AdvancedState state = selected.advancedStates[i];
 
                 CreateStateNode(state, new Vector2(30.0f + (i * 10.0f), 30.0f + (i * 10.0f)), state.ID);
             }
@@ -143,9 +143,9 @@ namespace AdvancedUnityPlugin.Editor
             {
                 if (editorNodes[i].myData.type == NodeType.STATE)
                 {
-                    for (int j = 0; j < editorNodes[i].myData.state.transitions.Count; j++)
+                    for (int j = 0; j < editorNodes[i].myData.state.Transition.ChildTransitions.Count; j++)
                     {
-                        AttachChildNodeInParentNode(FindNodeByTransition(editorNodes[i].myData.state.transitions[j]), editorNodes[i]);
+                        AttachChildNodeInParentNode(FindNodeByTransition(editorNodes[i].myData.state.Transition.ChildTransitions[j]), editorNodes[i]);
                     }
                 }
                 else if (editorNodes[i].myData.type == NodeType.TRANSITION)
@@ -261,18 +261,18 @@ namespace AdvancedUnityPlugin.Editor
         //TODO : 동일한 ID 입력에 대한 예외처리 해주
         public void CreateState(Vector2 position)
         {
-            AdvancedStateMachine.AdvancedState state = new AdvancedStateMachine.AdvancedState();
-            //state.ID = "New State" + Target.advancedStates.Count;
-            Target.advancedStates.Add(state);
+            //AdvancedState state = new AdvancedState();
+            ////state.ID = "New State" + Target.advancedStates.Count;
+            //Target.advancedStates.Add(state);
 
-            InitializePropertyData();
+            //InitializePropertyData();
 
-            InitializeStateNames();
+            //InitializeStateNames();
 
-            EditorNode<NodeData> node = CreateStateNode(state, position, state.ID);
-            SelectNode(node);
+            //EditorNode<NodeData> node = CreateStateNode(state, position, state.ID);
+            //SelectNode(node);
 
-            SaveData();
+            //SaveData();
         }
 
         //TODO : 동일한 ID 입력에 대한 예외처리 해주
@@ -309,7 +309,7 @@ namespace AdvancedUnityPlugin.Editor
             SaveData();
         }
 
-        private EditorNode<NodeData> CreateStateNode(AdvancedStateMachine.AdvancedState state, Vector2 position, string title)
+        private EditorNode<NodeData> CreateStateNode(AdvancedState state, Vector2 position, string title)
         {
             EditorNode<NodeData> node = new EditorNode<NodeData>(new NodeData(NodeType.STATE, state, null)
                                                                  ,editorNodes.Count
@@ -322,7 +322,7 @@ namespace AdvancedUnityPlugin.Editor
             return node;
         }
 
-        private EditorNode<NodeData> CreateTransitionNode(AdvancedStateMachine.AdvancedTransition transition, Vector2 position, string title)
+        private EditorNode<NodeData> CreateTransitionNode(AdvancedTransition transition, Vector2 position, string title)
         {
             EditorNode<NodeData> node = new EditorNode<NodeData>(new NodeData(NodeType.TRANSITION, null, transition)
                                                                  , editorNodes.Count
@@ -409,13 +409,13 @@ namespace AdvancedUnityPlugin.Editor
         {
             serializedObject.Update();
 
-            for (int i = 0; i < stateNode.myData.state.transitions.Count; i++)
+            for (int i = 0; i < stateNode.myData.state.Transition.ChildTransitions.Count; i++)
             {
-                if (stateNode.myData.state.transitions[i] == transitionNode.myData.transition)
+                if (stateNode.myData.state.Transition.ChildTransitions[i] == transitionNode.myData.transition)
                     return false;
             }
 
-            stateNode.myData.state.transitions.Add(transitionNode.myData.transition);
+            stateNode.myData.state.Transition.ChildTransitions.Add(transitionNode.myData.transition);
 
             EditorUtility.SetDirty(Target);
             serializedObject.ApplyModifiedProperties();
@@ -423,7 +423,7 @@ namespace AdvancedUnityPlugin.Editor
             return true;
         }
 
-        public void SelectNodeByState(AdvancedStateMachine.AdvancedState state)
+        public void SelectNodeByState(AdvancedState state)
         {
             for (int i = 0; i < editorNodes.Count; i++)
             {
@@ -438,7 +438,7 @@ namespace AdvancedUnityPlugin.Editor
             }
         }
 
-        public void SelectNodeByTransition(AdvancedStateMachine.AdvancedTransition transition)
+        public void SelectNodeByTransition(AdvancedTransition transition)
         {
             for (int i = 0; i < editorNodes.Count; i++)
             {
@@ -513,25 +513,25 @@ namespace AdvancedUnityPlugin.Editor
 
             if(selectNode.myData.type == NodeType.STATE)
             {
-                AdvancedStateMachine.AdvancedState state = new AdvancedStateMachine.AdvancedState();
-                //state.ID = "copy_" + selectNode.myData.state.ID;
+                //AdvancedState state = new AdvancedState();
+                ////state.ID = "copy_" + selectNode.myData.state.ID;
 
        
-                Target.advancedStates.Add(state);
+                //Target.advancedStates.Add(state);
 
-                InitializePropertyData();
+                //InitializePropertyData();
 
-                InitializeStateNames();
+                //InitializeStateNames();
 
-                //serializedObject.Update();
-                //serializedObject.Co
-                //SerializedProperty test2 = propertyStates.GetEndProperty();
-                //test2 = propertyStates.GetArrayElementAtIndex(FindStateIndexByNode(selectNode)).Copy();
+                ////serializedObject.Update();
+                ////serializedObject.Co
+                ////SerializedProperty test2 = propertyStates.GetEndProperty();
+                ////test2 = propertyStates.GetArrayElementAtIndex(FindStateIndexByNode(selectNode)).Copy();
 
-                serializedObject.ApplyModifiedProperties();
+                //serializedObject.ApplyModifiedProperties();
 
-                EditorNode<NodeData> node = CreateStateNode(state, new Vector2(selectNode.rect.position.x + 15, selectNode.rect.position.y + 15), state.ID);
-                SelectNode(node);
+                //EditorNode<NodeData> node = CreateStateNode(state, new Vector2(selectNode.rect.position.x + 15, selectNode.rect.position.y + 15), state.ID);
+                //SelectNode(node);
             }
             else if(selectNode.myData.type == NodeType.TRANSITION)
             {

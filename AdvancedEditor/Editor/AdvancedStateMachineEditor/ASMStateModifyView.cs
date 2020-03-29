@@ -94,7 +94,7 @@ namespace AdvancedUnityPlugin.Editor
                     GUILayout.BeginHorizontal();
                     {
                         GUILayout.Label("Count : ");
-                        GUILayout.Label(node.myData.state.transitions.Count.ToString());
+                        GUILayout.Label(node.myData.state.Transition.ChildTransitions.Count.ToString());
                     }
                     GUILayout.EndHorizontal();
 
@@ -107,26 +107,26 @@ namespace AdvancedUnityPlugin.Editor
             stateProperty.serializedObject.ApplyModifiedProperties();
         }
 
-        private List<ListItem<AdvancedStateMachine.AdvancedTransition>> transitions;
+        private List<ListItem<AdvancedTransition>> transitions;
         private void InitalizeListItems()
         {
             if (transitions == null)
-                transitions = new List<ListItem<AdvancedStateMachine.AdvancedTransition>>();
+                transitions = new List<ListItem<AdvancedTransition>>();
 
             transitions.Clear();
 
-            for (int i = 0; i < node.myData.state.transitions.Count; i++)
+            for (int i = 0; i < node.myData.state.Transition.ChildTransitions.Count; i++)
             {
-                ListItem<AdvancedStateMachine.AdvancedTransition> item = new ListItem<AdvancedStateMachine.AdvancedTransition>(i);
+                ListItem<AdvancedTransition> item = new ListItem<AdvancedTransition>(i);
 
-                item.SetData(node.myData.state.transitions[i]);
+                item.SetData(node.myData.state.Transition.ChildTransitions[i]);
 
                 transitions.Add(item);
             }
         }
 
         private Vector2 scrollPosition = Vector2.zero;
-        private ListItem<AdvancedStateMachine.AdvancedTransition> selectedItem;
+        private ListItem<AdvancedTransition> selectedItem;
         private void DrawListItems(Event e)
         {
             GUILayout.BeginVertical();
@@ -191,7 +191,7 @@ namespace AdvancedUnityPlugin.Editor
             }
         }
 
-        private void SelectListItem(ListItem<AdvancedStateMachine.AdvancedTransition> item)
+        private void SelectListItem(ListItem<AdvancedTransition> item)
         {
             if(selectedItem != null)
             {
@@ -211,28 +211,28 @@ namespace AdvancedUnityPlugin.Editor
 
             if (selectedIndex > 0)
             {
-                ListItem<AdvancedStateMachine.AdvancedTransition> t = transitions[selectedIndex];
+                ListItem<AdvancedTransition> t = transitions[selectedIndex];
                 transitions[selectedIndex] = transitions[selectedIndex - 1];
                 transitions[selectedIndex - 1] = t;
 
 
-                AdvancedStateMachine.AdvancedTransition temp = node.myData.state.transitions[selectedIndex];
-                node.myData.state.transitions[selectedIndex] = node.myData.state.transitions[selectedIndex - 1];
-                node.myData.state.transitions[selectedIndex - 1] = temp;
+                AdvancedTransition temp = node.myData.state.Transition.ChildTransitions[selectedIndex];
+                node.myData.state.Transition.ChildTransitions[selectedIndex] = node.myData.state.Transition.ChildTransitions[selectedIndex - 1];
+                node.myData.state.Transition.ChildTransitions[selectedIndex - 1] = temp;
 
 
                 SelectListItem(transitions[selectedIndex - 1]);
             }
             else
             {
-                ListItem<AdvancedStateMachine.AdvancedTransition> t = transitions[selectedIndex];
+                ListItem<AdvancedTransition> t = transitions[selectedIndex];
                 transitions[selectedIndex] = transitions[transitions.Count - 1];
                 transitions[transitions.Count - 1] = t;
 
 
-                AdvancedStateMachine.AdvancedTransition temp = node.myData.state.transitions[selectedItem.index];
-                node.myData.state.transitions[selectedItem.index] = node.myData.state.transitions[transitions.Count - 1];
-                node.myData.state.transitions[transitions.Count - 1] = temp;
+                AdvancedTransition temp = node.myData.state.Transition.ChildTransitions[selectedItem.index];
+                node.myData.state.Transition.ChildTransitions[selectedItem.index] = node.myData.state.Transition.ChildTransitions[transitions.Count - 1];
+                node.myData.state.Transition.ChildTransitions[transitions.Count - 1] = temp;
 
                 SelectListItem(transitions[transitions.Count - 1]);
             }
@@ -251,26 +251,26 @@ namespace AdvancedUnityPlugin.Editor
 
             if (selectedIndex < transitions.Count - 1)
             {
-                ListItem<AdvancedStateMachine.AdvancedTransition> t = transitions[selectedIndex];
+                ListItem<AdvancedTransition> t = transitions[selectedIndex];
                 transitions[selectedIndex] = transitions[selectedIndex + 1];
                 transitions[selectedIndex + 1] = t;
 
-                AdvancedStateMachine.AdvancedTransition temp = node.myData.state.transitions[selectedItem.index];
-                node.myData.state.transitions[selectedItem.index] = node.myData.state.transitions[selectedItem.index + 1];
-                node.myData.state.transitions[selectedItem.index + 1] = temp;
+                AdvancedTransition temp = node.myData.state.Transition.ChildTransitions[selectedItem.index];
+                node.myData.state.Transition.ChildTransitions[selectedItem.index] = node.myData.state.Transition.ChildTransitions[selectedItem.index + 1];
+                node.myData.state.Transition.ChildTransitions[selectedItem.index + 1] = temp;
 
                 SelectListItem(transitions[selectedItem.index + 1]);
             }
             else
             {
-                ListItem<AdvancedStateMachine.AdvancedTransition> t = transitions[selectedIndex];
+                ListItem<AdvancedTransition> t = transitions[selectedIndex];
                 transitions[selectedIndex] = transitions[0];
                 transitions[0] = t;
 
 
-                AdvancedStateMachine.AdvancedTransition temp = node.myData.state.transitions[selectedItem.index];
-                node.myData.state.transitions[selectedItem.index] = node.myData.state.transitions[0];
-                node.myData.state.transitions[0] = temp;
+                AdvancedTransition temp = node.myData.state.Transition.ChildTransitions[selectedItem.index];
+                node.myData.state.Transition.ChildTransitions[selectedItem.index] = node.myData.state.Transition.ChildTransitions[0];
+                node.myData.state.Transition.ChildTransitions[0] = temp;
 
                 SelectListItem(transitions[0]);
             }
@@ -285,7 +285,7 @@ namespace AdvancedUnityPlugin.Editor
             if (selectedItem == null)
                 return;
 
-            node.myData.state.transitions.Remove(selectedItem.data);
+            node.myData.state.Transition.ChildTransitions.Remove(selectedItem.data);
             transitions.Remove(selectedItem);
 
             node.RemoveChildNode(AdvancedStateMachineEditorWindow.Instance.FindNodeByTransition(selectedItem.data));

@@ -10,7 +10,7 @@ namespace AdvancedUnityPlugin.Editor
         public ASMTransitionModifyView() : base("StateModifyView"){}
 
         private SerializedProperty transitionProperty;
-        private AdvancedStateMachine.AdvancedTransition transition;
+        private AdvancedTransition transition;
         private EditorNode<AdvancedStateMachineEditorWindow.NodeData> node;
 
         public override void UpdateView(Rect editorRect, Rect percentageRect)

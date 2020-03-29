@@ -26,8 +26,8 @@ namespace AdvancedUnityPlugin.Editor
             }
         }
 
-        private AdvancedStateMachine.AdvancedTransition[] advancedTransitions;
-        public static AdvancedStateMachine.AdvancedTransition[] Transitions
+        private AdvancedTransition[] advancedTransitions;
+        public static AdvancedTransition[] Transitions
         {
             get
             {
@@ -44,7 +44,7 @@ namespace AdvancedUnityPlugin.Editor
 
         private void InitailizeTransition()
         {
-            advancedTransitions = FindObjectsOfType<AdvancedStateMachine.AdvancedTransition>();
+            //advancedTransitions = FindObjectsOfType<AdvancedTransition>();
         }
 
         private List<EditorNode<NodeData>> editorNodes;
