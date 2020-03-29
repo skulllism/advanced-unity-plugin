@@ -167,7 +167,7 @@ namespace AdvancedUnityPlugin.Editor
                 {
                     if(!e.alt)
                     {
-                        List<AdvancedStateMachine.AdvancedState> advancedStates = AdvancedStateMachineEditorWindow.Target.advancedStates;
+                        List<AdvancedState> advancedStates = AdvancedStateMachineEditorWindow.Target.advancedStates;
                         for (int i = 0; i < advancedStates.Count; i++)
                         {
                             if (SearchString(advancedStates[i].ID, strSearchText))
@@ -207,7 +207,7 @@ namespace AdvancedUnityPlugin.Editor
                     if(!e.alt)
                     {
 
-                        AdvancedStateMachine.AdvancedTransition[] advancedTransitions = AdvancedStateMachineEditorWindow.Transitions;   
+                        AdvancedTransition[] advancedTransitions = AdvancedStateMachineEditorWindow.Transitions;   
                         for (int i = 0; i < advancedTransitions.Length; i++)
                         {
                             if (SearchString(advancedTransitions[i].ID, strSearchText))

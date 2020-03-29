@@ -37,7 +37,7 @@ namespace AdvancedUnityPlugin.Editor
             return -1;
         }
 
-        public AdvancedStateMachine.AdvancedTransition FindTransitionByNode(EditorNode<NodeData> node)
+        public AdvancedTransition FindTransitionByNode(EditorNode<NodeData> node)
         {
             if (node == null)
                 return null;
@@ -52,7 +52,7 @@ namespace AdvancedUnityPlugin.Editor
             return null;
         }
 
-        public EditorNode<NodeData> FindNodeByTransition(AdvancedStateMachine.AdvancedTransition transition)
+        public EditorNode<NodeData> FindNodeByTransition(AdvancedTransition transition)
         {
             if (transition == null)
                 return null;
@@ -69,7 +69,7 @@ namespace AdvancedUnityPlugin.Editor
             return null;
         }
 
-        public EditorNode<NodeData> FindNodeByState(AdvancedStateMachine.AdvancedState state)
+        public EditorNode<NodeData> FindNodeByState(AdvancedState state)
         {
             if (state == null)
                 return null;
