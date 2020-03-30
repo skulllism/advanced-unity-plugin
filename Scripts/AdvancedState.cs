@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using AdvancedUnityPlugin;
 
-public abstract class AdvancedState : StateMachine.IState
+public abstract class AdvancedState : IState
 {
     public CompositeTransition Transition { private set; get; }
 
