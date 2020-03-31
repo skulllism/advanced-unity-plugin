@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class AUPPhysics2D
 {
@@ -9,20 +7,17 @@ public class AUPPhysics2D
     public AUPMove2D Move2D { private set; get; }
     public AUPForward Forward { private set; get; }
     public Collider2D[] Colliders { get; private set; }
-
-
+    
     public AUPPhysics2D(Rigidbody2D rigidbody2D, Transform transform, string motionColliderPath, HorizontalDirection startDirection)
     {
-        this.Rigidbody2D = rigidbody2D;
+        Rigidbody2D = rigidbody2D;
         Forward = new AUPForward();
         Forward.Init(transform, startDirection);
 
         Rigidbody2DController = new AUPRigidbody2DUtility(rigidbody2D, Forward);
 
-        Colliders = GameObject.Instantiate(Resources.Load<GameObject>(motionColliderPath), transform, false).GetComponents<Collider2D>();
+        Colliders = Object.Instantiate(Resources.Load<GameObject>(motionColliderPath), transform, false).GetComponents<Collider2D>();
 
         Move2D = new AUPMove2D(rigidbody2D, Colliders[0]);
     }
-
-    
 }
