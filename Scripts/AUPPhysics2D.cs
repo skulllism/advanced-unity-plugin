@@ -11,7 +11,7 @@ public class AUPPhysics2D
     public Collider2D[] Colliders { get; private set; }
 
 
-    public AUPPhysics2D(Rigidbody2D rigidbody2D, Transform transform, string motionColliderPath, eHorizontalDirection startDirection)
+    public AUPPhysics2D(Rigidbody2D rigidbody2D, Transform transform, string motionColliderPath, HorizontalDirection startDirection)
     {
         this.Rigidbody2D = rigidbody2D;
         Forward = new AUPForward();
