@@ -12,18 +12,6 @@ public class StateMachine
     {
         if (current != null)
         {
-#if DEBUG_PLAYER_TRANSITION
-                if (name == "Player")
-                {
-                    Debug.Log(name + "'s Transition : " + current.ID + " → " + ID);
-                }
-#endif
-#if DEBUG_NONPLAYER_TRANSITION
-                if (name != "Player")
-                {
-                    Debug.Log(name + "'s Transition : " + current.ID + " → " + ID);
-                }
-#endif
             current.OnExit();
         }
 
