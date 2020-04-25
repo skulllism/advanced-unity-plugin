@@ -27,25 +27,13 @@ namespace AdvancedUnityPlugin
         {
             if (current != null)
             {
-                #if DEBUG_PLAYER_TRANSITION
-                if (name == "Player")
-                {
-                    Debug.Log(name + "'s Transition : " + current.ID + " → " + ID);
-                }
-                #endif
-                #if DEBUG_NONPLAYER_TRANSITION
-                if (name != "Player")
-                {
-                    Debug.Log(name + "'s Transition : " + current.ID + " → " + ID);
-                }
-                #endif
                 current.OnExit();
             }
 
             current = GetState(ID);
 
             Debug.Assert(current != null, ID);
-            //Debug.Log(current.ID);
+            Debug.Log(current.ID);
             current.OnEnter();
         }
 
