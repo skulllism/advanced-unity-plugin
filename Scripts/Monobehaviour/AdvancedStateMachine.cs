@@ -5,7 +5,7 @@ using UnityEngine.Events;
 
 namespace AdvancedUnityPlugin
 {
-    public class AdvancedStateMachine : MonobehaviourStateMachine
+    public class AdvancedStateMachine : MonoBehaviourStateMachine
     {
         public string initialStateID;
         public List<AdvancedState> advancedStates = new List<AdvancedState>();

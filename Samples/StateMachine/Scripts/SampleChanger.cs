@@ -3,7 +3,7 @@ using AdvancedUnityPlugin;
 
 public class SampleChanger : MonoBehaviour
 {
-    public MonobehaviourStateMachine sm;
+    public MonoBehaviourStateMachine sm;
 	// Use this for initialization
 	void Start () {
         //sm.TransitionToState("1");

@@ -12,7 +12,7 @@ namespace AdvancedUnityPlugin
    * @date 2018-05-31
    * @version 0.0.1
    * */
-    public abstract class MonobehaviourStateMachine : MonoBehaviour
+    public abstract class MonoBehaviourStateMachine : MonoBehaviour
     {
         public readonly List<IState> states = new List<IState>();
 
