@@ -15,6 +15,6 @@ public class AUPPhysics2D
 
         Colliders = Object.Instantiate(Resources.Load<GameObject>(motionColliderPath), transform, false).GetComponents<Collider2D>();
 
-        Move2D = new AUPMove2D(rigidbody2D, Colliders[0]);
+        Move2D = new AUPMove2D(rigidbody2D);
     }
 }
