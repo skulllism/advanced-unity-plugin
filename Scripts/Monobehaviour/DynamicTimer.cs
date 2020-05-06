@@ -11,7 +11,11 @@ namespace AdvancedUnityPlugin
         public void StartTimer(string id)
         {
             if (timers.ContainsKey(id))
+            {
+                Clear(id);
+                StartTimer(id);
                 return;
+            }
 
             timers.Add(id, 0.0f);
         }
@@ -19,7 +23,11 @@ namespace AdvancedUnityPlugin
         public void StartTimer(string id,float startTime)
         {
             if (timers.ContainsKey(id))
+            {
+                Clear(id);
+                StartTimer(id,startTime);
                 return;
+            }
 
             timers.Add(id, startTime);
         }
@@ -51,14 +59,6 @@ namespace AdvancedUnityPlugin
         public void Clear()
         {
             timers.Clear();
-        }
-
-        public void AddTime(string id,float value)
-        {
-            if (!timers.ContainsKey(id))
-                return;
-
-            timers[id] += value;
         }
 
         private void Update()
