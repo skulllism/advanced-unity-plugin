@@ -4,7 +4,12 @@ using UnityEngine;
 
 public class StateMachine
 {
-    public readonly List<IState> states = new List<IState>();
+    private IState[] states;
+
+    public StateMachine(IState[] states)
+    {
+        this.states = states;
+    }
 
     public IState current { private set; get; }
 
@@ -55,7 +60,7 @@ public class StateMachine
 
     private IState GetState(string ID)
     {
-        for (int i = 0; i < states.Count; i++)
+        for (int i = 0; i < states.Length; i++)
         {
             if (states[i].ID == ID)
                 return states[i];
