@@ -1,14 +1,23 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class StateMachine
 {
-    private IState[] states;
+    private readonly List<IState> states = new List<IState>();
 
-    public StateMachine(IState[] states)
+    public StateMachine(params IState[] states)
     {
-        this.states = states;
+        AddStates(states);
+    }
+
+    public void AddStates(params IState[] states)
+    {
+        foreach (var state in states)
+        {
+            this.states.Add(state);
+        }
     }
 
     public IState current { private set; get; }
@@ -26,7 +35,7 @@ public class StateMachine
         current.OnEnter();
     }
 
-    protected virtual void ManualUpdate()
+    public void ManualUpdate()
     {
         if (current == null)
             return;
@@ -42,7 +51,7 @@ public class StateMachine
         current.OnUpdate();
     }
 
-    private void ManualLateUpdate()
+    public void ManualLateUpdate()
     {
         if (current == null)
             return;
@@ -50,7 +59,7 @@ public class StateMachine
         current.OnLateUpdate();
     }
 
-    private void ManualFixedUpdate()
+    public void ManualFixedUpdate()
     {
         if (current == null)
             return;
@@ -60,7 +69,7 @@ public class StateMachine
 
     private IState GetState(string ID)
     {
-        for (int i = 0; i < states.Length; i++)
+        for (int i = 0; i < states.Count; i++)
         {
             if (states[i].ID == ID)
                 return states[i];
