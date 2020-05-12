@@ -20,51 +20,53 @@ public class StateMachine
         }
     }
 
-    public IState current { private set; get; }
+    public IState Current { private set; get; }
+    public IState Prev { private set; get; }
 
     public void TransitionToState(string ID)
     {
-        if (current != null)
+        if (Current != null)
         {
-            current.OnExit();
+            Current.OnExit();
         }
 
-        current = GetState(ID);
+        Prev = Current;
+        Current = GetState(ID);
 
-        Debug.Assert(current != null, ID);
-        current.OnEnter();
+        Debug.Assert(Current != null, ID);
+        Current.OnEnter();
     }
 
     public void ManualUpdate()
     {
-        if (current == null)
+        if (Current == null)
             return;
 
         string transition = null;
 
-        if (current.IsTransition(out transition))
+        if (Current.IsTransition(out transition))
         {
             TransitionToState(transition);
             return;
         }
 
-        current.OnUpdate();
+        Current.OnUpdate();
     }
 
     public void ManualLateUpdate()
     {
-        if (current == null)
+        if (Current == null)
             return;
 
-        current.OnLateUpdate();
+        Current.OnLateUpdate();
     }
 
     public void ManualFixedUpdate()
     {
-        if (current == null)
+        if (Current == null)
             return;
 
-        current.OnFixedUpdate();
+        Current.OnFixedUpdate();
     }
 
     private IState GetState(string ID)
