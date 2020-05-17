@@ -77,7 +77,7 @@ public class StateMachine
                 return states[i];
         }
 
-        Debug.Log("Not found ID : " + ID);
+        Debug.Log("[StateMachine] Not found state ID : " + ID);
         return null;
     }
 }
