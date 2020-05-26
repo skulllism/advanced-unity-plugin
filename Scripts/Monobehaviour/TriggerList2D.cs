@@ -4,7 +4,6 @@ using UnityEngine.Events;
 
 namespace AdvancedUnityPlugin
 {
-    [RequireComponent(typeof(Collider2D))]
     public class TriggerList2D : MonoBehaviour
     {
         public Collider2DUnityEvent onEnter;
@@ -13,11 +12,6 @@ namespace AdvancedUnityPlugin
         public Collider2DUnityEvent onEmpty;
 
         private readonly List<Collider2D> colliders = new List<Collider2D>();
-
-        protected virtual void Awake()
-        {
-            GetComponent<Collider2D>().isTrigger = true;
-        }
 
         private void Update()
         {
