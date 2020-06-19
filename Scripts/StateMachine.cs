@@ -32,6 +32,7 @@ public class StateMachine
 
         Prev = Current;
         Current = GetState(ID);
+        Debug.Log(Current.ID);
 
         Debug.Assert(Current != null, "Not Found : " + ID + " / Prev : " + Prev);
         Current.OnEnter();
