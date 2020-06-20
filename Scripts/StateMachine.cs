@@ -7,6 +7,8 @@ public class StateMachine
 {
     private readonly List<IState> states = new List<IState>();
 
+    private float duration;
+
     public StateMachine(params IState[] states)
     {
         AddStates(states);
@@ -36,12 +38,18 @@ public class StateMachine
 
         Debug.Assert(Current != null, "Not Found : " + ID + " / Prev : " + Prev);
         Current.OnEnter();
+        duration = 0;
     }
 
     public void ManualUpdate()
     {
         if (Current == null)
             return;
+
+        if(duration < Current.MinDuration)
+        {
+            return;
+        }
 
         string transition = null;
 
@@ -67,6 +75,7 @@ public class StateMachine
         if (Current == null)
             return;
 
+        duration += Time.fixedDeltaTime;
         Current.OnFixedUpdate();
     }
 

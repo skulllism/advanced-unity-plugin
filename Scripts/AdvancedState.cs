@@ -12,9 +12,7 @@ public abstract class AdvancedState : IState
         Transition = transition;
     }
 
-    public abstract string ID { get; }
-
-    public virtual bool IsTransition(out string ID)
+    public override bool IsTransition(out string ID)
     {
         if(Transition.IsTransition())
         {
@@ -25,14 +23,4 @@ public abstract class AdvancedState : IState
         ID = null;
         return false;
     }
-
-    public abstract void OnEnter();
-
-    public abstract void OnExit();
-
-    public abstract void OnFixedUpdate();
-
-    public abstract void OnLateUpdate();
-
-    public abstract void OnUpdate();
 }
