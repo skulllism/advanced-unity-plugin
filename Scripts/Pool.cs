@@ -37,8 +37,15 @@ namespace AdvancedUnityPlugin
         {
             foreach (var pool in pools)
             {
+                if(pool.gameObject == null)
+                {
+                    pools.Remove(pool.gameObject);
+                    return Get();
+                }
                 if (pool.gameObject.activeSelf)
+                {
                     continue;
+                }
 
                 pool.gameObject.SetActive(true);
 
