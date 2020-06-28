@@ -47,7 +47,10 @@ namespace AdvancedUnityPlugin
 
         public static void ActivateAdditiveScene(string sceneName)
         {
-            onActivate.Invoke(sceneName);
+            if(onActivate!= null)
+            {
+                onActivate.Invoke(sceneName);
+            }
 
             AsyncOperation operation = GetLoadingOperation(sceneName);
             if (operation == null)
@@ -105,7 +108,10 @@ namespace AdvancedUnityPlugin
                 yield break;
             }
 
-            onUnload.Invoke(sceneName);
+            if(onUnload != null)
+            {
+                onUnload.Invoke(sceneName);
+            }
 
             operation = GetUnloadingOperation(sceneName);
 
@@ -133,7 +139,10 @@ namespace AdvancedUnityPlugin
 
             unloadingOperations.Remove(sceneName);
 
-            onUnloaded.Invoke(sceneName);
+            if(onUnload != null)
+            {
+                onUnloaded.Invoke(sceneName);
+            }
 
             if (onComplete != null)
                 onComplete.Invoke();
@@ -147,7 +156,10 @@ namespace AdvancedUnityPlugin
                 yield break;
             }
 
-            onAdditiveLoad.Invoke(sceneName);
+            if(onAdditiveLoad != null)
+            {
+                onAdditiveLoad.Invoke(sceneName);
+            }
 
             yield return null;
 
