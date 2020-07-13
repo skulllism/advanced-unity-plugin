@@ -32,18 +32,12 @@ namespace AdvancedUnityPlugin
             timers.Add(id, startTime);
         }
 
-        public float Peek(string id)
-        {
-            if (!timers.ContainsKey(id))
-                return -1f;
-
-            return timers[id];
-        }
-
         public float Get(string id)
         {
             if (!timers.ContainsKey(id))
-                StartTimer(id);
+            {
+                return -1f;
+            }
 
             return timers[id];
         }
