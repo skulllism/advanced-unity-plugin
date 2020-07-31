@@ -6,7 +6,7 @@ public class UIView : MonoBehaviour
 {
     private static List<UIView> views = new List<UIView>();
 
-    private void Awake()
+    protected virtual void Awake()
     {
         transform.localPosition = Vector3.zero;
         views.Add(this);
