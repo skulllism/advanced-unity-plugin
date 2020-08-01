@@ -82,7 +82,10 @@ namespace AdvancedUnityPlugin
         {
             foreach (var pool in pools)
             {
-                pool.gameObject.SetActive(false);
+                if(pool != null)
+                {
+                    pool.gameObject.SetActive(false);
+                }
             }
         }
 

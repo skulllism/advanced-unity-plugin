@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,7 +23,21 @@ public class UIView : MonoBehaviour
             }
         }
 
-        Debug.Log("Not found page : " + pageName);
+        Debug.Log("Not found page by name: " + pageName);
+        return null;
+    }
+
+    public static T Get<T>() where T : UIView
+    {
+        foreach (var view in views)
+        {
+            if (view is T)
+            {
+                return view as T;
+            }
+        }
+
+        Debug.Log("Not found page by type: " + typeof(T));
         return null;
     }
 
