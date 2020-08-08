@@ -100,12 +100,19 @@ namespace AdvancedUnityPlugin
         }
     }
 
-    public abstract class Pool<T> where T : Behaviour
+    public class Pool<T> where T : Behaviour
     {
         public T origin;
         public int count;
 
         protected List<T> pools = new List<T>();
+
+        public void Init(T origin, int count)
+        {
+            this.origin = origin;
+            this.count = count;
+            Init();
+        }
 
         public void Init()
         {
