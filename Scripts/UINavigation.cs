@@ -6,19 +6,22 @@ public class UINavigation
 {
     public readonly Stack<UIView> history = new Stack<UIView>();
 
-    private UIView current = null;
+    public UIView Current { private set; get; }
 
     public UIView Push(UIView view)
     {
-        if (current != null)
+        if (Current != null)
         {
-            current.Hide();
+            if(!Current.isAlwaysShow)
+            {
+                Current.Hide();
+            }
         }
 
         UIView page = view;
         page.Show();
 
-        current = page;
+        Current = page;
         history.Push(page);
         return page;
     }
@@ -31,9 +34,9 @@ public class UINavigation
 
     public UIView Pop()
     {
-        if(current != null)
+        if(Current != null)
         {
-            current.Hide();
+            Current.Hide();
             history.Pop();
         }
 
@@ -42,9 +45,9 @@ public class UINavigation
             return null;
         }
 
-        current = history.Peek();
-        current.Show();
-        return current;
+        Current = history.Peek();
+        Current.Show();
+        return Current;
     }
 
     public UIView Pop(string pageName)

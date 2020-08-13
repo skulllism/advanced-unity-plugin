@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class UIView : MonoBehaviour
 {
+    public bool isAlwaysShow;
     private static List<UIView> views = new List<UIView>();
 
     protected virtual void Awake()
