@@ -2,10 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class UIView : MonoBehaviour
 {
     public bool isAlwaysShow;
+    public UnityEngine.UI.Selectable first;
+
     private static List<UIView> views = new List<UIView>();
 
     protected virtual void Awake()
@@ -45,6 +49,13 @@ public class UIView : MonoBehaviour
     public void ShowImmediately()
     {
         gameObject.SetActive(true);
+
+        if(first != null)
+        {
+            EventSystem.current.SetSelectedGameObject(first.gameObject);
+            return;
+        }
+
     }
 
     public void HideImmediately()
