@@ -42,7 +42,8 @@ public class UINavigation
 
         if (history.Count == 0)
         {
-            return null;
+            Current = null;
+            return Current;
         }
 
         Current = history.Peek();
