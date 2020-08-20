@@ -46,6 +46,11 @@ public class UIView : MonoBehaviour
         return null;
     }
 
+    public bool IsShowing()
+    {
+        return gameObject.activeSelf;
+    }
+
     public void ShowImmediately()
     {
         gameObject.SetActive(true);
