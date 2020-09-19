@@ -1,21 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-public abstract class IState
+public interface IState
 {
-    public abstract string ID { get; }
+    string ID { get; }
 
-    public virtual float MinDuration => 0;
+    float MinDuration { get; }
 
-    public abstract bool IsTransition(out string ID);
+    bool IsTransition(out string ID);
 
-    public abstract void OnEnter();
+    void OnEnter();
 
-    public abstract void OnFixedUpdate();
+    void OnFixedUpdate();
 
-    public abstract void OnUpdate();
+    void OnUpdate();
 
-    public abstract void OnLateUpdate();
+    void OnLateUpdate();
 
-    public abstract void OnExit();
+    void OnExit();
 }
