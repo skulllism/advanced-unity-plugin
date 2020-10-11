@@ -21,19 +21,19 @@ namespace AdvancedUnityPlugin
             }
         }
 
-        public interface Listener
+        public interface IListener
         {
             void OnAttack(Data data);
         }
 
-        private List<Listener> listeners = new List<Listener>();
+        private List<IListener> listeners = new List<IListener>();
 
-        public void RegistEventListener(Listener listener)
+        public void RegistEventListener(IListener listener)
         {
             listeners.Add(listener);
         }
 
-        public void UnregistEventListener(Listener listener)
+        public void UnregistEventListener(IListener listener)
         {
             listeners.Remove(listener);
         }

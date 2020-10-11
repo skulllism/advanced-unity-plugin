@@ -4,7 +4,7 @@ using UnityEngine.Events;
 
 namespace AdvancedUnityPlugin
 {
-    public class DamageEventBroadcaster2D : MonoBehaviour , AttackEvent2D.Listener
+    public class DamageEventBroadcaster2D : MonoBehaviour , AttackEvent2D.IListener
     {
         public interface Listener
         {
