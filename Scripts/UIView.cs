@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class UIView : MonoBehaviour
 {
     public bool isAlwaysShow;
-    public Graphic first;
+    public Graphic firstSelect;
 
     private static List<UIView> views = new List<UIView>();
 
@@ -55,9 +55,9 @@ public class UIView : MonoBehaviour
     {
         gameObject.SetActive(true);
 
-        if(first != null)
+        if(firstSelect != null)
         {
-            EventSystem.current.SetSelectedGameObject(first.gameObject);
+            EventSystem.current.SetSelectedGameObject(firstSelect.gameObject);
             return;
         }
 
