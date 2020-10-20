@@ -17,8 +17,15 @@ public class UIView : MonoBehaviour
         transform.localPosition = Vector3.zero;
         views.Add(this);
         gameObject.SetActive(false);
+
     }
-    public static UIView Get(string pageName)
+
+	private void OnDestroy()
+	{
+        views.Remove(this);
+	}
+
+	public static UIView Get(string pageName)
     {
         foreach (var view in views)
         {
