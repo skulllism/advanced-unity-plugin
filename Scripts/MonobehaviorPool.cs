@@ -14,29 +14,23 @@ namespace AdvancedUnityPlugin
         public GameObject origin;
         public int count;
 
-        public void Init(GameObject origin, int count)
+        public void Initialize(GameObject origin, int count)
 		{
             if (isInitailized)
             {
                 return;
             }
 
-            isInitailized = true;
             if (!origin || count <= 0)
                 return;
 
+            isInitailized = true;
             pool = new Pool(origin, count);
         }
 
         private void Awake()
 		{
-            Init(origin, count);
-        }
-
-        private PoolableObject Create()
-        {
-            PoolableObject gameObject = pool.Get();
-            return gameObject;
+            Initialize(origin, count);
         }
 
         public PoolableObject Get()
