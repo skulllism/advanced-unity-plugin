@@ -112,8 +112,7 @@ namespace AdvancedUnityPlugin
 
             }
             component.name = origin.name;
-            component.transform.SetParent(parent);
-            component.Initialize(this, maxDuration, maxDistance);
+			component.Initialize(this, maxDuration, maxDistance);
             component.gameObject.SetActive(false);
             pools.Add(component);
             return component;
@@ -125,11 +124,10 @@ namespace AdvancedUnityPlugin
             {
                 return;
             }
-            //부모 리셋
-            poolableObject.transform.SetParent(parent);
-            poolableObject.transform.position = Vector3.zero;
-            //비활성
-            if (!poolableObject.gameObject.activeSelf)
+			//부모 리셋
+			poolableObject.transform.SetParent(parent,false);
+			//비활성
+			if (!poolableObject.gameObject.activeSelf)
             {
                 poolableObject.gameObject.SetActive(false);
             }
