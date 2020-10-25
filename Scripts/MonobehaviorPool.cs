@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 using VaporWorld;
 
@@ -10,7 +11,6 @@ namespace AdvancedUnityPlugin
     {
         private Pool pool;
         private bool isInitailized;
-
         public GameObject origin;
         public int count;
 
@@ -59,10 +59,10 @@ namespace AdvancedUnityPlugin
             return gameObject;
         }
 
-        public void Create(Transform parent)
-        {
-            Get(parent, false);
-        }
+        //public void Create(Transform parent)
+        //{
+        //    Get(parent, false);
+        //}
 
         public void PoolAll()
         {
@@ -91,18 +91,35 @@ namespace AdvancedUnityPlugin
             Debug.Assert(origin);
             Debug.Assert(count > 0);
             parent = new GameObject("Pool_" + origin.name).transform;
-            for (int i = 0; i < count; i++)
+
+            PoolableObject component;
+            if(origin.TryGetComponent(out component))
+			{
+                this.count = component.poolMaxCount;
+            }
+
+            for (int i = 0; i < this.count; i++)
             {
                 Create(parent);
             }
         }
 
-        private PoolableObject Create(Transform parent=null)
+        private PoolableObject Create(Transform parent, float maxDuration = 0, float maxDistance = 0)
         {
-            PoolableObject component = GameObject.Instantiate(origin).AddComponent<PoolableObject>();
+            GameObject obj = GameObject.Instantiate(origin);
+            PoolableObject component;
+            if (!obj.TryGetComponent<PoolableObject>(out component))
+            {
+                component = obj.AddComponent<PoolableObject>();
+            }
+            else
+            {
+                component = obj.GetComponent<PoolableObject>();
+
+            }
             component.name = origin.name;
             component.transform.SetParent(parent);
-            component.Initialize(this);
+            component.Initialize(this, maxDuration, maxDistance);
             component.gameObject.SetActive(false);
             pools.Add(component);
             return component;
@@ -116,6 +133,7 @@ namespace AdvancedUnityPlugin
             }
             //부모 리셋
             poolableObject.transform.SetParent(parent);
+            poolableObject.transform.position = Vector3.zero;
             //비활성
             if (!poolableObject.gameObject.activeSelf)
             {
