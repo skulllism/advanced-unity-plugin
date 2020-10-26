@@ -42,7 +42,7 @@ namespace AdvancedUnityPlugin
 
         public static void SetActiveScene(string sceneName)
         {
-            SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
+            UnityEngine.SceneManagement.SceneManager.SetActiveScene(UnityEngine.SceneManagement.SceneManager.GetSceneByName(sceneName));
         }
 
         public static void ActivateAdditiveScene(string sceneName)
