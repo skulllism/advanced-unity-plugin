@@ -41,21 +41,21 @@ public class StateMachine
         duration = 0;
     }
 
+    private Stack<string> nexts = new Stack<string>();
+
     public void ManualUpdate()
     {
         if (Current == null)
             return;
-
-        if(duration < Current.MinDuration)
+        
+        if (Current.IsTransition(out string transition))
         {
-            return;
-        }
-
-        string transition = null;
-
-        if (Current.IsTransition(out transition))
-        {
-            TransitionToState(transition);
+            Debug.Log(nexts.Count);
+            if (nexts.Contains(transition))
+            {
+                return;
+            }
+            nexts.Push(transition);
             return;
         }
 
@@ -74,8 +74,12 @@ public class StateMachine
     {
         if (Current == null)
             return;
+        if(nexts.Count > 0)
+        {
+            TransitionToState(nexts.Pop());
+            nexts.Clear();
 
-        duration += Time.fixedDeltaTime;
+        }
         Current.OnFixedUpdate();
     }
 
