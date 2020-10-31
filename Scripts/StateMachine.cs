@@ -50,7 +50,7 @@ public class StateMachine
         
         if (Current.IsTransition(out string transition))
         {
-            Debug.Log(nexts.Count);
+            //Debug.Log(nexts.Count);
             if (nexts.Contains(transition))
             {
                 return;
@@ -78,7 +78,6 @@ public class StateMachine
         {
             TransitionToState(nexts.Pop());
             nexts.Clear();
-
         }
         Current.OnFixedUpdate();
     }
