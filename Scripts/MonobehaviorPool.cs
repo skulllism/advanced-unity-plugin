@@ -125,7 +125,7 @@ namespace AdvancedUnityPlugin
                 return;
             }
 			//부모 리셋
-			poolableObject.transform.SetParent(parent,false);
+			poolableObject.transform.SetParent(null,false);
 			//비활성
 			if (!poolableObject.gameObject.activeSelf)
             {
