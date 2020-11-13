@@ -34,7 +34,9 @@ public class StateMachine
 
         Prev = Current;
         Current = GetState(ID);
-        //Debug.Log(Current.ID);
+        //if(Prev!=null)
+        //Debug.Log("current : "+ Current.ID + " / prev : " + Prev.ID);
+        
 
         Debug.Assert(Current != null, "Not Found : " + ID + " / Prev : " + Prev);
         Current.OnEnter();
@@ -48,7 +50,7 @@ public class StateMachine
         if (Current == null)
             return;
         
-        if (Current.IsTransition(out string transition))
+        if (duration >= Current.MinDuration && Current.IsTransition(out string transition))
         {
             //Debug.Log(nexts.Count);
             if (nexts.Contains(transition))
@@ -60,6 +62,7 @@ public class StateMachine
         }
 
         Current.OnUpdate();
+        duration += Time.deltaTime;
     }
 
     public void ManualLateUpdate()
