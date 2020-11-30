@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 using VaporWorld;
 
@@ -149,7 +148,7 @@ namespace AdvancedUnityPlugin
                 return pool;
             }
 
-            Debug.Log("Create on demand : " + origin.name);
+            //Debug.Log("Create on demand : " + origin.name);
             Create(parent);
 
             return Get();
