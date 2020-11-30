@@ -6,14 +6,14 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using VaporWorld;
 
-public class UIView : MonoBehaviour, GameManager.IEventHandler
+public class UIView : MonoBehaviour
 {
     public bool isAlwaysShow;
     public Graphic firstSelect;
 
     private static List<UIView> views = new List<UIView>();
 
-    public virtual void OnPlayerInitialized(Player player)
+    private void Awake()
     {
         transform.localPosition = Vector3.zero;
         views.Add(this);
@@ -84,12 +84,4 @@ public class UIView : MonoBehaviour, GameManager.IEventHandler
     {
         HideImmediately();
     }
-
-    public virtual void OnGameManagerInitialized(GameManager gameManager)
-    {
-    }
-
-	public virtual void OnSceneInitialized(string sceneName)
-	{
-	}
 }

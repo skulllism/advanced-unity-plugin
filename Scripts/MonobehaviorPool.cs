@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using VaporWorld;
 
 namespace AdvancedUnityPlugin
 {
