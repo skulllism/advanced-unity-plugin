@@ -113,21 +113,7 @@ namespace AdvancedUnityPlugin
             pools.Add(component);
             return component;
         }
-        public void Reset(PoolableObject poolableObject)
-		{
-            //예외처리
-            if (poolableObject.name != origin.name)
-            {
-                return;
-            }
-			//부모 리셋
-			poolableObject.transform.SetParent(null,false);
-			//비활성
-			if (!poolableObject.gameObject.activeSelf)
-            {
-                poolableObject.gameObject.SetActive(false);
-            }
-        }
+
         public void Remove(PoolableObject poolableObject)
 		{
             pools.Remove(poolableObject);
