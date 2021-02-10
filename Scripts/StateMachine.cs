@@ -5,9 +5,20 @@ using UnityEngine;
 
 public class StateMachine
 {
-    private readonly List<IState> states = new List<IState>();
+    public interface IEventHandler
+    {
+        void OnTransitionToState(IState prev ,IState next);
+    }
+
+    private readonly List<IState> states      = new List<IState>();
+    private List<IEventHandler> eventHandlers = new List<IEventHandler>();
 
     private float duration;
+   
+    public void ResisterEvent(IEventHandler eventHandler)
+    {
+        eventHandlers.Add(eventHandler);
+    }
 
     public StateMachine(params IState[] states)
     {
@@ -40,12 +51,18 @@ public class StateMachine
 
         Prev = Current;
         Current = GetState(ID);
+
         //if(Prev!=null)
         //Debug.Log("current : "+ Current.ID + " / prev : " + Prev.ID);
         
 
         Debug.Assert(Current != null, "Not Found : " + ID + " / Prev : " + Prev);
+        foreach (var  eventHandler in eventHandlers)
+        {
+            eventHandler.OnTransitionToState(Prev, Current);
+        }
         Current.OnEnter();
+        
         duration = 0;
     }
 
