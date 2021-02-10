@@ -68,8 +68,8 @@ public class StateMachine
 
     public void ManualUpdate()
     {
-        if (Current == null)
-            return;
+        //if (Current == null)
+        //    return;
         
         if (duration >= Current.MinDuration && Current.IsTransition(out string transition))
         {
@@ -85,16 +85,16 @@ public class StateMachine
 
     public void ManualLateUpdate()
     {
-        if (Current == null)
-            return;
+        //if (Current == null)
+        //    return;
 
         Current.OnLateUpdate();
     }
 
     public void ManualFixedUpdate()
     {
-        if (Current == null)
-            return;
+        //if (Current == null)
+        //    return;
 
         Current.OnFixedUpdate();
     }
