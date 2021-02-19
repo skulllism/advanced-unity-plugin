@@ -176,8 +176,8 @@ namespace AdvancedUnityPlugin
 
             while (operation == null)
             {
-                operation = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-                //SceneManager.LoadScene(sceneName);
+                //operation = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+                SceneManager.LoadScene(sceneName);
                 yield return null;
             }
 
