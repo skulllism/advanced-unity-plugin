@@ -87,7 +87,6 @@ public class UIView : MonoBehaviour
             EventSystem.current.SetSelectedGameObject(firstSelect.gameObject);
             return;
         }
-
     }
 
     public void HideImmediately()
