@@ -30,7 +30,7 @@ namespace AdvancedUnityPlugin
             loadedScene.Remove(arg0);
         }
 
-        private static void OnSceneLoaded(Scene arg0, LoadSceneMode arg1)
+        public static void OnSceneLoaded(Scene arg0, LoadSceneMode arg1)
         {
             if (arg1 == LoadSceneMode.Single)
                 loadedScene.Clear();
