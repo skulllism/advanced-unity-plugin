@@ -11,33 +11,20 @@ public class UIView : MonoBehaviour
     public bool isAlwaysShow;
     public Graphic firstSelect;
     
-    private int screenHeight;
-    private int screenWidth;
-
     private static List<UIView> views = new List<UIView>();
-
 
     // UNITY VIEWPORT COORDINATE
     // (0.0, 0.0)--------------------(1.0, 0.0)
     // |                                      |
     // |                                      |
     // (0.0, 1.0)--------------------(1.0, 1.0)
-    private void UIViewTranslate(Vector2 viewPortTranlation)
-	{
-        //UI 화면 비율 이동 구현
-
-
-	}
-
 
     private void Awake()
     {
+       
         transform.localPosition = Vector3.zero;
         views.Add(this);
         gameObject.SetActive(false);
-
-        screenHeight = Screen.height;
-        screenWidth = Screen.width;
     }
 
 	private void OnDestroy()
