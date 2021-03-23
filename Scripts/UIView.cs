@@ -13,11 +13,6 @@ public class UIView : MonoBehaviour
     
     private static List<UIView> views = new List<UIView>();
 
-    // UNITY VIEWPORT COORDINATE
-    // (0.0, 0.0)--------------------(1.0, 0.0)
-    // |                                      |
-    // |                                      |
-    // (0.0, 1.0)--------------------(1.0, 1.0)
 
     protected virtual void Awake()
     {
