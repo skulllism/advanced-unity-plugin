@@ -19,9 +19,8 @@ public class UIView : MonoBehaviour
     // |                                      |
     // (0.0, 1.0)--------------------(1.0, 1.0)
 
-    private void Awake()
+    protected virtual void Awake()
     {
-       
         transform.localPosition = Vector3.zero;
         views.Add(this);
         gameObject.SetActive(false);
