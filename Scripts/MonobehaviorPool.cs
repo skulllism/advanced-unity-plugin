@@ -108,7 +108,8 @@ namespace AdvancedUnityPlugin
 
             }
             component.name = origin.name;
-			component.Initialize(this, maxDuration, maxDistance);
+			component.Initialize(this, maxDuration, maxDistance,parent);
+            component.transform.SetParent(parent);
             component.gameObject.SetActive(false);
             pools.Add(component);
             return component;
