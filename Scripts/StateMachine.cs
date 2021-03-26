@@ -33,14 +33,8 @@ public class StateMachine
         }
     }
 
-    public void SetInitState(string ID)
-	{
-        InitState = ID;
-    }
-
     public IState Current { private set; get; }
     public IState Prev { private set; get; }
-    public string InitState { private set; get; }
 
     public void TransitionToState(string ID)
     {
@@ -99,13 +93,7 @@ public class StateMachine
         Current.OnFixedUpdate();
     }
 
-    public void ResetState()
-	{
-        TransitionToState(InitState);
-
-
-    }
-
+   
     private IState GetState(string ID)
     {
         for (int i = 0; i < states.Count; i++)
