@@ -29,22 +29,23 @@ namespace AdvancedUnityPlugin
             Initialize(origin, count);
         }
 
-        public PoolableObject Get()
+        public PoolableObject Get(bool isActive = true)
         {
-            return pool.Get();
+            return pool.Get(isActive);
         }
 
-        public PoolableObject Get(Vector3 position)
+        public PoolableObject Get( Vector3 position ,bool isActive = true)
         {
-            PoolableObject gameObject = Get();
+            PoolableObject gameObject = Get(isActive);
+           
             gameObject.transform.position = position;
 
             return gameObject;
         }
 
-        public PoolableObject Get(Transform parent, bool worldPositionStays = false)
+        public PoolableObject Get(Transform parent,bool isActive = true, bool worldPositionStays = false)
         {
-            PoolableObject gameObject = Get();
+            PoolableObject gameObject = Get(isActive);
             gameObject.transform.SetParent(parent, worldPositionStays);
             return gameObject;
         }
@@ -120,14 +121,17 @@ namespace AdvancedUnityPlugin
             pools.Remove(poolableObject);
         }
 
-        public PoolableObject Get(Transform parent = null)
+        public PoolableObject Get(bool isActive,Transform parent = null)
         {
             foreach (var pool in pools)
             {
                 if (pool.gameObject.activeSelf)
                     continue;
 
-                pool.gameObject.SetActive(true);
+                if (isActive)
+                {
+                    pool.gameObject.SetActive(true);
+                }
 
                 return pool;
             }
@@ -135,7 +139,7 @@ namespace AdvancedUnityPlugin
             //Debug.Log("Create on demand : " + origin.name);
             Create(parent);
 
-            return Get();
+            return Get(isActive);
         }
 
         public void PoolAll()
