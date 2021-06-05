@@ -85,14 +85,14 @@ public class AUPAudioSourceContainer
     }
     private const string sourcePath = "Audio/Sources/";
 
-    public AUPAudioSourceContainer(Transform parent)
+    public AUPAudioSourceContainer(Transform parent, string path = sourcePath)
     {
-        LoadSources(parent);
+        LoadSources(parent, path);
     }
 
-    private void LoadSources(Transform parent)
+    private void LoadSources(Transform parent, string path)
     {
-        AudioSource[] array = Resources.LoadAll<AudioSource>(sourcePath);
+        AudioSource[] array = Resources.LoadAll<AudioSource>(path);
 
         foreach (var source in array)
         {
