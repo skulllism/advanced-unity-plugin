@@ -30,5 +30,5 @@ public abstract class AdvancedState : IState
     public abstract void OnFixedUpdate();
     public abstract void OnUpdate();
     public abstract void OnLateUpdate();
-    public abstract void OnExit();
+    public abstract void OnExit(string next);
 }

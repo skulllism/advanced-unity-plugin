@@ -17,5 +17,5 @@ public interface IState
 
     void OnLateUpdate();
 
-    void OnExit();
+    void OnExit(string next);
 }

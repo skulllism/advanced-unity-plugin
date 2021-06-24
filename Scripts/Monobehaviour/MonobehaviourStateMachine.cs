@@ -27,7 +27,7 @@ namespace AdvancedUnityPlugin
         {
             if (current != null)
             {
-                current.OnExit();
+                current.OnExit(ID);
             }
 
             current = GetState(ID);
