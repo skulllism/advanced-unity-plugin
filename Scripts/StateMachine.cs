@@ -40,7 +40,7 @@ public class StateMachine
     {
         if (Current != null)
         {
-            Current.OnExit();
+            Current.OnExit(ID);
         }
 
         Prev = Current;

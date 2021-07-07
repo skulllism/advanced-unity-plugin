@@ -54,6 +54,27 @@ public class UIView : MonoBehaviour
         return null;
     }
 
+    public static List<T> GetList<T>() where T : UIView
+    {
+        List<T> results = new List<T>();
+
+        foreach (var view in views)
+        {
+            if(view is T)
+            {
+                results.Add(view as T);
+            }
+        }
+
+        if (results.Count > 0)
+        {
+            return results;
+        }
+
+        Debug.LogError("Can't Found UIView List");
+        return null;
+    }
+
     public bool IsShowing()
     {
         return gameObject.activeSelf;
