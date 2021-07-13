@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DG.Tweening;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,27 +7,99 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using VaporWorld;
 
-public class UIView : MonoBehaviour
+public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandler
 {
-    public bool isAlwaysShow;
+    public bool isOverlay;
+
     public Graphic firstSelect;
+
+    private Graphic[] graphics;
     
     private static List<UIView> views = new List<UIView>();
 
+    public Image panel;
 
-    protected virtual void Awake()
+    private UIManager UI;
+
+    public virtual void OnCancel()
     {
-        transform.localPosition = Vector3.zero;
-        views.Add(this);
-        gameObject.SetActive(false);
+        UI.Pop();
+    }
+    public virtual void Hide()
+    {
+        List<UIAnimationEventManager.FadeParams> list = new List<UIAnimationEventManager.FadeParams>();
+
+        Graphic[] graphics = GetAllGraphics();
+
+        foreach (var graphic in graphics)
+        {
+            if (panel != null && graphic == panel)
+            {
+                list.Add(new UIAnimationEventManager.FadeParams(panel, 0.0f, 0.5f, 0.25f));
+                continue;
+            }
+
+            list.Add(new UIAnimationEventManager.FadeParams(graphic, 0.0f, 0.5f));
+        }
+
+        UI.EventManager.Queue.Enqueue(new UIAnimationEventManager.UIAnimationEvent(list.ToArray(),
+            () =>
+            {
+                Time.timeScale = 1f;
+            },
+             () =>
+             {
+                 HideImmediately();
+             }));
+    }
+    public virtual void Show()
+    {
+        List<UIAnimationEventManager.FadeParams> list = new List<UIAnimationEventManager.FadeParams>();
+
+        SetAllAlpha(0);
+
+        Graphic[] graphics = GetAllGraphics();
+
+        foreach (var graphic in graphics)
+        {
+            if (panel != null && graphic == panel)
+            {
+                list.Add(new UIAnimationEventManager.FadeParams(panel, 0.5f, 0.5f, 0f));
+                continue;
+            }
+
+            list.Add(new UIAnimationEventManager.FadeParams(graphic, 1f, 0.5f, 0.25f));
+        }
+
+        UI.EventManager.Queue.Enqueue(new UIAnimationEventManager.UIAnimationEvent(list.ToArray(),
+            () =>
+            {
+                ShowImmediately();
+            },
+            () =>
+            {
+                Time.timeScale = 0f;
+            }));
     }
 
-	private void OnDestroy()
+    private void OnDestroy()
 	{
         views.Remove(this);
 	}
 
-	public static UIView Get(string pageName)
+    private void Awake()
+    {
+        transform.localPosition = Vector3.zero;
+        views.Add(this);
+        graphics = GetComponentsInChildren<Graphic>();
+        HideImmediately();
+    }
+    public Graphic[] GetAllGraphics()
+    {
+        return graphics;
+    }
+
+    public static UIView Get(string pageName)
     {
         foreach (var view in views)
         {
@@ -91,18 +164,65 @@ public class UIView : MonoBehaviour
         }
     }
 
+    public void SetAllAlpha(float value)
+    {
+        foreach (var graphic in graphics)
+        {
+            graphic.DOFade(value, 0);
+        }
+    }
+
     public void HideImmediately()
     {
         gameObject.SetActive(false);
     }
 
-    public virtual void Show()
+    public virtual void OnSubmit()
     {
-        ShowImmediately();
     }
 
-    public void Hide()
+    public virtual void OnLeftBumper()
     {
-        HideImmediately();
+    }
+
+    public virtual void OnRightBumper()
+    {
+    }
+
+    public virtual void OnTab()
+    {
+    }
+
+    public virtual void OnSceneInitialized(IngameScene ingameScene)
+    {
+        UI = ingameScene.UI;
+    }
+
+    public virtual void OnPlayerInitialzed(Player player)
+    {
+    }
+
+    public virtual void OnGameReset()
+    {
+    }
+
+    public virtual void OnUpdate()
+    {
+    }
+
+    public virtual void OnFixedUpdate()
+    {
+    }
+
+    public virtual void OnLateUpdate()
+    {
+    }
+
+    public virtual void OnResister(params object[] args)
+    {
+    }
+
+    public virtual void OnUnresister()
+    {
     }
 }

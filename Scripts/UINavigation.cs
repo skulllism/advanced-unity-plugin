@@ -8,28 +8,34 @@ public class UINavigation
 
     public UIView Current { private set; get; }
 
-    public UIView Push(UIView view)
+    public UIView Push(UIView view,bool hideAnimation = false)
     {
         if (Current != null)
         {
-            if(!Current.isAlwaysShow)
+            if(!view.isOverlay)
             {
-                Current.Hide();
+                if(hideAnimation)
+                {
+                    Current.Hide();
+                }
+                else
+                {
+                    Current.HideImmediately();
+                }
             }
         }
 
-        UIView page = view;
-        page.Show();
+        Current = view;
+        view.Show();
 
-        Current = page;
-        history.Push(page);
-        return page;
+        history.Push(view);
+        return view;
     }
 
-    public UIView Push(string pageName)
+    public UIView Push(string pageName, bool hideAnimation = false)
     {
         UIView page = UIView.Get(pageName);
-        return Push(page);
+        return Push(page,hideAnimation);
     }
 
     public UIView Pop()
@@ -43,11 +49,13 @@ public class UINavigation
         if (history.Count == 0)
         {
             Current = null;
-            return Current;
         }
-
-        Current = history.Peek();
-        Current.Show();
+        else
+        {
+            Current = history.Peek();
+            Current.Show();
+        }
+  
         return Current;
     }
 
