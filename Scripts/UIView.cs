@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -36,16 +37,57 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
         UI.Escape();
     }
 
+    public void HideImmediately()
+    {
+        gameObject.SetActive(false);
+    }
+
+    public void ShowImmediately()
+    {
+        gameObject.SetActive(true);
+
+        if (firstSelect != null)
+        {
+            EventSystem.current.SetSelectedGameObject(firstSelect.gameObject);
+            return;
+        }
+    }
+
     public void Show()
     {
-        UI.EventManager.Push(GetShowAnimationEvent(),
-            OnStartShowAnimationEvent, OnFinishShowAnimationEvent);
+        OnStartShowAnimationEvent();
+
+        //Transparent Zero Setting
+        Sequence sequence = DOTween.Sequence();
+
+        foreach (var graphic in GetAllGraphics().ToList())
+        {
+            sequence.Insert(0, graphic.DOFade(0, 0));
+        }
+
+        sequence.OnComplete(() =>
+        {
+            //Push Show Animation
+            UI.EventManager.Push(GetShowAnimationEvent(),
+           () =>
+           {
+               ShowImmediately();
+           },
+           OnFinishShowAnimationEvent);
+        });
     }
 
     public void Hide()
     {
+        OnStartHideAnimationEvent();
+
         UI.EventManager.Push(GetHideAnimationEvent(),
-            OnStartHideAnimationEvent, OnFinishHideAnimationEvent);
+            null, 
+            ()=>
+            {
+                HideImmediately();
+                OnFinishHideAnimationEvent();
+            });
     }
 
     protected virtual void OnStartShowAnimationEvent()
@@ -70,14 +112,12 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
 
     protected virtual UIAnimationEventManager.EventParams[] GetHideAnimationEvent()
     {
-        return new UIAnimationEventManager.SetActiveEvent[]
-            { new UIAnimationEventManager.SetActiveEvent(gameObject,false) };
+        return UIAnimationEventManager.GetFade(GetAllGraphics(),0f,0.5f);
     }
 
     protected virtual UIAnimationEventManager.EventParams[] GetShowAnimationEvent()
     {
-        return new UIAnimationEventManager.SetActiveEvent[]
-            { new UIAnimationEventManager.SetActiveEvent(gameObject,true) };
+        return UIAnimationEventManager.GetFade(GetAllGraphics(), 1f, 0.5f);
     }
 
     private void OnDestroy()
@@ -145,30 +185,6 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
 
         Debug.LogError("Can't Found UIView List");
         return null;
-    }
-
-    public bool IsShowing()
-    {
-        return gameObject.activeSelf;
-    }
-
-    public void ShowImmediately()
-    {
-        gameObject.SetActive(true);
-
-        if(firstSelect != null)
-        {
-            EventSystem.current.SetSelectedGameObject(firstSelect.gameObject);
-            return;
-        }
-    }
-
-    public void SetAllAlpha(float value)
-    {
-        foreach (var graphic in graphics)
-        {
-            graphic.DOFade(value, 0);
-        }
     }
 
     public virtual void OnSubmit()

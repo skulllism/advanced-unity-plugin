@@ -6,15 +6,36 @@ public class UINavigation : UIView.IEventHandler
 {
     public interface IEventHandler
     {
-        void OnHide(UIView view);
-        void OnFinishShowAnimationEvent(UIView view);
+        void OnStartShow(UIView view);
+        void OnFinishShow(UIView view);
+        void OnStartHide(UIView view);
+        void OnFinishHide(UIView view);
+        void OnChangeView(UIView view);
     }
 
     public IEventHandler EventHandler { set; get; }
 
     public readonly Stack<UIView> history = new Stack<UIView>();
 
-    public UIView Current { private set; get; }
+    public UIView Current
+    {
+        set
+        {
+            if(current != null)
+            {
+                current.EventHandler = null;
+            }
+            current = value;
+            current.EventHandler = this;
+            EventHandler?.OnChangeView(current);
+        }
+        get
+        {
+            return current;
+        }
+    }
+
+    private UIView current;
 
     public UIView Push(UIView view)
     {
@@ -23,30 +44,37 @@ public class UINavigation : UIView.IEventHandler
             if(!view.isOverlay)
             {
                 Current.Hide();
-                Current.EventHandler = null;
             }
         }
 
         Current = view;
-        Current.EventHandler = this;
-        view.Show();
+
+        Current.Show();
 
         history.Push(view);
         return view;
     }
-
     public UIView Push(string pageName)
     {
         UIView page = UIView.Get(pageName);
         return Push(page);
     }
 
-    public UIView Pop()
+    public UIView Pop(bool hideImmediately = false, bool showImmediately = false)
     {
         if(Current != null)
         {
-            Current.Hide();
-            Current.EventHandler = null;
+            EventHandler?.OnStartHide(current);
+
+            if(hideImmediately)
+            {
+                current.HideImmediately();
+            }
+            else
+            {
+                Current.Hide();
+            }
+
             history.Pop();
         }
 
@@ -57,16 +85,31 @@ public class UINavigation : UIView.IEventHandler
         else
         {
             Current = history.Peek();
-            Current.EventHandler = this;
-            Current.Show();
+
+            EventHandler?.OnStartShow(current);
+            if(showImmediately)
+            {
+                current.ShowImmediately();
+            }
+            else
+            {
+                Current.Show();
+            }
         }
-  
+
         return Current;
+    }
+
+    public UIView Pop<T>() where T : UIView
+    {
+        UIView pop = Pop();
+
+        return pop is T ? pop : Pop<T>();
     }
 
     public UIView Pop(string pageName)
     {
-        UIView pop =  Pop();
+        UIView pop = Pop();
 
         return pop.name == pageName ? pop : Pop(pageName);
     }
@@ -79,18 +122,20 @@ public class UINavigation : UIView.IEventHandler
     }
     public void OnStartShowAnimationEvent(UIView view)
     {
+        EventHandler?.OnStartShow(current);
     }
     public void OnFinishShowAnimationEvent(UIView view)
     {
-        EventHandler?.OnFinishShowAnimationEvent(view);
+        EventHandler?.OnFinishShow(view);
     }
 
     public void OnStartHideAnimationEvent(UIView view)
     {
-        EventHandler?.OnHide(view);
+        EventHandler?.OnStartHide(current);
     }
 
     public void OnFinishHideAnimationEvent(UIView view)
     {
+        EventHandler?.OnFinishHide(view);
     }
 }
