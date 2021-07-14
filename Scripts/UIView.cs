@@ -9,6 +9,14 @@ using VaporWorld;
 
 public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandler
 {
+    public interface IEventHandler
+    {
+        void OnStartShowAnimationEvent(UIView view);
+        void OnFinishShowAnimationEvent(UIView view);
+        void OnStartHideAnimationEvent(UIView view);
+        void OnFinishHideAnimationEvent(UIView view);
+    }
+
     public bool isOverlay;
 
     public Graphic firstSelect;
@@ -17,69 +25,59 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
     
     private static List<UIView> views = new List<UIView>();
 
-    public Image panel;
+    public Image pannel;
 
     private UIManager UI;
 
+    public IEventHandler EventHandler { set; get; }
+
     public virtual void OnCancel()
     {
-        UI.Pop();
+        UI.Escape();
     }
-    public virtual void Hide()
+
+    public void Show()
     {
-        List<UIAnimationEventManager.FadeParams> list = new List<UIAnimationEventManager.FadeParams>();
-
-        Graphic[] graphics = GetAllGraphics();
-
-        foreach (var graphic in graphics)
-        {
-            if (panel != null && graphic == panel)
-            {
-                list.Add(new UIAnimationEventManager.FadeParams(panel, 0.0f, 0.5f, 0.25f));
-                continue;
-            }
-
-            list.Add(new UIAnimationEventManager.FadeParams(graphic, 0.0f, 0.5f));
-        }
-
-        UI.EventManager.Queue.Enqueue(new UIAnimationEventManager.UIAnimationEvent(list.ToArray(),
-            () =>
-            {
-                Time.timeScale = 1f;
-            },
-             () =>
-             {
-                 HideImmediately();
-             }));
+        UI.EventManager.Push(GetShowAnimationEvent(),
+            OnStartShowAnimationEvent, OnFinishShowAnimationEvent);
     }
-    public virtual void Show()
+
+    public void Hide()
     {
-        List<UIAnimationEventManager.FadeParams> list = new List<UIAnimationEventManager.FadeParams>();
+        UI.EventManager.Push(GetHideAnimationEvent(),
+            OnStartHideAnimationEvent, OnFinishHideAnimationEvent);
+    }
 
-        SetAllAlpha(0);
+    protected virtual void OnStartShowAnimationEvent()
+    {
+        EventHandler?.OnStartShowAnimationEvent(this);
+    }
 
-        Graphic[] graphics = GetAllGraphics();
+    protected virtual void OnFinishShowAnimationEvent()
+    {
+        EventHandler?.OnFinishShowAnimationEvent(this);
+    }
 
-        foreach (var graphic in graphics)
-        {
-            if (panel != null && graphic == panel)
-            {
-                list.Add(new UIAnimationEventManager.FadeParams(panel, 0.5f, 0.5f, 0f));
-                continue;
-            }
+    protected virtual void OnStartHideAnimationEvent()
+    {
+        EventHandler?.OnStartHideAnimationEvent(this);
+    }
 
-            list.Add(new UIAnimationEventManager.FadeParams(graphic, 1f, 0.5f, 0.25f));
-        }
+    protected virtual void OnFinishHideAnimationEvent()
+    {
+        EventHandler?.OnFinishHideAnimationEvent(this);
+    }
 
-        UI.EventManager.Queue.Enqueue(new UIAnimationEventManager.UIAnimationEvent(list.ToArray(),
-            () =>
-            {
-                ShowImmediately();
-            },
-            () =>
-            {
-                Time.timeScale = 0f;
-            }));
+    protected virtual UIAnimationEventManager.EventParams[] GetHideAnimationEvent()
+    {
+        return new UIAnimationEventManager.SetActiveEvent[]
+            { new UIAnimationEventManager.SetActiveEvent(gameObject,false) };
+    }
+
+    protected virtual UIAnimationEventManager.EventParams[] GetShowAnimationEvent()
+    {
+        return new UIAnimationEventManager.SetActiveEvent[]
+            { new UIAnimationEventManager.SetActiveEvent(gameObject,true) };
     }
 
     private void OnDestroy()
@@ -92,8 +90,9 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
         transform.localPosition = Vector3.zero;
         views.Add(this);
         graphics = GetComponentsInChildren<Graphic>();
-        HideImmediately();
+        gameObject.SetActive(false);
     }
+
     public Graphic[] GetAllGraphics()
     {
         return graphics;
@@ -170,11 +169,6 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
         {
             graphic.DOFade(value, 0);
         }
-    }
-
-    public void HideImmediately()
-    {
-        gameObject.SetActive(false);
     }
 
     public virtual void OnSubmit()

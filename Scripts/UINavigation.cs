@@ -2,40 +2,43 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UINavigation
+public class UINavigation : UIView.IEventHandler
 {
+    public interface IEventHandler
+    {
+        void OnHide(UIView view);
+        void OnFinishShowAnimationEvent(UIView view);
+    }
+
+    public IEventHandler EventHandler { set; get; }
+
     public readonly Stack<UIView> history = new Stack<UIView>();
 
     public UIView Current { private set; get; }
 
-    public UIView Push(UIView view,bool hideAnimation = false)
+    public UIView Push(UIView view)
     {
         if (Current != null)
         {
             if(!view.isOverlay)
             {
-                if(hideAnimation)
-                {
-                    Current.Hide();
-                }
-                else
-                {
-                    Current.HideImmediately();
-                }
+                Current.Hide();
+                Current.EventHandler = null;
             }
         }
 
         Current = view;
+        Current.EventHandler = this;
         view.Show();
 
         history.Push(view);
         return view;
     }
 
-    public UIView Push(string pageName, bool hideAnimation = false)
+    public UIView Push(string pageName)
     {
         UIView page = UIView.Get(pageName);
-        return Push(page,hideAnimation);
+        return Push(page);
     }
 
     public UIView Pop()
@@ -43,6 +46,7 @@ public class UINavigation
         if(Current != null)
         {
             Current.Hide();
+            Current.EventHandler = null;
             history.Pop();
         }
 
@@ -53,6 +57,7 @@ public class UINavigation
         else
         {
             Current = history.Peek();
+            Current.EventHandler = this;
             Current.Show();
         }
   
@@ -71,5 +76,21 @@ public class UINavigation
         UIView pop = Pop();
 
         return history.Count == 1 ? pop : PopToRoot();
+    }
+    public void OnStartShowAnimationEvent(UIView view)
+    {
+    }
+    public void OnFinishShowAnimationEvent(UIView view)
+    {
+        EventHandler?.OnFinishShowAnimationEvent(view);
+    }
+
+    public void OnStartHideAnimationEvent(UIView view)
+    {
+        EventHandler?.OnHide(view);
+    }
+
+    public void OnFinishHideAnimationEvent(UIView view)
+    {
     }
 }
