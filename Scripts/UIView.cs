@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using VaporWorld;
@@ -29,7 +30,7 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
 
     public Image pannel;
 
-    private UIManager UI;
+    protected UIManager UI;
 
     public IEventHandler EventHandler { set; get; }
 
@@ -152,11 +153,21 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
 
     protected virtual UIAnimationEventManager.EventParams[] GetHideAnimationEvent()
     {
+        if(pannel != null)
+        {
+            return UIAnimationEventManager.GetUsePannelFadeOut(GetAllGraphics(), pannel);
+        }
+
         return UIAnimationEventManager.GetFade(GetAllGraphics(),0f,0.5f);
     }
 
     protected virtual UIAnimationEventManager.EventParams[] GetShowAnimationEvent()
     {
+        if (pannel != null)
+        {
+            return UIAnimationEventManager.GetUsePannelFadeIn(GetAllGraphics(), pannel);
+        }
+
         return UIAnimationEventManager.GetFade(GetAllGraphics(), 1f, 0.5f);
     }
 
