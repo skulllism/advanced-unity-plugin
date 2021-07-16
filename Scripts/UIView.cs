@@ -19,6 +19,7 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
     }
 
     public bool isOverlay;
+    public bool useTimeScale;
 
     public Graphic firstSelect;
 
@@ -37,26 +38,38 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
         UI.Escape();
     }
 
-    public void HideImmediately()
+    public void HideImmediately(Action onStart, Action onFinish)
     {
-        gameObject.SetActive(false);
+        UI.AnimationEventManager.Push(UIAnimationEventManager.GetFade(GetAllGraphics(), 0, 0),
+            () =>
+            {
+                onStart?.Invoke();
+                OnStartHideAnimationEvent();
+            },
+              () =>
+              {
+                  onFinish?.Invoke();
+                  OnFinishHideAnimationEvent();
+              });
     }
 
-    public void ShowImmediately()
+    public void ShowImmediately(Action onStart, Action onFinish)
     {
-        gameObject.SetActive(true);
-
-        if (firstSelect != null)
-        {
-            EventSystem.current.SetSelectedGameObject(firstSelect.gameObject);
-            return;
-        }
+        UI.AnimationEventManager.Push(UIAnimationEventManager.GetFade(GetAllGraphics(), 1, 0),
+            ()=>
+            {
+                onStart?.Invoke();
+                OnStartShowAnimationEvent();
+            },
+         () =>
+         {
+             onFinish?.Invoke();
+             OnFinishShowAnimationEvent();
+         });     
     }
 
-    public void Show()
+    public void Show(Action onStart, Action onFinish)
     {
-        OnStartShowAnimationEvent();
-
         //Transparent Zero Setting
         Sequence sequence = DOTween.Sequence();
 
@@ -68,36 +81,61 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
         sequence.OnComplete(() =>
         {
             //Push Show Animation
-            UI.EventManager.Push(GetShowAnimationEvent(),
+            UI.AnimationEventManager.Push(GetShowAnimationEvent(),
            () =>
            {
-               ShowImmediately();
+               onStart?.Invoke();
+               OnStartShowAnimationEvent();
            },
-           OnFinishShowAnimationEvent);
+           ()=>
+           {
+               onFinish?.Invoke();
+               OnFinishShowAnimationEvent();
+           });
         });
     }
 
-    public void Hide()
+    public void Hide(Action onStart, Action onFinish)
     {
-        OnStartHideAnimationEvent();
+        if (useTimeScale)
+        {
+            Time.timeScale = 1f;
+        }
 
-        UI.EventManager.Push(GetHideAnimationEvent(),
-            null, 
+        UI.AnimationEventManager.Push(GetHideAnimationEvent(),
             ()=>
             {
-                HideImmediately();
+                onStart?.Invoke();
+                OnStartHideAnimationEvent();
+            },
+            ()=>
+            {
+                onFinish?.Invoke();
                 OnFinishHideAnimationEvent();
             });
     }
 
     protected virtual void OnStartShowAnimationEvent()
     {
+        gameObject.SetActive(true);
+
+        if (firstSelect != null)
+        {
+            EventSystem.current.SetSelectedGameObject(firstSelect.gameObject);
+            return;
+        }
+
         EventHandler?.OnStartShowAnimationEvent(this);
     }
 
     protected virtual void OnFinishShowAnimationEvent()
     {
         EventHandler?.OnFinishShowAnimationEvent(this);
+
+        if(useTimeScale)
+        {
+            Time.timeScale = 0;
+        }
     }
 
     protected virtual void OnStartHideAnimationEvent()
@@ -108,6 +146,8 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
     protected virtual void OnFinishHideAnimationEvent()
     {
         EventHandler?.OnFinishHideAnimationEvent(this);
+        EventHandler = null;
+        gameObject.SetActive(false);
     }
 
     protected virtual UIAnimationEventManager.EventParams[] GetHideAnimationEvent()
