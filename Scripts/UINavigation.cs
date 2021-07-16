@@ -51,21 +51,22 @@ public class UINavigation : UIView.IEventHandler
         return current;
     }
 
-    public UIView Push(UIView view, bool hideImmediately, bool showImmediately, Action onStart = null, Action onFinish = null)
+    public void Push(UIView view, bool hideImmediately, bool showImmediately, Action onStart = null, Action onFinish = null)
     {
-        if (Current != null)
+        if (Current != null && !view.isOverlay)
         {
-            if(!view.isOverlay)
-            {
-                Hide(current, hideImmediately, onStart, onFinish);
-            }
+            Hide(current, hideImmediately, onStart,
+                () =>
+                {
+                    Show(current, showImmediately, null, onFinish);
+                });
+
+            Push(view);
+            return;
         }
 
         Push(view);
-
         Show(current, showImmediately, onStart, onFinish);
-
-        return view;
     }
     public UIView Push(string pageName)
     {
@@ -110,21 +111,30 @@ public class UINavigation : UIView.IEventHandler
         }
     }
 
-    public UIView Pop(bool hideImmediately , bool showImmediately, Action onStart = null, Action onFinish = null)
+    public void Pop(bool hideImmediately , bool showImmediately, Action onStart = null, Action onFinish = null)
     {
+        UIView view = null;
+
         if (Current != null)
         {
-            Hide(current, hideImmediately, onStart, onFinish);
+            Hide(current, hideImmediately, onStart, 
+                ()=>
+                {
+                    if (view != null)
+                    {
+                        Show(current, showImmediately, null, onFinish);
+                    }
+                });
+            view = Pop();
+            return;
         }
 
-        UIView view = Pop();
+        view = Pop();
 
         if (view != null)
         {
-            Show(current, showImmediately, onStart, onFinish);
+            Show(current, showImmediately, null, onFinish);
         }
-
-        return view;
     }
 
     public UIView Pop()
@@ -160,6 +170,33 @@ public class UINavigation : UIView.IEventHandler
         UIView pop = Pop();
 
         return pop.name == pageName ? pop : Pop(pageName);
+    }
+
+    public void PopToRoot(bool hideImmediately, bool showImmediately, Action onStart = null, Action onFinish = null)
+    {
+        UIView view = null;
+        if (Current != null)
+        {
+            Hide(current, hideImmediately, onStart,
+                () =>
+                {
+                    view = PopToRoot();
+
+                    if (view != null)
+                    {
+                        Show(current, showImmediately, null, onFinish);
+                    }
+                });
+
+            return;
+        }
+
+        view = PopToRoot();
+
+        if (view != null)
+        {
+            Show(current, showImmediately, null, onFinish);
+        }
     }
 
     public UIView PopToRoot()
