@@ -180,7 +180,6 @@ public class UINavigation : UIView.IEventHandler
             Hide(current, hideImmediately, onStart,
                 () =>
                 {
-                    view = PopToRoot();
 
                     if (view != null)
                     {
@@ -188,6 +187,7 @@ public class UINavigation : UIView.IEventHandler
                     }
                 });
 
+            view = PopToRoot();
             return;
         }
 
