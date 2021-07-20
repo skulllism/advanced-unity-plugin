@@ -286,4 +286,8 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
     public virtual void OnUnresister()
     {
     }
+
+    public virtual void OnGameOver(InventoryList reconsitutionItems, string KillerSpawnPointID)
+    {
+    }
 }
