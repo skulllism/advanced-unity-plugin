@@ -23,9 +23,10 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
     public bool useTimeScale;
 
     public Graphic firstSelect;
+    //test
+    public bool isGraphicsAll = true;
+    public Graphic[] graphics;
 
-    private Graphic[] graphics;
-    
     private static List<UIView> views = new List<UIView>();
 
     public Image pannel;
@@ -57,7 +58,7 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
     public void ShowImmediately(Action onStart, Action onFinish)
     {
         UI.AnimationEventManager.Push(UIAnimationEventManager.GetFade(GetAllGraphics(), 1, 0),
-            ()=>
+            () =>
             {
                 onStart?.Invoke();
                 OnStartShowAnimationEvent();
@@ -66,7 +67,7 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
          {
              onFinish?.Invoke();
              OnFinishShowAnimationEvent();
-         });     
+         });
     }
 
     public void Show(Action onStart, Action onFinish)
@@ -88,7 +89,7 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
                onStart?.Invoke();
                OnStartShowAnimationEvent();
            },
-           ()=>
+           () =>
            {
                onFinish?.Invoke();
                OnFinishShowAnimationEvent();
@@ -104,12 +105,12 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
         }
 
         UI.AnimationEventManager.Push(GetHideAnimationEvent(),
-            ()=>
+            () =>
             {
                 onStart?.Invoke();
                 OnStartHideAnimationEvent();
             },
-            ()=>
+            () =>
             {
                 onFinish?.Invoke();
                 OnFinishHideAnimationEvent();
@@ -133,7 +134,7 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
     {
         EventHandler?.OnFinishShowAnimationEvent(this);
 
-        if(useTimeScale)
+        if (useTimeScale)
         {
             Time.timeScale = 0;
         }
@@ -153,12 +154,12 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
 
     protected virtual UIAnimationEventManager.EventParams[] GetHideAnimationEvent()
     {
-        if(pannel != null)
+        if (pannel != null)
         {
             return UIAnimationEventManager.GetUsePannelFadeOut(GetAllGraphics(), pannel);
         }
 
-        return UIAnimationEventManager.GetFade(GetAllGraphics(),0f,0.5f);
+        return UIAnimationEventManager.GetFade(GetAllGraphics(), 0f, 0.5f);
     }
 
     protected virtual UIAnimationEventManager.EventParams[] GetShowAnimationEvent()
@@ -172,15 +173,25 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
     }
 
     private void OnDestroy()
-	{
+    {
         views.Remove(this);
-	}
+    }
 
     private void Awake()
     {
         transform.localPosition = Vector3.zero;
         views.Add(this);
-        graphics = GetComponentsInChildren<Graphic>();
+        if (isGraphicsAll)
+        {
+            graphics = GetComponentsInChildren<Graphic>();
+        }
+        else
+        {
+            if(graphics == null)
+            {
+                graphics = new Graphic[0];
+            }
+        }
         gameObject.SetActive(false);
     }
 
@@ -193,7 +204,7 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
     {
         foreach (var view in views)
         {
-            if(view.name == pageName)
+            if (view.name == pageName)
             {
                 return view;
             }
@@ -223,7 +234,7 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
 
         foreach (var view in views)
         {
-            if(view is T)
+            if (view is T)
             {
                 results.Add(view as T);
             }
