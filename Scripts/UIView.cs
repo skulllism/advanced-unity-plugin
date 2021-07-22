@@ -176,7 +176,7 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
         views.Remove(this);
 	}
 
-    private void Awake()
+    protected virtual void Awake()
     {
         transform.localPosition = Vector3.zero;
         views.Add(this);
