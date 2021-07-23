@@ -32,11 +32,14 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
 
     protected UIManager UI;
 
+    public UnityEvent onCancel;
+    public UnityEvent onSubmit;
+
     public IEventHandler EventHandler { set; get; }
 
     public virtual void OnCancel()
     {
-        UI.Escape();
+        onCancel?.Invoke();
     }
 
     public void HideImmediately(Action onStart, Action onFinish)
@@ -186,7 +189,7 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
 
     public Graphic[] GetAllGraphics()
     {
-        return graphics;
+        return GetComponentsInChildren<Graphic>();
     }
 
     public static UIView Get(string pageName)
@@ -240,6 +243,7 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
 
     public virtual void OnSubmit()
     {
+        onSubmit?.Invoke();
     }
 
     public virtual void OnLeftBumper()

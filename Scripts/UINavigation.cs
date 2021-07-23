@@ -113,25 +113,24 @@ public class UINavigation : UIView.IEventHandler
 
     public void Pop(bool hideImmediately , bool showImmediately, Action onStart = null, Action onFinish = null)
     {
-        UIView view = null;
-
         if (Current != null)
         {
             Hide(current, hideImmediately, onStart, 
                 ()=>
                 {
-                    if (view != null)
+                    if (current != null)
                     {
                         Show(current, showImmediately, null, onFinish);
                     }
                 });
-            view = Pop();
+
+            Pop();
             return;
         }
 
-        view = Pop();
+        Pop();
 
-        if (view != null)
+        if (current != null)
         {
             Show(current, showImmediately, null, onFinish);
         }
@@ -174,26 +173,24 @@ public class UINavigation : UIView.IEventHandler
 
     public void PopToRoot(bool hideImmediately, bool showImmediately, Action onStart = null, Action onFinish = null)
     {
-        UIView view = null;
         if (Current != null)
         {
             Hide(current, hideImmediately, onStart,
                 () =>
                 {
-
-                    if (view != null)
+                    if (current != null)
                     {
                         Show(current, showImmediately, null, onFinish);
                     }
                 });
 
-            view = PopToRoot();
+            PopToRoot();
             return;
         }
 
-        view = PopToRoot();
+        PopToRoot();
 
-        if (view != null)
+        if (current != null)
         {
             Show(current, showImmediately, null, onFinish);
         }
