@@ -9,6 +9,16 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using VaporWorld;
 
+public class VaporWorldGraphic
+{
+    public Graphic graphic;
+    public float maxTransparent;
+    public VaporWorldGraphic(Graphic graphic)
+    {
+        this.graphic = graphic;
+        maxTransparent = graphic.color.a;
+    }
+}
 public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandler
 {
     public interface IEventHandler
@@ -23,13 +33,13 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
     public bool useTimeScale;
 
     public Graphic firstSelect;
-    //test
-    public bool isGraphicsAll = true;
-    public Graphic[] graphics;
+    public List<VaporWorldGraphic> graphics = new List<VaporWorldGraphic>();
 
     private static List<UIView> views = new List<UIView>();
 
     public Image pannel;
+    [HideInInspector]
+    public VaporWorldGraphic Pannel { private set; get; }
 
     protected UIManager UI;
 
@@ -77,7 +87,7 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
 
         foreach (var graphic in GetAllGraphics().ToList())
         {
-            sequence.Insert(0, graphic.DOFade(0, 0));
+            sequence.Insert(0, graphic.graphic.DOFade(graphic.maxTransparent * 0, 0));
         }
 
         sequence.OnComplete(() =>
@@ -154,9 +164,9 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
 
     protected virtual UIAnimationEventManager.EventParams[] GetHideAnimationEvent()
     {
-        if (pannel != null)
+        if (Pannel != null)
         {
-            return UIAnimationEventManager.GetUsePannelFadeOut(GetAllGraphics(), pannel);
+            return UIAnimationEventManager.GetUsePannelFadeOut(GetAllGraphics(), Pannel);
         }
 
         return UIAnimationEventManager.GetFade(GetAllGraphics(), 0f, 0.5f);
@@ -164,9 +174,9 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
 
     protected virtual UIAnimationEventManager.EventParams[] GetShowAnimationEvent()
     {
-        if (pannel != null)
+        if (Pannel != null)
         {
-            return UIAnimationEventManager.GetUsePannelFadeIn(GetAllGraphics(), pannel);
+            return UIAnimationEventManager.GetUsePannelFadeIn(GetAllGraphics(), Pannel);
         }
 
         return UIAnimationEventManager.GetFade(GetAllGraphics(), 1f, 0.5f);
@@ -181,23 +191,22 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
     {
         transform.localPosition = Vector3.zero;
         views.Add(this);
-        if (isGraphicsAll)
+        if(pannel != null)
         {
-            graphics = GetComponentsInChildren<Graphic>();
+            Pannel = new VaporWorldGraphic(pannel);
         }
-        else
+        Graphic[] temp = GetComponentsInChildren<Graphic>();
+        foreach (var graphic in temp)
         {
-            if(graphics == null)
-            {
-                graphics = new Graphic[0];
-            }
+            graphics.Add(new VaporWorldGraphic(graphic));
         }
+
         gameObject.SetActive(false);
     }
 
-    public Graphic[] GetAllGraphics()
+    public VaporWorldGraphic[] GetAllGraphics()
     {
-        return graphics;
+        return graphics.ToArray();
     }
 
     public static UIView Get(string pageName)
