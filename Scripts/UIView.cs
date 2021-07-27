@@ -38,36 +38,59 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
     private static List<UIView> views = new List<UIView>();
 
     public Image pannel;
-    [HideInInspector]
     public VaporWorldGraphic Pannel { private set; get; }
+    private UIAnimationEvent[] animationEvents;
 
     protected UIManager UI;
+
+    public UnityEvent onCancel;
+    public UnityEvent onSubmit;
 
     public IEventHandler EventHandler { set; get; }
 
     public virtual void OnCancel()
     {
-        UI.Escape();
+        onCancel?.Invoke();
     }
-
     public void HideImmediately(Action onStart, Action onFinish)
     {
-        UI.AnimationEventManager.Push(UIAnimationEventManager.GetFade(GetAllGraphics(), 0, 0),
-            () =>
-            {
-                onStart?.Invoke();
-                OnStartHideAnimationEvent();
-            },
-              () =>
-              {
-                  onFinish?.Invoke();
-                  OnFinishHideAnimationEvent();
-              });
+        List<Sequence> list = new List<Sequence>();
+
+        foreach (var animationEvent in animationEvents)
+        {
+            list.Add(animationEvent.HideSequences(0));
+        }
+
+        Hide(list, onStart, onFinish);
     }
 
     public void ShowImmediately(Action onStart, Action onFinish)
     {
-        UI.AnimationEventManager.Push(UIAnimationEventManager.GetFade(GetAllGraphics(), 1, 0),
+        List<Sequence> list = new List<Sequence>();
+
+        foreach (var animationEvent in animationEvents)
+        {
+            list.Add(animationEvent.ShowSequences(0));
+        }
+
+        Show(list, onStart, onFinish);
+    }
+
+    public void Show(Action onStart, Action onFinish)
+    {
+        List<Sequence> list = new List<Sequence>();
+
+        foreach (var animationEvent in animationEvents)
+        {
+            list.Add(animationEvent.ShowSequences());
+        }
+
+        Show(list, onStart, onFinish);
+    }
+
+    private void Show(List<Sequence> list, Action onStart, Action onFinish)
+    {
+        UI.AnimationEventManager.Push(new UIAnimationEventManager.SequenceStream(list,
             () =>
             {
                 onStart?.Invoke();
@@ -77,34 +100,21 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
          {
              onFinish?.Invoke();
              OnFinishShowAnimationEvent();
-         });
+         }));
     }
-
-    public void Show(Action onStart, Action onFinish)
+    private void Hide(List<Sequence> list, Action onStart, Action onFinish)
     {
-        //Transparent Zero Setting
-        Sequence sequence = DOTween.Sequence();
-
-        foreach (var graphic in GetAllGraphics().ToList())
-        {
-            sequence.Insert(0, graphic.graphic.DOFade(graphic.maxTransparent * 0, 0));
-        }
-
-        sequence.OnComplete(() =>
-        {
-            //Push Show Animation
-            UI.AnimationEventManager.Push(GetShowAnimationEvent(),
-           () =>
-           {
-               onStart?.Invoke();
-               OnStartShowAnimationEvent();
-           },
+        UI.AnimationEventManager.Push(new UIAnimationEventManager.SequenceStream(list,
+         () =>
+         {
+             onStart?.Invoke();
+             OnStartHideAnimationEvent();
+         },
            () =>
            {
                onFinish?.Invoke();
-               OnFinishShowAnimationEvent();
-           });
-        });
+               OnFinishHideAnimationEvent();
+           }));
     }
 
     public void Hide(Action onStart, Action onFinish)
@@ -114,17 +124,14 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
             Time.timeScale = 1f;
         }
 
-        UI.AnimationEventManager.Push(GetHideAnimationEvent(),
-            () =>
-            {
-                onStart?.Invoke();
-                OnStartHideAnimationEvent();
-            },
-            () =>
-            {
-                onFinish?.Invoke();
-                OnFinishHideAnimationEvent();
-            });
+        List<Sequence> list = new List<Sequence>();
+
+        foreach (var animationEvent in animationEvents)
+        {
+            list.Add(animationEvent.HideSequences());
+        }
+
+        Hide(list, onStart, onFinish);
     }
 
     protected virtual void OnStartShowAnimationEvent()
@@ -162,36 +169,11 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
         gameObject.SetActive(false);
     }
 
-    protected virtual UIAnimationEventManager.EventParams[] GetHideAnimationEvent()
-    {
-        if (Pannel != null)
-        {
-            return UIAnimationEventManager.GetUsePannelFadeOut(GetAllGraphics(), Pannel);
-        }
-
-        return UIAnimationEventManager.GetFade(GetAllGraphics(), 0f, 0.5f);
-    }
-
-    protected virtual UIAnimationEventManager.EventParams[] GetShowAnimationEvent()
-    {
-        if (Pannel != null)
-        {
-            return UIAnimationEventManager.GetUsePannelFadeIn(GetAllGraphics(), Pannel);
-        }
-
-        return UIAnimationEventManager.GetFade(GetAllGraphics(), 1f, 0.5f);
-    }
-
-    private void OnDestroy()
-    {
-        views.Remove(this);
-    }
-
-    private void Awake()
+    protected virtual void Awake()
     {
         transform.localPosition = Vector3.zero;
         views.Add(this);
-        if(pannel != null)
+        if (pannel != null)
         {
             Pannel = new VaporWorldGraphic(pannel);
         }
@@ -200,8 +182,12 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
         {
             graphics.Add(new VaporWorldGraphic(graphic));
         }
+        animationEvents = GetComponentsInChildren<UIAnimationEvent>();
+    }
 
-        gameObject.SetActive(false);
+    private void OnDestroy()
+    {
+        views.Remove(this);
     }
 
     public VaporWorldGraphic[] GetAllGraphics()
@@ -260,6 +246,7 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
 
     public virtual void OnSubmit()
     {
+        onSubmit?.Invoke();
     }
 
     public virtual void OnLeftBumper()
@@ -276,7 +263,13 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
 
     public virtual void OnSceneInitialized(IngameScene ingameScene)
     {
+        Initialize(ingameScene);
+    }
+
+    private void Initialize(IngameScene ingameScene)
+    {
         UI = ingameScene.UI;
+        HideImmediately(null, null);
     }
 
     public virtual void OnPlayerInitialzed(Player player)
