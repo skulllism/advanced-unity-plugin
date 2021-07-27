@@ -33,12 +33,8 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
     public bool useTimeScale;
 
     public Graphic firstSelect;
-    public List<VaporWorldGraphic> graphics = new List<VaporWorldGraphic>();
-
     private static List<UIView> views = new List<UIView>();
 
-    public Image pannel;
-    public VaporWorldGraphic Pannel { private set; get; }
     private UIAnimationEvent[] animationEvents;
 
     protected UIManager UI;
@@ -173,26 +169,17 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
     {
         transform.localPosition = Vector3.zero;
         views.Add(this);
-        if (pannel != null)
-        {
-            Pannel = new VaporWorldGraphic(pannel);
-        }
-        Graphic[] temp = GetComponentsInChildren<Graphic>();
-        foreach (var graphic in temp)
-        {
-            graphics.Add(new VaporWorldGraphic(graphic));
-        }
+
         animationEvents = GetComponentsInChildren<UIAnimationEvent>();
+        if(animationEvents == null)
+        {
+            animationEvents = new UIAnimationEvent[0];
+        }
     }
 
     private void OnDestroy()
     {
         views.Remove(this);
-    }
-
-    public VaporWorldGraphic[] GetAllGraphics()
-    {
-        return graphics.ToArray();
     }
 
     public static UIView Get(string pageName)
