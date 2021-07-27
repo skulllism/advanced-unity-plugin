@@ -9,6 +9,16 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using VaporWorld;
 
+public class VaporWorldGraphic
+{
+    public Graphic graphic;
+    public float maxTransparent;
+    public VaporWorldGraphic(Graphic graphic)
+    {
+        this.graphic = graphic;
+        maxTransparent = graphic.color.a;
+    }
+}
 public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandler
 {
     public interface IEventHandler
@@ -23,7 +33,6 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
     public bool useTimeScale;
 
     public Graphic firstSelect;
-
     private static List<UIView> views = new List<UIView>();
 
     private UIAnimationEvent[] animationEvents;
@@ -138,7 +147,7 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
     {
         EventHandler?.OnFinishShowAnimationEvent(this);
 
-        if(useTimeScale)
+        if (useTimeScale)
         {
             Time.timeScale = 0;
         }
@@ -162,17 +171,22 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
         views.Add(this);
 
         animationEvents = GetComponentsInChildren<UIAnimationEvent>();
+        if(animationEvents == null)
+        {
+            animationEvents = new UIAnimationEvent[0];
+        }
     }
 
     private void OnDestroy()
-	{
+    {
         views.Remove(this);
-	}
+    }
+
     public static UIView Get(string pageName)
     {
         foreach (var view in views)
         {
-            if(view.name == pageName)
+            if (view.name == pageName)
             {
                 return view;
             }
@@ -202,7 +216,7 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
 
         foreach (var view in views)
         {
-            if(view is T)
+            if (view is T)
             {
                 results.Add(view as T);
             }
