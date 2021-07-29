@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class UINavigation : UIView.IEventHandler
 {
     public interface IEventHandler
     {
-
         void OnStartShow(UIView view);
         void OnFinishShow(UIView view);
         void OnStartHide(UIView view);
@@ -164,11 +164,32 @@ public class UINavigation : UIView.IEventHandler
         return pop is T ? pop : Pop<T>();
     }
 
-    public UIView Pop(string pageName)
+    public UIView PopTo(string viewName)
     {
         UIView pop = Pop();
 
-        return pop.name == pageName ? pop : Pop(pageName);
+        return pop.name == viewName ? pop : PopTo(viewName);
+    }
+
+    public UIView Pop(string viewName)
+    {
+        if(!history.Contains(UIView.Get(viewName)))
+        { 
+            return null;
+        }
+
+        List<UIView> list = history.ToList();
+
+        foreach (var item in list)
+        {
+            if(item.name == viewName)
+            {
+                list.Remove(item);
+                break;
+            }
+        }
+
+        return null;
     }
 
     public void PopToRoot(bool hideImmediately, bool showImmediately, Action onStart = null, Action onFinish = null)

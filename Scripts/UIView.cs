@@ -54,7 +54,7 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
 
         foreach (var animationEvent in animationEvents)
         {
-            list.Add(animationEvent.HideSequences(0));
+            list.Add(animationEvent.HideSequences(0,0));
         }
 
         Hide(list, onStart, onFinish);
@@ -66,7 +66,7 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
 
         foreach (var animationEvent in animationEvents)
         {
-            list.Add(animationEvent.ShowSequences(0));
+            list.Add(animationEvent.ShowSequences(0, 0));
         }
 
         Show(list, onStart, onFinish);
