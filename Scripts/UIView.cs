@@ -48,32 +48,14 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
     {
         onCancel?.Invoke();
     }
-    public void HideImmediately(Action onStart, Action onFinish)
-    {
-        List<Sequence> list = new List<Sequence>();
 
-        foreach (var animationEvent in animationEvents)
+    public List<Sequence> Show()
+    {
+        if (useTimeScale)
         {
-            list.Add(animationEvent.HideSequences(0,0));
+            Time.timeScale = 1f;
         }
 
-        Hide(list, onStart, onFinish);
-    }
-
-    public void ShowImmediately(Action onStart, Action onFinish)
-    {
-        List<Sequence> list = new List<Sequence>();
-
-        foreach (var animationEvent in animationEvents)
-        {
-            list.Add(animationEvent.ShowSequences(0, 0));
-        }
-
-        Show(list, onStart, onFinish);
-    }
-
-    public void Show(Action onStart, Action onFinish)
-    {
         List<Sequence> list = new List<Sequence>();
 
         foreach (var animationEvent in animationEvents)
@@ -81,39 +63,27 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
             list.Add(animationEvent.ShowSequences());
         }
 
-        Show(list, onStart, onFinish);
+        return list;
     }
 
-    private void Show(List<Sequence> list, Action onStart, Action onFinish)
+    public List<Sequence> Show(float insertTime, float duration)
     {
-        UI.AnimationEventManager.Push(new UIAnimationEventManager.SequenceStream(list,
-            () =>
-            {
-                onStart?.Invoke();
-                OnStartShowAnimationEvent();
-            },
-         () =>
-         {
-             onFinish?.Invoke();
-             OnFinishShowAnimationEvent();
-         }));
-    }
-    private void Hide(List<Sequence> list, Action onStart, Action onFinish)
-    {
-        UI.AnimationEventManager.Push(new UIAnimationEventManager.SequenceStream(list,
-         () =>
-         {
-             onStart?.Invoke();
-             OnStartHideAnimationEvent();
-         },
-           () =>
-           {
-               onFinish?.Invoke();
-               OnFinishHideAnimationEvent();
-           }));
+        if (useTimeScale)
+        {
+            Time.timeScale = 1f;
+        }
+
+        List<Sequence> list = new List<Sequence>();
+
+        foreach (var animationEvent in animationEvents)
+        {
+            list.Add(animationEvent.ShowSequences(insertTime, duration));
+        }
+
+        return list;
     }
 
-    public void Hide(Action onStart, Action onFinish)
+    public List<Sequence> Hide()
     {
         if (useTimeScale)
         {
@@ -125,12 +95,30 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
         foreach (var animationEvent in animationEvents)
         {
             list.Add(animationEvent.HideSequences());
+
         }
 
-        Hide(list, onStart, onFinish);
+        return list;
     }
 
-    protected virtual void OnStartShowAnimationEvent()
+    public List<Sequence> Hide(float insertTime, float duration)
+    {
+        if (useTimeScale)
+        {
+            Time.timeScale = 1f;
+        }
+
+        List<Sequence> list = new List<Sequence>();
+
+        foreach (var animationEvent in animationEvents)
+        {
+            list.Add(animationEvent.HideSequences(insertTime,duration));
+        }
+
+        return list;
+    }
+
+    public virtual void OnStartShowAnimationEvent()
     {
         gameObject.SetActive(true);
 
@@ -143,7 +131,7 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
         EventHandler?.OnStartShowAnimationEvent(this);
     }
 
-    protected virtual void OnFinishShowAnimationEvent()
+    public virtual void OnFinishShowAnimationEvent()
     {
         EventHandler?.OnFinishShowAnimationEvent(this);
 
@@ -153,12 +141,12 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
         }
     }
 
-    protected virtual void OnStartHideAnimationEvent()
+    public virtual void OnStartHideAnimationEvent()
     {
         EventHandler?.OnStartHideAnimationEvent(this);
     }
 
-    protected virtual void OnFinishHideAnimationEvent()
+    public virtual void OnFinishHideAnimationEvent()
     {
         EventHandler?.OnFinishHideAnimationEvent(this);
         EventHandler = null;
@@ -206,7 +194,7 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
             }
         }
 
-        Debug.Log("Not found page by type: " + typeof(T));
+        Debug.Log("Not found view by type: " + typeof(T));
         return null;
     }
 
@@ -256,7 +244,7 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
     private void Initialize(IngameScene ingameScene)
     {
         UI = ingameScene.UI;
-        HideImmediately(null, null);
+        UI.PushEvent(new UIEventHide(true, this));
     }
 
     public virtual void OnPlayerInitialzed(Player player)

@@ -43,97 +43,33 @@ public class UINavigation : UIView.IEventHandler
 
     private UIView current;
 
+    public List<UIView> GetCurrentShowing()
+    {
+        List<UIView> list = new List<UIView>();
+
+        foreach (var view in history)
+        {
+            if(view.gameObject.activeSelf)
+            {
+                list.Add(view);
+            }
+        }
+
+        return list;
+    }
+
     public UIView Push(UIView view)
     {
         Current = view;
         history.Push(view);
-        Debug.Log("Push / Current = " + current.name + " / History Count = " + history.Count);
+        //Debug.Log("Push / Current = " + current.name + " / History Count = " + history.Count);
         return current;
     }
 
-    public void Push(UIView view, bool hideImmediately, bool showImmediately, Action onStart = null, Action onFinish = null)
-    {
-        if (Current != null && !view.isOverlay)
-        {
-            Hide(current, hideImmediately, onStart,
-                () =>
-                {
-                    Show(current, showImmediately, null, onFinish);
-                });
-
-            Push(view);
-            return;
-        }
-
-        Push(view);
-        Show(current, showImmediately, onStart, onFinish);
-    }
     public UIView Push(string pageName)
     {
         UIView page = UIView.Get(pageName);
         return Push(page);
-    }
-
-    public void Hide(bool immediately, Action onStart, Action onFinish)
-    {
-        Hide(current, immediately, onStart, onFinish);
-    }
-
-    private void Hide(UIView view, bool immediately, Action onStart,Action onFinish)
-    {
-        EventHandler?.OnStartHide(view);
-
-        if (immediately)
-        {
-            current.HideImmediately(onStart,onFinish);
-        }
-        else
-        {
-            Current.Hide(onStart, onFinish);
-        }
-    }
-
-    public void Show(bool immediately, Action onStart, Action onFinish)
-    {
-        Show(current, immediately, onStart, onFinish);
-    }
-
-    private void Show(UIView view, bool immediately, Action onStart, Action onFinish)
-    {
-        EventHandler?.OnStartShow(view);
-        if (immediately)
-        {
-            view.ShowImmediately(onStart, onFinish);
-        }
-        else
-        {
-            view.Show(onStart, onFinish);
-        }
-    }
-
-    public void Pop(bool hideImmediately , bool showImmediately, Action onStart = null, Action onFinish = null)
-    {
-        if (Current != null)
-        {
-            Hide(current, hideImmediately, onStart, 
-                ()=>
-                {
-                    if (current != null)
-                    {
-                        Show(current, showImmediately, null, onFinish);
-                    }
-                });
-
-            Pop();
-            return;
-        }
-
-        Pop();
-
-        if (current != null)
-        {
-            Show(current, showImmediately, null, onFinish);
-        }
     }
 
     public UIView Pop()
@@ -152,7 +88,7 @@ public class UINavigation : UIView.IEventHandler
             Current = history.Peek();
         }
 
-        Debug.Log("Pop / Current = " + current?.name + " / History Count = " + history.Count);
+        //Debug.Log("Pop / Current = " + current?.name + " / History Count = " + history.Count);
 
         return Current;
     }
@@ -190,31 +126,6 @@ public class UINavigation : UIView.IEventHandler
         }
 
         return null;
-    }
-
-    public void PopToRoot(bool hideImmediately, bool showImmediately, Action onStart = null, Action onFinish = null)
-    {
-        if (Current != null)
-        {
-            Hide(current, hideImmediately, onStart,
-                () =>
-                {
-                    if (current != null)
-                    {
-                        Show(current, showImmediately, null, onFinish);
-                    }
-                });
-
-            PopToRoot();
-            return;
-        }
-
-        PopToRoot();
-
-        if (current != null)
-        {
-            Show(current, showImmediately, null, onFinish);
-        }
     }
 
     public UIView PopToRoot()
