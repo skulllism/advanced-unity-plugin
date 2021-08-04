@@ -39,6 +39,7 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
 
     public UnityEvent onCancel;
     public UnityEvent onSubmit;
+    public UnityEvent onAnyKeyDown;
 
     public IEventHandler EventHandler { set; get; }
 
@@ -274,5 +275,10 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
 
     public virtual void OnGameOver(InventoryList reconsitutionItems, string KillerSpawnPointID)
     {
+    }
+
+    public void OnAnyKeyDown()
+    {
+        onAnyKeyDown?.Invoke();
     }
 }
