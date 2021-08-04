@@ -37,8 +37,6 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
 
     private UIAnimationEvent[] animationEvents;
 
-    protected UIManager UI;
-
     public UnityEvent onCancel;
     public UnityEvent onSubmit;
 
@@ -243,8 +241,7 @@ public class UIView : MonoBehaviour, UIManager.ICommand, IngameScene.IEventHandl
 
     private void Initialize(IngameScene ingameScene)
     {
-        UI = ingameScene.UI;
-        UI.PushEvent(new UIEventHide(true, this));
+        ingameScene.UIManager.PushEvent(new UIEventHide(true, this));
     }
 
     public virtual void OnPlayerInitialzed(Player player)
