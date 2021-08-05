@@ -132,7 +132,7 @@ public class UINavigation : UIView.IEventHandler
     {
         UIView pop = Pop();
 
-        return history.Count == 1 ? pop : PopToRoot();
+        return history.Count <= 1 ? pop : PopToRoot();
     }
     public void OnStartShowAnimationEvent(UIView view)
     {
