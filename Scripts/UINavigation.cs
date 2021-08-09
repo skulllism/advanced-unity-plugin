@@ -62,7 +62,7 @@ public class UINavigation : UIView.IEventHandler
     {
         Current = view;
         history.Push(view);
-        //Debug.Log("Push / Current = " + current.name + " / History Count = " + history.Count);
+        Debug.Log("Push / Current = " + current.name + " / History Count = " + history.Count);
         return current;
     }
 
@@ -114,17 +114,30 @@ public class UINavigation : UIView.IEventHandler
             return null;
         }
 
-        List<UIView> list = history.ToList();
-
-        foreach (var item in list)
+        List<UIView> historyList = history.ToList();
+        history.Clear();
+        foreach (var item in historyList)
         {
             if(item.name == viewName)
             {
-                list.Remove(item);
-                break;
+                historyList.Remove(item);
+                if(historyList.Count == 0)
+                {
+                    Current = null;
+                }
+                else
+                {
+                    foreach (var list in historyList)
+                    {
+                        history.Push(list);
+                    }
+                    Current = history.Peek();
+                }
+                return item;
             }
         }
 
+        Debug.LogError("Not Found Pop " + viewName);
         return null;
     }
 
