@@ -19,7 +19,7 @@ public class UINavigation : UIView.IEventHandler
         void OnStartHideAnimationEvent(UIView view);
         void OnFinishHideAnimationEvent(UIView view);
     }
-
+    private string ID;
     public IEventHandler EventHandler { set; get; }
 
     public readonly Stack<UIView> history = new Stack<UIView>();
@@ -43,6 +43,11 @@ public class UINavigation : UIView.IEventHandler
 
     private UIView current;
 
+    public UINavigation(string ID)
+    {
+        this.ID = ID;
+    }
+
     public List<UIView> GetCurrentShowing()
     {
         List<UIView> list = new List<UIView>();
@@ -62,7 +67,7 @@ public class UINavigation : UIView.IEventHandler
     {
         Current = view;
         history.Push(view);
-        Debug.Log("Push / Current = " + current.name + " / History Count = " + history.Count);
+        Debug.Log("PushNavi "+ID + "\t Current = " + current.name + "\t History Count = " + history.Count);
         return current;
     }
 
