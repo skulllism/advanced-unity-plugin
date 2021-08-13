@@ -19,7 +19,7 @@ public class UINavigation : UIView.IEventHandler
         void OnStartHideAnimationEvent(UIView view);
         void OnFinishHideAnimationEvent(UIView view);
     }
-    private string ID;
+    public string ID;
     public IEventHandler EventHandler { set; get; }
 
     public readonly Stack<UIView> history = new Stack<UIView>();
@@ -29,7 +29,7 @@ public class UINavigation : UIView.IEventHandler
         set
         {
             current = value;
-            if(current != null)
+            if (current != null)
             {
                 current.EventHandler = this;
             }
@@ -48,14 +48,18 @@ public class UINavigation : UIView.IEventHandler
         this.ID = ID;
     }
 
-    public List<UIView> GetCurrentShowing()
+    public List<UIView> GetCurrentShowing(bool includeNotOverlay = true)
     {
         List<UIView> list = new List<UIView>();
 
         foreach (var view in history)
         {
-            if(view.gameObject.activeSelf)
+            if (view.gameObject.activeSelf)
             {
+                if(view.isOverlay == false && !includeNotOverlay)
+                {
+                    continue;
+                }
                 list.Add(view);
             }
         }
@@ -67,7 +71,7 @@ public class UINavigation : UIView.IEventHandler
     {
         Current = view;
         history.Push(view);
-        Debug.Log("PushNavi "+ID + "\t Current = " + current.name + "\t History Count = " + history.Count);
+        Debug.Log("PushNavi " + ID + "\t Current = " + current.name + "\t History Count = " + history.Count);
         return current;
     }
 
@@ -79,7 +83,7 @@ public class UINavigation : UIView.IEventHandler
 
     public UIView Pop()
     {
-        if(Current != null)
+        if (Current != null)
         {
             history.Pop();
         }
@@ -93,7 +97,7 @@ public class UINavigation : UIView.IEventHandler
             Current = history.Peek();
         }
 
-        //Debug.Log("Pop / Current = " + current?.name + " / History Count = " + history.Count);
+        Debug.Log("Pop / Current = " + current?.name + " / History Count = " + history.Count);
 
         return Current;
     }
@@ -110,40 +114,6 @@ public class UINavigation : UIView.IEventHandler
         UIView pop = Pop();
 
         return pop.name == viewName ? pop : PopTo(viewName);
-    }
-
-    public UIView Pop(string viewName)
-    {
-        if(!history.Contains(UIView.Get(viewName)))
-        { 
-            return null;
-        }
-
-        List<UIView> historyList = history.ToList();
-        history.Clear();
-        foreach (var item in historyList)
-        {
-            if(item.name == viewName)
-            {
-                historyList.Remove(item);
-                if(historyList.Count == 0)
-                {
-                    Current = null;
-                }
-                else
-                {
-                    foreach (var list in historyList)
-                    {
-                        history.Push(list);
-                    }
-                    Current = history.Peek();
-                }
-                return item;
-            }
-        }
-
-        Debug.LogError("Not Found Pop " + viewName);
-        return null;
     }
 
     public UIView PopToRoot()
