@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class UINavigation : UIView.IEventHandler
 {
     public interface IEventHandler
     {
-
         void OnStartShow(UIView view);
         void OnFinishShow(UIView view);
         void OnStartHide(UIView view);
@@ -19,7 +19,7 @@ public class UINavigation : UIView.IEventHandler
         void OnStartHideAnimationEvent(UIView view);
         void OnFinishHideAnimationEvent(UIView view);
     }
-
+    public string ID;
     public IEventHandler EventHandler { set; get; }
 
     public readonly Stack<UIView> history = new Stack<UIView>();
@@ -29,7 +29,7 @@ public class UINavigation : UIView.IEventHandler
         set
         {
             current = value;
-            if(current != null)
+            if (current != null)
             {
                 current.EventHandler = this;
             }
@@ -43,102 +43,47 @@ public class UINavigation : UIView.IEventHandler
 
     private UIView current;
 
+    public UINavigation(string ID)
+    {
+        this.ID = ID;
+    }
+
+    public List<UIView> GetCurrentShowing(bool includeNotOverlay = true)
+    {
+        List<UIView> list = new List<UIView>();
+
+        foreach (var view in history)
+        {
+            if (view.gameObject.activeSelf)
+            {
+                if(view.isOverlay == false && !includeNotOverlay)
+                {
+                    continue;
+                }
+                list.Add(view);
+            }
+        }
+
+        return list;
+    }
+
     public UIView Push(UIView view)
     {
         Current = view;
         history.Push(view);
-        Debug.Log("Push / Current = " + current.name + " / History Count = " + history.Count);
+        Debug.Log("PushNavi " + ID + "\t Current = " + current.name + "\t History Count = " + history.Count);
         return current;
     }
 
-    public void Push(UIView view, bool hideImmediately, bool showImmediately, Action onStart = null, Action onFinish = null)
-    {
-        if (Current != null && !view.isOverlay)
-        {
-            Hide(current, hideImmediately, onStart,
-                () =>
-                {
-                    Show(current, showImmediately, null, onFinish);
-                });
-
-            Push(view);
-            return;
-        }
-
-        Push(view);
-        Show(current, showImmediately, onStart, onFinish);
-    }
     public UIView Push(string pageName)
     {
         UIView page = UIView.Get(pageName);
         return Push(page);
     }
 
-    public void Hide(bool immediately, Action onStart, Action onFinish)
-    {
-        Hide(current, immediately, onStart, onFinish);
-    }
-
-    private void Hide(UIView view, bool immediately, Action onStart,Action onFinish)
-    {
-        EventHandler?.OnStartHide(view);
-
-        if (immediately)
-        {
-            current.HideImmediately(onStart,onFinish);
-        }
-        else
-        {
-            Current.Hide(onStart, onFinish);
-        }
-    }
-
-    public void Show(bool immediately, Action onStart, Action onFinish)
-    {
-        Show(current, immediately, onStart, onFinish);
-    }
-
-    private void Show(UIView view, bool immediately, Action onStart, Action onFinish)
-    {
-        EventHandler?.OnStartShow(view);
-        if (immediately)
-        {
-            view.ShowImmediately(onStart, onFinish);
-        }
-        else
-        {
-            view.Show(onStart, onFinish);
-        }
-    }
-
-    public void Pop(bool hideImmediately , bool showImmediately, Action onStart = null, Action onFinish = null)
-    {
-        if (Current != null)
-        {
-            Hide(current, hideImmediately, onStart, 
-                ()=>
-                {
-                    if (current != null)
-                    {
-                        Show(current, showImmediately, null, onFinish);
-                    }
-                });
-
-            Pop();
-            return;
-        }
-
-        Pop();
-
-        if (current != null)
-        {
-            Show(current, showImmediately, null, onFinish);
-        }
-    }
-
     public UIView Pop()
     {
-        if(Current != null)
+        if (Current != null)
         {
             history.Pop();
         }
@@ -164,36 +109,11 @@ public class UINavigation : UIView.IEventHandler
         return pop is T ? pop : Pop<T>();
     }
 
-    public UIView Pop(string pageName)
+    public UIView PopTo(string viewName)
     {
         UIView pop = Pop();
 
-        return pop.name == pageName ? pop : Pop(pageName);
-    }
-
-    public void PopToRoot(bool hideImmediately, bool showImmediately, Action onStart = null, Action onFinish = null)
-    {
-        if (Current != null)
-        {
-            Hide(current, hideImmediately, onStart,
-                () =>
-                {
-                    if (current != null)
-                    {
-                        Show(current, showImmediately, null, onFinish);
-                    }
-                });
-
-            PopToRoot();
-            return;
-        }
-
-        PopToRoot();
-
-        if (current != null)
-        {
-            Show(current, showImmediately, null, onFinish);
-        }
+        return pop.name == viewName ? pop : PopTo(viewName);
     }
 
     public UIView PopToRoot()
