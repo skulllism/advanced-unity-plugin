@@ -190,7 +190,14 @@ namespace AdvancedUnityPlugin
             }
 
             if (autoActivate)
+            {
                 ActivateAdditiveScene(sceneName);
+
+                while (!SceneManager.GetSceneByName(sceneName).isLoaded)
+                {
+                    yield return null;
+                }   
+            }
 
             if (onComplete != null)
                 onComplete.Invoke();
