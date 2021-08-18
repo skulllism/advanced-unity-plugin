@@ -34,6 +34,11 @@ namespace AdvancedUnityPlugin
             return pool.Get(isActive);
         }
 
+        public List<PoolableObject> Get(int count)
+        {
+            return pool.Get(count);
+        }
+
         public PoolableObject Get( Vector3 position ,bool isActive = true)
         {
             PoolableObject gameObject = Get(isActive);
@@ -140,6 +145,17 @@ namespace AdvancedUnityPlugin
             Create(parent);
 
             return Get(isActive);
+        }
+
+        public List<PoolableObject> Get(int count)
+        {
+            List<PoolableObject> result = new List<PoolableObject>();
+            for (int i = 0; i < count; i++)
+            {
+                result.Add(pools[i]);
+            }
+
+            return result;
         }
 
         public void PoolAll()
