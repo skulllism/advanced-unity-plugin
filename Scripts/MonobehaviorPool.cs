@@ -149,12 +149,18 @@ namespace AdvancedUnityPlugin
 
         public List<PoolableObject> Get(int count)
         {
+            if (pools.Count == 0)
+            {
+                Create(parent);
+            }
+
             List<PoolableObject> result = new List<PoolableObject>();
             for (int i = 0; i < count; i++)
             {
                 result.Add(pools[i]);
             }
 
+           
             return result;
         }
 
