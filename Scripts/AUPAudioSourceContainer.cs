@@ -104,9 +104,17 @@ public class AUPAudioSourceContainer
         //Debug.Log(sources.Count);
     }
 
-    public AudioSource Get(string sourceType)
+    public bool TryGet(string sourceType, out AudioSource source)
     {
-        return sources.ContainsKey(sourceType) ? sources[sourceType].Get() : null;
+        if(sources.TryGetValue(sourceType, out AudioSourcePool pool))
+        {
+            source = pool.Get();
+            return true;
+        }
+
+        Debug.LogError("Not Found AudioSource Type : " + sourceType);
+        source = null;
+        return false;
     }
 
 }
