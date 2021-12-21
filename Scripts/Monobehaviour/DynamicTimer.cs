@@ -32,14 +32,17 @@ namespace AdvancedUnityPlugin
             timers.Add(id, startTime);
         }
 
-        public float Get(string id)
+        public bool TryGet(string id, out float time)
         {
             if (!timers.ContainsKey(id))
             {
-                return -1f;
+                Debug.LogError("Couldn't Find TimerID : " + id);
+                time = float.MaxValue;
+                return false;
             }
 
-            return timers[id];
+            time = timers[id];
+            return true;
         }
 
         public void Clear(string id)
