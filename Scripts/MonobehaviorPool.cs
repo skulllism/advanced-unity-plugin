@@ -79,14 +79,20 @@ namespace AdvancedUnityPlugin
         protected List<PoolableObject> pools = new List<PoolableObject>();
         private Transform parent; 
 
-		public Pool(GameObject origin, int count)
+		public Pool(GameObject origin, int count,Transform parent = null)
 		{
 			this.origin = origin;
 			this.count = count;
 
             Debug.Assert(origin);
             Debug.Assert(count > 0);
-            parent = new GameObject("Pool_" + origin.name).transform;
+            this.parent = new GameObject("Pool" + origin.name).transform;
+
+            if (parent != null)
+            {
+                this.parent.SetParent(parent);
+            }
+
 
             PoolableObject component;
             if(origin.TryGetComponent(out component))
@@ -96,7 +102,7 @@ namespace AdvancedUnityPlugin
 
             for (int i = 0; i < this.count; i++)
             {
-                Create(parent);
+                Create(this.parent);
             }
         }
 
