@@ -49,17 +49,14 @@ namespace AdvancedUnityPlugin
             timers.Add(id, new TimePair(targetDuration));
         }
 
-        public bool TryGet(string id, out TimePair timer)
+        public bool TryGet(string id, out TimePair timePair)
         {
-            if (!timers.ContainsKey(id))
+            if (timers.TryGetValue(id,out timePair))
             {
-                Debug.LogError("Couldn't Find TimerID : " + id);
-                timer = null;
-                return false;
+                return true;
             }
-
-            timer = timers[id];
-            return true;
+            Debug.LogError("Couldn't Find TimerID : " + id);
+            return false;
         }
 
         public void Remove(string id)
