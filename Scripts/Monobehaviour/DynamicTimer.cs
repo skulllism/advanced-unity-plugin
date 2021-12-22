@@ -55,7 +55,6 @@ namespace AdvancedUnityPlugin
             {
                 return true;
             }
-            Debug.LogError("Couldn't Find TimerID : " + id);
             return false;
         }
 
