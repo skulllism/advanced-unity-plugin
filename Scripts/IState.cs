@@ -5,8 +5,6 @@ public interface IState
 {
     string ID { get; }
 
-    float MinDuration { get; }
-
     bool IsTransition(out string ID);
 
     void OnEnter();
