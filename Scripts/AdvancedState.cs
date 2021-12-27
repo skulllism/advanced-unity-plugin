@@ -5,11 +5,11 @@ using AdvancedUnityPlugin;
 
 public abstract class AdvancedState : IState
 {
-    public CompositeTransition Transition { private set; get; }
+    public AdvancedCompositeTransition Transition { private set; get; }
     public abstract string ID { get; }
     public abstract float MinDuration { get; }
 
-    public AdvancedState(CompositeTransition transition)
+    public AdvancedState(AdvancedCompositeTransition transition)
     {
         Transition = transition;
     }
