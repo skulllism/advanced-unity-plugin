@@ -7,12 +7,13 @@ namespace AdvancedUnityPlugin
     public class TimePair
     {
         public float Current { set; get; }
-        public float Target => target;
+        public System.Action Action { private set; get; }
         private float target;
 
-        public TimePair(float target)
+        public TimePair(float target,System.Action action)
         {
             this.target = target;
+            this.Action = action;
         }
 
         public bool IsReached()
@@ -25,7 +26,7 @@ namespace AdvancedUnityPlugin
     {
         private Dictionary<string, TimePair> timers = new Dictionary<string, TimePair>();
 
-        public void StartTimer(string id)
+        public void StartTimer(string id,System.Action action =null)
         {
             if (timers.ContainsKey(id))
             {
@@ -34,19 +35,19 @@ namespace AdvancedUnityPlugin
                 return;
             }
 
-            timers.Add(id, new TimePair(float.MaxValue));
+            timers.Add(id, new TimePair(float.MaxValue,action));
         }
 
-        public void StartTimer(string id,float targetDuration)
+        public void StartTimer(string id,float targetDuration,System.Action action = null)
         {
             if (timers.ContainsKey(id))
             {
                 Remove(id);
-                StartTimer(id,targetDuration);
+                StartTimer(id,targetDuration,action);
                 return;
             }
 
-            timers.Add(id, new TimePair(targetDuration));
+            timers.Add(id, new TimePair(targetDuration,action));
         }
 
         public bool TryGet(string id, out TimePair timePair)
@@ -75,9 +76,11 @@ namespace AdvancedUnityPlugin
         {
             foreach (string key in timers.Keys.ToList())
             {
-                timers[key].Current += Time.deltaTime;
-                if (timers[key].IsReached())
+                TimePair timePair = timers[key];
+                timePair.Current += Time.deltaTime;
+                if (timePair.IsReached())
                 {
+                    timePair.Action?.Invoke();
                     Remove(key);
                 }
             }
