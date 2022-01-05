@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using AdvancedUnityPlugin;
 
-public class CompositeTransition : AdvancedTransition
+public class AdvancedCompositeTransition : AdvancedTransition
 {
     public readonly List<AdvancedTransition> ChildTransitions = new List<AdvancedTransition>();
 

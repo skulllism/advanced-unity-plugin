@@ -13,8 +13,6 @@ public class StateMachine
     private readonly List<IState> states      = new List<IState>();
     private List<IEventHandler> eventHandlers = new List<IEventHandler>();
 
-    private float duration;
-   
     public void ResisterEvent(IEventHandler eventHandler)
     {
         eventHandlers.Add(eventHandler);
@@ -44,11 +42,17 @@ public class StateMachine
         }
 
         Prev = Current;
-        Current = GetState(ID);
+        if(!TryGetState(ID,out IState state))
+        {
+            Debug.LogError("Request From : " + Prev.ID);
+            return;
+        }
 
-        //if(Prev!=null)
-        //Debug.Log("current : "+ Current.ID + " / prev : " + Prev.ID);
-        
+        Current = state;
+
+        if (Prev != null)
+            Debug.Log("current : " + Current.ID + " / prev : " + Prev.ID);
+
 
         Debug.Assert(Current != null, "Not Found : " + ID + " / Prev : " + Prev);
         foreach (var  eventHandler in eventHandlers)
@@ -56,8 +60,6 @@ public class StateMachine
             eventHandler.OnTransitionToState(Prev, Current);
         }
         Current.OnEnter();
-        
-        duration = 0;
     }
 
     public void ManualUpdate()
@@ -65,7 +67,7 @@ public class StateMachine
         //if (Current == null)
         //    return;
         
-        if (duration >= Current.MinDuration && Current.IsTransition(out string transition))
+        if (Current.IsTransition(out string transition))
         {
             TransitionToState(transition);
 
@@ -74,7 +76,6 @@ public class StateMachine
         }
 
         Current.OnUpdate();
-        duration += Time.deltaTime;
     }
 
     public void ManualLateUpdate()
@@ -94,16 +95,20 @@ public class StateMachine
     }
 
    
-    private IState GetState(string ID)
+    private bool TryGetState(string ID, out IState state)
     {
         for (int i = 0; i < states.Count; i++)
         {
             if (states[i].ID == ID)
-                return states[i];
+            {
+                state = states[i];
+                return true;
+            }
         }
 
         Debug.Log("[StateMachine] Not found state ID : " + ID);
-        return null;
+        state = null;
+        return false;
     }
 
     
