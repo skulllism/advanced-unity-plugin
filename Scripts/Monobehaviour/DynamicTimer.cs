@@ -38,16 +38,16 @@ namespace AdvancedUnityPlugin
             timers.Add(id, new TimePair(float.MaxValue,action));
         }
 
-        public void StartTimer(string id,float targetDuration,System.Action action = null)
+        public void StartTimer(string id,float targetDuration,System.Action onComplete = null)
         {
             if (timers.ContainsKey(id))
             {
                 Remove(id);
-                StartTimer(id,targetDuration,action);
+                StartTimer(id,targetDuration,onComplete);
                 return;
             }
 
-            timers.Add(id, new TimePair(targetDuration,action));
+            timers.Add(id, new TimePair(targetDuration,onComplete));
         }
 
         public bool TryGet(string id, out TimePair timePair)
