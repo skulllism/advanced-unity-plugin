@@ -51,7 +51,7 @@ public class StateMachine
         Current = state;
 
         if (Prev != null)
-            Debug.Log("current : " + Current.ID + " / prev : " + Prev.ID);
+            //Debug.Log("current : " + Current.ID + " / prev : " + Prev.ID);
 
 
         Debug.Assert(Current != null, "Not Found : " + ID + " / Prev : " + Prev);
