@@ -26,6 +26,7 @@ namespace AdvancedUnityPlugin
     {
         private Dictionary<string, TimePair> timers = new Dictionary<string, TimePair>();
 
+        public int Count => timers.Count;
         public void StartTimer(string id,System.Action action =null)
         {
             if (timers.ContainsKey(id))
