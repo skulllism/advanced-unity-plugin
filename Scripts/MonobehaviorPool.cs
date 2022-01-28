@@ -29,30 +29,9 @@ namespace AdvancedUnityPlugin
             Initialize(origin, count);
         }
 
-        public PoolableObject Get(bool isActive = true)
+        public GameObject Get(bool isActive = true)
         {
             return pool.Get(isActive);
-        }
-
-        public List<PoolableObject> Get(int count)
-        {
-            return pool.Get(count);
-        }
-
-        public PoolableObject Get( Vector3 position ,bool isActive = true)
-        {
-            PoolableObject gameObject = Get(isActive);
-           
-            gameObject.transform.position = position;
-
-            return gameObject;
-        }
-
-        public PoolableObject Get(Transform parent,bool isActive = true, bool worldPositionStays = false)
-        {
-            PoolableObject gameObject = Get(isActive);
-            gameObject.transform.SetParent(parent, worldPositionStays);
-            return gameObject;
         }
 
         //public void Create(Transform parent)
@@ -75,7 +54,7 @@ namespace AdvancedUnityPlugin
         public GameObject origin;
         public int count;
 
-        protected List<PoolableObject> pools = new List<PoolableObject>();
+        protected List<GameObject> pools = new List<GameObject>();
         private Transform parent;
 
         public Pool(GameObject origin, int count, Transform parent = null)
@@ -93,10 +72,10 @@ namespace AdvancedUnityPlugin
             }
 
 
-            PoolableObject component;
+            IPoolableObject component;
             if (origin.TryGetComponent(out component))
             {
-                this.count = component.poolMaxCount;
+                this.count = component.PoolMax;
             }
 
             for (int i = 0; i < this.count; i++)
@@ -105,33 +84,19 @@ namespace AdvancedUnityPlugin
             }
         }
 
-        private PoolableObject Create(Transform parent, float maxDuration = 0, float maxDistance = 0)
+        private GameObject Create(Transform parent, float maxDuration = 0, float maxDistance = 0)
         {
             GameObject obj = GameObject.Instantiate(origin);
-            PoolableObject component;
-            if (!obj.TryGetComponent<PoolableObject>(out component))
-            {
-                component = obj.AddComponent<PoolableObject>();
-            }
-            else
-            {
-                component = obj.GetComponent<PoolableObject>();
-
-            }
-            component.name = origin.name;
-            component.Initialize(maxDuration, maxDistance, parent);
-            component.transform.SetParent(parent);
-            component.gameObject.SetActive(false);
-            pools.Add(component);
-            return component;
+            pools.Add(obj);
+            return obj;
         }
 
-        public void Remove(PoolableObject poolableObject)
+        public void Remove(GameObject poolableObject)
         {
             pools.Remove(poolableObject);
         }
 
-        public PoolableObject Get(bool isActive, Transform parent = null)
+        public GameObject Get(bool isActive, Transform parent = null)
         {
             foreach (var pool in pools)
             {
@@ -152,14 +117,14 @@ namespace AdvancedUnityPlugin
             return Get(isActive);
         }
 
-        public List<PoolableObject> Get(int count)
+        public List<GameObject> Get(int count)
         {
             if (pools.Count == 0)
             {
                 Create(parent);
             }
 
-            List<PoolableObject> result = new List<PoolableObject>();
+            List<GameObject> result = new List<GameObject>();
             for (int i = 0; i < count; i++)
             {
                 result.Add(pools[i]);
@@ -196,18 +161,15 @@ namespace AdvancedUnityPlugin
     public class Pool<T> where T : Behaviour
     {
         public GameObject origin;
-        public int count;
 
         protected List<T> pools = new List<T>();
         private Transform parent; 
 
-		public Pool(GameObject origin, int count,Transform parent = null)
+		public Pool(GameObject origin, Transform parent = null)
 		{
 			this.origin = origin;
-			this.count = count;
 
             Debug.Assert(origin);
-            Debug.Assert(count > 0);
             this.parent = new GameObject("Pool" + origin.name).transform;
 
             if (parent != null)
@@ -215,20 +177,20 @@ namespace AdvancedUnityPlugin
                 this.parent.SetParent(parent);
             }
 
+            int count = 0;
 
-            PoolableObject component;
-            if(origin.TryGetComponent(out component))
+            if (origin.TryGetComponent(out IPoolableObject poolableObject))
 			{
-                this.count = component.poolMaxCount;
+                count = poolableObject.PoolMax;
             }
 
-            for (int i = 0; i < this.count; i++)
+            for (int i = 0; i < count; i++)
             {
                 Create(this.parent);
             }
         }
 
-        private T Create(Transform parent, float maxDuration = 0, float maxDistance = 0)
+        private T Create(Transform parent)
         {
             GameObject obj = GameObject.Instantiate(origin);
 
@@ -241,22 +203,17 @@ namespace AdvancedUnityPlugin
                 Debug.LogError("Not Found Component");
             }
 
-            if (!component.TryGetComponent(out PoolableObject poolableObject))
+            if (!component.TryGetComponent(out IPoolableObject poolableObject))
             {
-                poolableObject = obj.AddComponent<PoolableObject>();
+                Debug.LogError("Not Found IPoolableObject");
             }
             else
             {
-                poolableObject = obj.GetComponent<PoolableObject>();
+                poolableObject = obj.GetComponent<IPoolableObject>();
 
             }
 
-            poolableObject.name = origin.name;
-			poolableObject.Initialize(maxDuration, maxDistance,parent);
-            poolableObject.transform.SetParent(parent);
-            poolableObject.gameObject.SetActive(false);
-
-           
+			poolableObject.Initialize();
 
             return component;
         }
@@ -308,7 +265,6 @@ namespace AdvancedUnityPlugin
         }
 
         //public void Reset()
-        //{
         //    DestroyAll();
         //    Init();
         //}
