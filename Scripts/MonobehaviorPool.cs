@@ -80,13 +80,15 @@ namespace AdvancedUnityPlugin
 
             for (int i = 0; i < this.count; i++)
             {
-                Create(this.parent);
+                Create(origin,this.parent);
             }
         }
 
-        private GameObject Create(Transform parent, float maxDuration = 0, float maxDistance = 0)
+        private GameObject Create(GameObject origin, Transform parent)
         {
             GameObject obj = GameObject.Instantiate(origin);
+            obj.transform.SetParent(parent);
+            obj.gameObject.SetActive(false);
             pools.Add(obj);
             return obj;
         }
@@ -101,7 +103,9 @@ namespace AdvancedUnityPlugin
             foreach (var pool in pools)
             {
                 if (pool.gameObject.activeSelf)
+                {
                     continue;
+                }
 
                 if (isActive)
                 {
@@ -112,7 +116,7 @@ namespace AdvancedUnityPlugin
             }
 
             //Debug.Log("Create on demand : " + origin.name);
-            Create(parent);
+            Create(origin, parent);
 
             return Get(isActive);
         }
@@ -121,7 +125,7 @@ namespace AdvancedUnityPlugin
         {
             if (pools.Count == 0)
             {
-                Create(parent);
+                Create(origin,parent);
             }
 
             List<GameObject> result = new List<GameObject>();
@@ -163,11 +167,13 @@ namespace AdvancedUnityPlugin
         public GameObject origin;
 
         protected List<T> pools = new List<T>();
-        private Transform parent; 
+        private Transform parent;
+        private IngameScene ingameScene;
 
-		public Pool(GameObject origin, Transform parent = null)
+		public Pool(GameObject origin, IngameScene ingameScene,Transform parent = null)
 		{
 			this.origin = origin;
+            this.ingameScene = ingameScene;
 
             Debug.Assert(origin);
             this.parent = new GameObject("Pool" + origin.name).transform;
@@ -186,11 +192,11 @@ namespace AdvancedUnityPlugin
 
             for (int i = 0; i < count; i++)
             {
-                Create(this.parent);
+                Create(this.parent, ingameScene);
             }
         }
 
-        private T Create(Transform parent)
+        private T Create(Transform parent,IngameScene ingameScene)
         {
             GameObject obj = GameObject.Instantiate(origin);
 
@@ -210,10 +216,12 @@ namespace AdvancedUnityPlugin
             else
             {
                 poolableObject = obj.GetComponent<IPoolableObject>();
-
             }
 
-			poolableObject.Initialize();
+            obj.transform.SetParent(parent);
+            obj.SetActive(false);
+
+            poolableObject.Initialize(ingameScene);
 
             return component;
         }
@@ -234,26 +242,9 @@ namespace AdvancedUnityPlugin
             }
 
             //Debug.Log("Create on demand : " + origin.name);
-            Create(parent);
+            Create(parent, ingameScene);
 
             return Get(isActive);
-        }
-
-        public List<T> Get(int count)
-        {
-            if (pools.Count == 0)
-            {
-                Create(parent);
-            }
-
-            List<T> result = new List<T>();
-            for (int i = 0; i < count; i++)
-            {
-                result.Add(pools[i]);
-            }
-
-           
-            return result;
         }
 
         public void PoolAll()

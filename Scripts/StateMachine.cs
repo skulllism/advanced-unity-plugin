@@ -31,6 +31,19 @@ public class StateMachine
         }
     }
 
+    public void Remove(string ID)
+    {
+        if(TryGetState(ID, out IState state))
+        {
+            Remove(state);
+        }
+    }
+
+    public void Remove(IState state)
+    {
+        states.Remove(state);
+    }
+
     public IState Current { private set; get; }
     public IState Prev { private set; get; }
 
