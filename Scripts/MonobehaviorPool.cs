@@ -21,7 +21,7 @@ namespace AdvancedUnityPlugin
                 return;
 
             isInitailized = true;
-            pool = new Pool(origin, count);
+            pool = new Pool(origin, count,this.transform);
         }
 
         private void Awake()
@@ -29,30 +29,9 @@ namespace AdvancedUnityPlugin
             Initialize(origin, count);
         }
 
-        public PoolableObject Get(bool isActive = true)
+        public GameObject Get(bool isActive = true)
         {
             return pool.Get(isActive);
-        }
-
-        public List<PoolableObject> Get(int count)
-        {
-            return pool.Get(count);
-        }
-
-        public PoolableObject Get( Vector3 position ,bool isActive = true)
-        {
-            PoolableObject gameObject = Get(isActive);
-           
-            gameObject.transform.position = position;
-
-            return gameObject;
-        }
-
-        public PoolableObject Get(Transform parent,bool isActive = true, bool worldPositionStays = false)
-        {
-            PoolableObject gameObject = Get(isActive);
-            gameObject.transform.SetParent(parent, worldPositionStays);
-            return gameObject;
         }
 
         //public void Create(Transform parent)
@@ -70,19 +49,18 @@ namespace AdvancedUnityPlugin
             pool.DestroyAll();
         }
     }
-
     public class Pool
     {
         public GameObject origin;
         public int count;
 
-        protected List<PoolableObject> pools = new List<PoolableObject>();
-        private Transform parent; 
+        protected List<GameObject> pools = new List<GameObject>();
+        private Transform parent;
 
-		public Pool(GameObject origin, int count,Transform parent = null)
-		{
-			this.origin = origin;
-			this.count = count;
+        public Pool(GameObject origin, int count, Transform parent = null)
+        {
+            this.origin = origin;
+            this.count = count;
 
             Debug.Assert(origin);
             Debug.Assert(count > 0);
@@ -94,45 +72,161 @@ namespace AdvancedUnityPlugin
             }
 
 
-            PoolableObject component;
-            if(origin.TryGetComponent(out component))
-			{
-                this.count = component.poolMaxCount;
+            IPoolableObject component;
+            if (origin.TryGetComponent(out component))
+            {
+                this.count = component.PoolMax;
             }
 
             for (int i = 0; i < this.count; i++)
             {
-                Create(this.parent);
+                Create(origin,this.parent);
             }
         }
 
-        private PoolableObject Create(Transform parent, float maxDuration = 0, float maxDistance = 0)
+        private GameObject Create(GameObject origin, Transform parent)
         {
             GameObject obj = GameObject.Instantiate(origin);
-            PoolableObject component;
-            if (!obj.TryGetComponent<PoolableObject>(out component))
-            {
-                component = obj.AddComponent<PoolableObject>();
-            }
-            else
-            {
-                component = obj.GetComponent<PoolableObject>();
-
-            }
-            component.name = origin.name;
-			component.Initialize(this, maxDuration, maxDistance,parent);
-            component.transform.SetParent(parent);
-            component.gameObject.SetActive(false);
-            pools.Add(component);
-            return component;
+            obj.transform.SetParent(parent);
+            obj.gameObject.SetActive(false);
+            pools.Add(obj);
+            return obj;
         }
 
-        public void Remove(PoolableObject poolableObject)
-		{
+        public void Remove(GameObject poolableObject)
+        {
             pools.Remove(poolableObject);
         }
 
-        public PoolableObject Get(bool isActive,Transform parent = null)
+        public GameObject Get(bool isActive, Transform parent = null)
+        {
+            foreach (var pool in pools)
+            {
+                if (pool.gameObject.activeSelf)
+                {
+                    continue;
+                }
+
+                if (isActive)
+                {
+                    pool.gameObject.SetActive(true);
+                }
+
+                return pool;
+            }
+
+            //Debug.Log("Create on demand : " + origin.name);
+            Create(origin, parent);
+
+            return Get(isActive);
+        }
+
+        public List<GameObject> Get(int count)
+        {
+            if (pools.Count == 0)
+            {
+                Create(origin,parent);
+            }
+
+            List<GameObject> result = new List<GameObject>();
+            for (int i = 0; i < count; i++)
+            {
+                result.Add(pools[i]);
+            }
+
+
+            return result;
+        }
+
+        public void PoolAll()
+        {
+            foreach (var pool in pools)
+            {
+                pool.gameObject.SetActive(false);
+            }
+        }
+
+        //public void Reset()
+        //{
+        //    DestroyAll();
+        //    Init();
+        //}
+
+        public void DestroyAll()
+        {
+            foreach (var pool in pools)
+            {
+                GameObject.Destroy(pool.gameObject);
+            }
+
+            pools.Clear();
+        }
+    }
+    public class Pool<T> where T : Behaviour
+    {
+        public GameObject origin;
+
+        protected List<T> pools = new List<T>();
+        private Transform parent;
+        private IngameScene ingameScene;
+
+		public Pool(GameObject origin, IngameScene ingameScene,Transform parent = null)
+		{
+			this.origin = origin;
+            this.ingameScene = ingameScene;
+
+            Debug.Assert(origin);
+            this.parent = new GameObject("Pool" + origin.name).transform;
+
+            if (parent != null)
+            {
+                this.parent.SetParent(parent);
+            }
+
+            int count = 0;
+
+            if (origin.TryGetComponent(out IPoolableObject poolableObject))
+			{
+                count = poolableObject.PoolMax;
+            }
+
+            for (int i = 0; i < count; i++)
+            {
+                Create(this.parent, ingameScene);
+            }
+        }
+
+        private T Create(Transform parent,IngameScene ingameScene)
+        {
+            GameObject obj = GameObject.Instantiate(origin);
+
+            if (obj.TryGetComponent<T>(out T component))
+            {
+                pools.Add(component);
+            }
+            else
+            {
+                Debug.LogError("Not Found Component");
+            }
+
+            if (!component.TryGetComponent(out IPoolableObject poolableObject))
+            {
+                Debug.LogError("Not Found IPoolableObject");
+            }
+            else
+            {
+                poolableObject = obj.GetComponent<IPoolableObject>();
+            }
+
+            obj.transform.SetParent(parent);
+            obj.SetActive(false);
+
+            poolableObject.Initialize(ingameScene);
+
+            return component;
+        }
+
+        public T Get(bool isActive,Transform parent = null)
         {
             foreach (var pool in pools)
             {
@@ -148,26 +242,9 @@ namespace AdvancedUnityPlugin
             }
 
             //Debug.Log("Create on demand : " + origin.name);
-            Create(parent);
+            Create(parent, ingameScene);
 
             return Get(isActive);
-        }
-
-        public List<PoolableObject> Get(int count)
-        {
-            if (pools.Count == 0)
-            {
-                Create(parent);
-            }
-
-            List<PoolableObject> result = new List<PoolableObject>();
-            for (int i = 0; i < count; i++)
-            {
-                result.Add(pools[i]);
-            }
-
-           
-            return result;
         }
 
         public void PoolAll()
@@ -179,7 +256,6 @@ namespace AdvancedUnityPlugin
         }
 
         //public void Reset()
-        //{
         //    DestroyAll();
         //    Init();
         //}
