@@ -21,7 +21,7 @@ namespace AdvancedUnityPlugin
                 return;
 
             isInitailized = true;
-            pool = new Pool(origin, count);
+            pool = new Pool(origin, count,this.transform);
         }
 
         private void Awake()
