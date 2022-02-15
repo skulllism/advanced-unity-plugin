@@ -12,7 +12,7 @@ namespace AdvancedUnityPlugin
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (!this.gameObject.CompareTag(this.tagName))
+            if (!other.CompareTag(this.tagName))
             {
                 return;
             }
@@ -21,7 +21,7 @@ namespace AdvancedUnityPlugin
 
         private void OnTriggerExit2D(Collider2D other)
         {
-            if (!this.gameObject.CompareTag(this.tagName))
+            if (!other.CompareTag(this.tagName))
             {
                 return;
             }
@@ -30,7 +30,7 @@ namespace AdvancedUnityPlugin
 
         private void OnTriggerStay2D(Collider2D other)
         {
-            if (!this.gameObject.CompareTag(this.tagName))
+            if (!other.CompareTag(this.tagName))
             {
                 return;
             }
