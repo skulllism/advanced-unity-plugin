@@ -164,6 +164,7 @@ namespace AdvancedUnityPlugin
     }
     public class Pool<T> where T : Behaviour
     {
+        private const int DEFAULT_MAX = 5;
         public GameObject origin;
 
         protected List<T> pools = new List<T>();
@@ -183,7 +184,7 @@ namespace AdvancedUnityPlugin
                 this.parent.SetParent(parent);
             }
 
-            int count = 0;
+            int count = DEFAULT_MAX;
 
             if (origin.TryGetComponent(out IPoolableObject poolableObject))
 			{
@@ -211,7 +212,7 @@ namespace AdvancedUnityPlugin
 
             if (!component.TryGetComponent(out IPoolableObject poolableObject))
             {
-                Debug.LogError("Not Found IPoolableObject");
+                Debug.LogWarning("Not Found IPoolableObject");
             }
             else
             {
@@ -221,30 +222,51 @@ namespace AdvancedUnityPlugin
             obj.transform.SetParent(parent);
             obj.SetActive(false);
 
-            poolableObject.Initialize(ingameScene);
+            poolableObject?.Initialize(ingameScene);
 
             return component;
         }
 
-        public T Get(bool isActive,Transform parent = null)
+        public List<T> GetCurrentActives()
+        {
+            List<T> result = new List<T>();
+
+            foreach (var pool in pools)
+            {
+                if (!pool.gameObject.activeSelf)
+                {
+                    continue;
+                }
+
+                result.Add(pool);
+            }
+
+            return result;
+        }
+
+        public T Get(bool isActive, Transform parent = null)
         {
             foreach (var pool in pools)
             {
                 if (pool.gameObject.activeSelf)
-                    continue;
-
-                if (isActive)
                 {
-                    pool.gameObject.SetActive(true);
+                    continue;
                 }
+
+                if (parent)
+                {
+                    pool.transform.SetParent(parent);
+                }
+
+                pool.gameObject.SetActive(isActive);
 
                 return pool;
             }
 
             //Debug.Log("Create on demand : " + origin.name);
-            Create(parent, ingameScene);
+            Create(this.parent, ingameScene);
 
-            return Get(isActive);
+            return Get(isActive, parent);
         }
 
         public void PoolAll()
