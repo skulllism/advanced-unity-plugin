@@ -46,6 +46,7 @@ namespace AdvancedUnityPlugin
         private void Reset()
         {
             isRun = false;
+            transform.localPosition = Vector3.zero;
 
             //StartCoroutine(WaitForFrame());
         }
