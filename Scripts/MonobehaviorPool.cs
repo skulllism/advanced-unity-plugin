@@ -171,6 +171,8 @@ namespace AdvancedUnityPlugin
         private Transform parent;
         private IngameScene ingameScene;
 
+        private int onDemandCount = 0;
+
 		public Pool(GameObject origin, IngameScene ingameScene,Transform parent = null)
 		{
 			this.origin = origin;
@@ -193,13 +195,14 @@ namespace AdvancedUnityPlugin
 
             for (int i = 0; i < count; i++)
             {
-                Create(this.parent, ingameScene);
+                Create(this.parent, ingameScene,i.ToString());
             }
         }
 
-        private T Create(Transform parent,IngameScene ingameScene)
+        private T Create(Transform parent,IngameScene ingameScene,string extraName)
         {
             GameObject obj = GameObject.Instantiate(origin);
+            obj.name = obj.name + extraName;
 
             if (obj.TryGetComponent<T>(out T component))
             {
@@ -264,7 +267,8 @@ namespace AdvancedUnityPlugin
             }
 
             //Debug.Log("Create on demand : " + origin.name);
-            Create(this.parent, ingameScene);
+            onDemandCount++;
+            Create(this.parent, ingameScene,"OnDemand"+onDemandCount);
 
             return Get(isActive, parent);
         }
