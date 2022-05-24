@@ -31,7 +31,7 @@ namespace AdvancedUnityPlugin
         {
             if (timers.ContainsKey(id))
             {
-                Remove(id);
+                TryRemove(id);
                 StartTimer(id);
                 return;
             }
@@ -43,7 +43,7 @@ namespace AdvancedUnityPlugin
         {
             if (timers.ContainsKey(id))
             {
-                Remove(id);
+                TryRemove(id);
                 StartTimer(id,targetDuration,onComplete);
                 return;
             }
@@ -60,12 +60,13 @@ namespace AdvancedUnityPlugin
             return false;
         }
 
-        public void Remove(string id)
+        public bool TryRemove(string id)
         {
             if (!timers.ContainsKey(id))
-                return;
+                return false;
 
             timers.Remove(id);
+            return true;
         }
 
         public void Clear()
@@ -82,7 +83,7 @@ namespace AdvancedUnityPlugin
                 if (timePair.IsReached())
                 {
                     timePair.Action?.Invoke();
-                    Remove(key);
+                    TryRemove(key);
                 }
             }
         }
