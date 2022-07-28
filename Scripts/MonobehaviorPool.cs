@@ -34,6 +34,11 @@ namespace AdvancedUnityPlugin
             return pool.Get(isActive);
         }
 
+        public GameObject Instantiate()
+        {
+            return pool.Instantiate();
+        }
+
         //public void Create(Transform parent)
         //{
         //    Get(parent, false);
@@ -136,6 +141,10 @@ namespace AdvancedUnityPlugin
 
 
             return result;
+        }
+        public GameObject Instantiate()
+        {
+            return Create(origin,parent);
         }
 
         public void PoolAll()
