@@ -75,6 +75,13 @@ public class StateMachine
         Current.OnEnter();
     }
 
+    public void ManualReset()
+    {
+        this.Current.OnExit(null);
+        this.Current = null;
+        this.Prev = null;
+    }
+
     public void ManualUpdate()
     {
         if (Current == null)
