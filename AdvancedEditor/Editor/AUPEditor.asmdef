@@ -1,0 +1,18 @@
+{
+    "name": "AUPEditor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:51ca5e0714703d04b83682229dce0588"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
