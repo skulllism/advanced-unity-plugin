@@ -77,7 +77,7 @@ public class StateMachine
 
     public void ManualReset()
     {
-        this.Current.OnExit(null);
+        this.Current?.OnExit(null);
         this.Current = null;
         this.Prev = null;
     }
