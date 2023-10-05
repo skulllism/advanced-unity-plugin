@@ -10,6 +10,22 @@ namespace AdvancedUnityPlugin
         public Collider2DUnityEvent onTriggerStay;
         public Collider2DUnityEvent onTriggerExit;
 
+        private Collider2D collider;
+        private void Awake()
+        {
+            this.collider = GetComponent<Collider2D>();
+        }
+
+        public void Enable()
+        {
+            this.collider.enabled = true;
+        }
+
+        public void Disable()
+        {
+            this.collider.enabled = false;
+        }
+
         private void OnTriggerEnter2D(Collider2D other)
         {
             if (!other.CompareTag(this.tagName))
