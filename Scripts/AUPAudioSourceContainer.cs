@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 public class AUPAudioSourceContainer
 {
@@ -83,30 +85,52 @@ public class AUPAudioSourceContainer
             pools.Clear();
         }
     }
-    private const string sourcePath = "Audio/Sources/";
 
-    public AUPAudioSourceContainer(Transform parent, string path = sourcePath)
+    Transform parent;
+
+    public event System.Action onCompleteInitialized;
+    public AUPAudioSourceContainer(Transform parent)
     {
-        LoadSources(parent, path);
+        this.parent = parent;
+        LoadSources();
     }
 
-    private void LoadSources(Transform parent, string path)
+    private void LoadSources()
     {
-        AudioSource[] array = Resources.LoadAll<AudioSource>(path);
+        Addressables.LoadAssetsAsync<GameObject>("AudioSource", null).Completed += OnAssetsLoaded;
+    }
 
-        foreach (var source in array)
+    private void OnAssetsLoaded(AsyncOperationHandle<IList<GameObject>> handle)
+    {
+        if (handle.Status == AsyncOperationStatus.Succeeded)
         {
-            var pool = new AudioSourcePool();
-            pool.Init(source, max, parent);
+            var assets = handle.Result;
+            foreach (var source in assets)
+            {
+                if (source.TryGetComponent(out AudioSource audioSource))
+                {
+                    var pool = new AudioSourcePool();
+                    pool.Init(audioSource, max, this.parent);
+                    sources.Add(source.name, pool);
+                }
+                else
+                {
+                    Debug.LogError("해당 컴포넌트가없습니다.");
+                }
+            }
 
-            sources.Add(source.name, pool);
+            onCompleteInitialized?.Invoke();
         }
-        //Debug.Log(sources.Count);
+        else
+        {
+            Debug.LogError("Failed to load assets.");
+        }
     }
+
 
     public bool TryGet(string sourceType, out AudioSource source)
     {
-        if(sources.TryGetValue(sourceType, out AudioSourcePool pool))
+        if (sources.TryGetValue(sourceType, out AudioSourcePool pool))
         {
             source = pool.Get();
             return true;
