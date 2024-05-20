@@ -20,12 +20,5 @@ namespace AdvancedUnityPlugin
                 return null;
             }
         }
-
-        public string GetRandom()
-        {
-            int random = Random.Range(0, strings.Count);
-
-            return Get(random);
-        }
     }
 }
