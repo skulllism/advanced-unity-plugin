@@ -6,9 +6,7 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 public class AUPAudioSourceContainer
 {
-    private const int max = 2;
-    private readonly Dictionary<string, AudioSourcePool> sources = new Dictionary<string, AudioSourcePool>();
-
+    private Dictionary<string, AudioSourcePool> sources;
     public class AudioSourcePool
     {
         public AudioSource origin { get; private set; }
@@ -86,45 +84,10 @@ public class AUPAudioSourceContainer
         }
     }
 
-    Transform parent;
 
-    public event System.Action onCompleteInitialized;
-    public AUPAudioSourceContainer(Transform parent)
+    public AUPAudioSourceContainer(Dictionary<string, AudioSourcePool> sources)
     {
-        this.parent = parent;
-        LoadSources();
-    }
-
-    private void LoadSources()
-    {
-        Addressables.LoadAssetsAsync<GameObject>("AudioSource", null).Completed += OnAssetsLoaded;
-    }
-
-    private void OnAssetsLoaded(AsyncOperationHandle<IList<GameObject>> handle)
-    {
-        if (handle.Status == AsyncOperationStatus.Succeeded)
-        {
-            var assets = handle.Result;
-            foreach (var source in assets)
-            {
-                if (source.TryGetComponent(out AudioSource audioSource))
-                {
-                    var pool = new AudioSourcePool();
-                    pool.Init(audioSource, max, this.parent);
-                    sources.Add(source.name, pool);
-                }
-                else
-                {
-                    Debug.LogError("해당 컴포넌트가없습니다.");
-                }
-            }
-
-            onCompleteInitialized?.Invoke();
-        }
-        else
-        {
-            Debug.LogError("Failed to load assets.");
-        }
+        this.sources = sources;
     }
 
 
